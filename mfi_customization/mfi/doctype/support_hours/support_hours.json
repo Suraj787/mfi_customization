@@ -6,7 +6,9 @@
  "field_order": [
   "company",
   "start_time",
-  "end_time"
+  "end_time",
+  "lunch_start_time",
+  "lunch_end_time"
  ],
  "fields": [
   {
@@ -27,10 +29,22 @@
    "fieldtype": "Time",
    "in_list_view": 1,
    "label": "End Time"
+  },
+  {
+   "fieldname": "lunch_start_time",
+   "fieldtype": "Time",
+   "in_list_view": 1,
+   "label": "Lunch Start Time"
+  },
+  {
+   "fieldname": "lunch_end_time",
+   "fieldtype": "Time",
+   "in_list_view": 1,
+   "label": "Lunch End Time"
   }
  ],
  "istable": 1,
- "modified": "2021-08-04 12:32:21.209379",
+ "modified": "2021-08-06 17:01:00.198275",
  "modified_by": "Administrator",
  "module": "mfi",
  "name": "Support Hours",
