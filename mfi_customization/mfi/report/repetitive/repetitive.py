@@ -63,12 +63,14 @@ def get_data(filters):
 	if filters.get("company"):
 		fltr.update({"company":filters.get("company")})
 	for ast in frappe.get_all("Asset",fltr,['name','customer','serial_no','item_code','project']):
-		data.append({
-				"customer":frappe.db.get_value("Project",ast.project,"customer"),
-				"serial_no":ast.get('serial_no'),
-				"machine_model":ast.name,
-				"calls":get_count(ast.name,ast.item_code,filters)
-		})
+		count=get_count(ast.name,ast.item_code,filters)
+		if count>=1:
+			data.append({
+					"customer":frappe.db.get_value("Project",ast.project,"customer"),
+					"serial_no":ast.get('serial_no'),
+					"machine_model":ast.name,
+					"calls":count
+			})
 	
 	return data
 

@@ -153,7 +153,7 @@ def get_data(filters):
 
 			})
 			
-			if len(frappe.get_all("Task",{'completed_by':usr.email})) > 0:
+			if len(frappe.get_all("Task",{'completed_by':usr.email})) > 0 and total_calls_cnt>=1:
 				data.append(row)
 		
 		return data

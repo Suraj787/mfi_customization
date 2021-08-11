@@ -43,19 +43,13 @@ def get_columns(filters=None):
 	"label": "Failure Date",
 	"fieldtype": "Data",
 	"fieldname": "failure_date_and_time",
-	'width':100
+	'width':150
 	},
 	{
 	"label": "Opening Date",
 	"fieldtype": "Data",
-	"fieldname": "opening_date",
-	'width':100
-	},
-	{
-	"label": "Opening Time",
-	"fieldtype": "Data",
-	"fieldname": "opening_time",
-	'width':100
+	"fieldname": "opening_date_time",
+	'width':150
 	},
 	{
 	"label": "First Responded On",
@@ -89,7 +83,7 @@ def prepare_data(filters):
 	if filters.get("company"):
 		fltr.update({"company":filters.get("company")})
 
-	for i in frappe.get_all('Issue',filters=fltr,fields=["name","status","issue_type","description","failure_date_and_time","opening_date","opening_time","first_responded_on","resolution_date","opening_date_time", "company"]):
+	for i in frappe.get_all('Issue',filters=fltr,fields=["name","status","issue_type","description","failure_date_and_time","opening_date_time","first_responded_on","resolution_date","opening_date_time", "company"]):
 		attended_time=frappe.db.get_value("Task",{"issue":i.name},"attended_date_time")
 		if i.opening_date_time :
 			company = fltr.get("company") if fltr.get("company") else ( i.get('company') if  i.get('company') else 'MFI MAROC SARL')

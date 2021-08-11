@@ -4,6 +4,8 @@
 from __future__ import unicode_literals
 import frappe
 import re
+import	 datetime
+
 
 def execute(filters=None):
 	columns = get_columns()
@@ -93,8 +95,11 @@ def get_working_hrs(call_to, creation, completion_date_time, company):
 	daily_hrs_data = frappe.db.get_all("Support Hours", {'parent': 'Support Setting', 'company':company}, ['start_time', 'end_time', 'lunch_start_time', 'lunch_end_time'])
 	if daily_hrs_data:
 		daily_hrs = daily_hrs_data[0].get('end_time') - daily_hrs_data[0].get('start_time')  
-		lunch_hr = daily_hrs_data[0].get('lunch_end_time') - daily_hrs_data[0].get('lunch_start_time')
-		daily_hrs = daily_hrs - (lunch_hr if lunch_hr else 1)
+		lunch_hr=datetime.timedelta(days=0, seconds=0, microseconds=0, milliseconds=0, minutes=0, hours=0, weeks=0)
+
+		if daily_hrs_data[0].get('lunch_end_time') and daily_hrs_data[0].get('lunch_start_time'):
+			lunch_hr = daily_hrs_data[0].get('lunch_end_time') - daily_hrs_data[0].get('lunch_start_time')
+		daily_hrs = daily_hrs - lunch_hr
 		daily_hrs = daily_hrs.seconds//3600
 		daily_hrs = daily_hrs if daily_hrs else 8
 		if days != 0 :
