@@ -120,8 +120,7 @@ def get_data(filters):
 					response_time_diff = (tk2.get("completion_date_time") - tk2.get('attended_date_time')) 
 					hrs = get_working_hrs(response_time_diff,tk2.get('attended_date_time'), tk2.get('completion_date_time'), company)
 					productivity_by_wtg+=round(( float(type_of_call)* float(frappe.db.get_value("Type of Call",filters.get("type_of_call"),"waitage")) *  float(hrs)),2)
-					# response_time = round(((response_time_diff.days * 24) + (((response_time_diff.seconds//3600)) + hrs)),2) 
-					# productivity_by_wtg11 = round((float(response_time) * float(type_of_call) * float(waitage)),2)
+				
 				if tk2.get("attended_date_time") and tk2.get("assign_date"):
 					cnt += 1
 					avg_wt +=  date_diff(tk2.get("attended_date_time"), tk2.get("assign_date"))
@@ -169,6 +168,7 @@ def get_working_hrs(call_to,opening_date_time, attended_time, company):
 	else:
 		days = call_to.days
 	hrs = call_to.seconds//3600
+	minutes = int(call_to.seconds % 3600 / 60.0)
 	daily_hrs_data = frappe.db.get_all("Support Hours", {'parent': 'Support Setting', 'company':company}, ['start_time', 'end_time'])
 	if daily_hrs_data:
 		daily_hrs = daily_hrs_data[0].get('end_time') - daily_hrs_data[0].get('start_time')  
@@ -180,5 +180,8 @@ def get_working_hrs(call_to,opening_date_time, attended_time, company):
 			total_hours = hrs
 	else:
 		frappe.msgprint("Please set start time and end time in Support Setting for '{0}'".format(company))
-	
-	return total_hours
+	if minutes :
+		total_hours = float(str(total_hours)+"."+str(minutes))
+		return total_hours
+	else:
+		return total_hours

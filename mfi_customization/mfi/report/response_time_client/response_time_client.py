@@ -108,8 +108,7 @@ def get_working_hrs(call_to, creation, completion_date_time, company):
 			total_hours = hrs
 	else:
 		frappe.msgprint("Please set start time and end time, lunch_start time and lunch_end time in Support Setting for '{0}'".format(company))
-	result=("<b>hours : </b> "+str(total_hours)+ ", <b>min : </b> "+str(minutes))
-	return result
+	return ("<b>hours : </b> "+str(total_hours)+ ", <b>min : </b> "+str(minutes)),total_hours
 
 def get_data(filters):
 	data = []
@@ -148,28 +147,28 @@ def get_data(filters):
 				logging = tk.get('creation')
 				logging = logging.strftime("%m/%d/%Y, %H:%M:%S")
 				
-			
+			response_time=""
+			response_time_int_value=0
 			#Calculating the diff and converting time in fours			
 			if tk.get('creation') and tk.get('attended_date_time'):
 				response_time_diff = (tk.get('attended_date_time')- tk.get("creation"))
-				hrs1 = ((response_time_diff.seconds//60)%60)/60
-				response_time = round(((response_time_diff.days * 24) + (((response_time_diff.seconds//3600)) + hrs1)),2)
+				# hrs1 = ((response_time_diff.seconds//60)%60)/60
+				# response_time = round(((response_time_diff.days * 24) + (((response_time_diff.seconds//3600)) + hrs1)),2)
+				response_time,response_time_int_value=get_working_hrs(response_time_diff, tk.get('creation'), tk.get('attended_date_time'), i.get('company') or "MFI MAROC SARL")
 			
-			else:
-				response_time = 0
 	
 			if tk.get('completion_date_time') and tk.get('creation'):
 				call_to=tk.get('completion_date_time') - tk.get('creation')
-				call_to_fix = get_working_hrs(call_to, tk.get('creation'), tk.get('completion_date_time'), i.get('company') or "MFI MAROC SARL")
+				call_to_fix = get_working_hrs(call_to, tk.get('creation'), tk.get('completion_date_time'), i.get('company') or "MFI MAROC SARL")[0]
 			
 			if tk.get('completion_date_time') and tk.get('attended_date_time'):
 				call_resolution=tk.get('completion_date_time') - tk.get('attended_date_time')
-				call_resolution_time = get_working_hrs(call_resolution, tk.get('attended_date_time'), tk.get('completion_date_time'), i.get('company') or "MFI MAROC SARL")
+				call_resolution_time = get_working_hrs(call_resolution, tk.get('attended_date_time'), tk.get('completion_date_time'), i.get('company') or "MFI MAROC SARL")[0]
 
 			#applying filters according to condition set
 			if tk.get('attended_date_time') != None:
 				call_assign_date = (tk.get('attended_date_time')).strftime("%d/%m/%Y")
-			if lgc_value == '>' and  int(digit) <= response_time:
+			if lgc_value == '>' and  int(digit) <= response_time_int_value:
 				row = {
 				'name': tk.get('name'),
 				'response_time': response_time,
@@ -185,7 +184,7 @@ def get_data(filters):
 				'call_resolution_time':call_resolution_time
 						}
 				data.append(row)
-			elif lgc_value == '<' and  int(digit) >= response_time and response_time >= 0  and call_resolution_time:
+			elif lgc_value == '<' and  int(digit) >= response_time_int_value and response_time_int_value >= 0  and call_resolution_time:
 
 				row = {
 				'name': tk.get('name'),
@@ -204,7 +203,7 @@ def get_data(filters):
 				data.append(row)
 
 			#if no condition filter is applied
-			elif lgc_value == '' and response_time >= 0 and call_resolution_time:
+			elif lgc_value == '' and response_time_int_value >= 0 and call_resolution_time:
 
 				row = {
 				'name': tk.get('name'),

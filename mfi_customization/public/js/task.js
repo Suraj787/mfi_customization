@@ -1,4 +1,11 @@
 frappe.ui.form.on('Task', {
+    status:function(frm){
+        if(frm.doc.status == 'Working'){
+            let today = new Date()
+            frappe.model.set_value("Issue", frm.doc.issue, 'first_responded_on',today);
+        }
+        
+    },
 asset:function(frm){
     if(frm.doc.asset){
     frappe.db.get_value('Asset',{'name':frm.doc.asset,'docstatus':1},['asset_name','location','serial_no','project'])

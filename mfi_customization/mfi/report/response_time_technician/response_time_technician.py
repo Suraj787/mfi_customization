@@ -57,6 +57,7 @@ def get_working_hrs(call_to, assign_date, attended_date_time, company):
     else:
         days = call_to.days
     hrs = call_to.seconds//3600
+    minutes = int(call_to.seconds % 3600 / 60.0)
     daily_hrs_data = frappe.db.get_all("Support Hours", {'parent': 'Support Setting', 'company':company}, ['start_time', 'end_time'])
     if daily_hrs_data:
         daily_hrs = daily_hrs_data[0].get('end_time') - daily_hrs_data[0].get('start_time')  
@@ -68,7 +69,11 @@ def get_working_hrs(call_to, assign_date, attended_date_time, company):
             total_hours = hrs
     else:
         frappe.msgprint("Please set start time and end time in Support Setting for '{0}'".format(company))
-    return total_hours
+    if minutes :
+        total_hours = float(str(total_hours)+"."+str(minutes))
+        return total_hours
+    else:
+        return total_hours
 
 def get_data(filters):
     data=[]

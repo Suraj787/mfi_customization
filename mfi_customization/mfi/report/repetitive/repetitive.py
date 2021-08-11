@@ -62,6 +62,8 @@ def get_data(filters):
 		fltr.update({"serial_no":filters.get("serial_no")})
 	if filters.get("company"):
 		fltr.update({"company":filters.get("company")})
+	if filters.get("company"):
+		fltr.update({"company":filters.get("company")})
 	for ast in frappe.get_all("Asset",fltr,['name','customer','serial_no','item_code','project']):
 		count=get_count(ast.name,ast.item_code,filters)
 		if count>=1:

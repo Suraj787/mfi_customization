@@ -65,6 +65,10 @@ frappe.ui.form.on('Issue', {
 		}  
 	},
 	status:function(frm){
+		if(frm.doc.status == 'Working'){
+			let today = new Date()
+			frm.set_value('first_responded_on',today);
+		}
 		if(frm.doc.status == 'Closed'){
 			frm.set_df_property('current_reading','reqd',1);
 		}
@@ -180,7 +184,11 @@ frappe.ui.form.on('Issue', {
 		});
 	},
 	refresh: function (frm) {
-
+        frappe.db.get_value("Task", {"issue": frm.doc.name}, 'name',(r) =>{
+			if(r.name){
+				frm.set_df_property('status','read_only',1);
+			}
+		});
 		if (!frm.doc.__islocal ){
 		frm.add_custom_button(__('Task'), function() {
 			frappe.set_route('List', 'Task', {issue: frm.doc.name});
