@@ -100,12 +100,12 @@ def prepare_data(filters):
 				i.update({
 					'response_time':get_working_hrs(response_time, i.opening_date_time, attended_time, company)
 				})
-			if i.resolution_date:
-				time_resolution = i.resolution_date - attended_time
-				i.update({
-					'time_resolution':get_working_hrs(time_resolution, attended_time,i.resolution_date, company),
-					'resolution_date': (i.resolution_date).strftime("%d/%m/%Y, %I:%M:%S %p")
-				})
+				if i.resolution_date:
+					time_resolution = i.resolution_date - attended_time
+					i.update({
+						'time_resolution':get_working_hrs(time_resolution, attended_time,i.resolution_date, company),
+						'resolution_date': (i.resolution_date).strftime("%d/%m/%Y, %I:%M:%S %p")
+					})
 			i.update({
 				'opening_date_time': (i.opening_date_time).strftime("%d/%m/%Y, %I:%M:%S %p")
 			})
