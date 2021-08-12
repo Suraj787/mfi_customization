@@ -17,7 +17,8 @@ def get_columns(filters = None):
 	return[	{
 			"label":"Task",
 			"fieldname":"name",
-			"fieldtype":"Data"	
+			"fieldtype":"Link",
+			"options":"Task"	
 
 		},
 			{
@@ -139,13 +140,13 @@ def get_data(filters):
 			call_resolution_time=""
 			if tk.get('completion_date_time'):
 				resolution_date =  tk.get('completion_date_time')
-				resolution_date = resolution_date.strftime("%m/%d/%Y, %H:%M:%S")
+				resolution_date = resolution_date.strftime("%d/%m/%Y, %I:%M:%S %p")
 			if tk.get('attended_date_time'):
 				attended_date =  tk.get('attended_date_time')
-				attended_date = attended_date.strftime("%m/%d/%Y, %H:%M:%S")
+				attended_date = attended_date.strftime("%d/%m/%Y, %I:%M:%S %p")
 			if tk.get('creation') :
 				logging = tk.get('creation')
-				logging = logging.strftime("%m/%d/%Y, %H:%M:%S")
+				logging = logging.strftime("%d/%m/%Y, %I:%M:%S %p")
 				
 			response_time=""
 			response_time_int_value=0

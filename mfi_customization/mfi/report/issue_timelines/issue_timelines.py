@@ -83,23 +83,32 @@ def prepare_data(filters):
 	if filters.get("company"):
 		fltr.update({"company":filters.get("company")})
 
-	for i in frappe.get_all('Issue',filters=fltr,fields=["name","status","issue_type","description","failure_date_and_time","opening_date_time","first_responded_on","resolution_date","opening_date_time", "company"]):
+	for i in frappe.get_all('Issue',filters=fltr,fields=["name","status","issue_type","description","failure_date_and_time","opening_date_time","first_responded_on","resolution_date","company"]):
 		attended_time=frappe.db.get_value("Task",{"issue":i.name},"attended_date_time")
 		if i.opening_date_time :
 			company = fltr.get("company") if fltr.get("company") else ( i.get('company') if  i.get('company') else 'MFI MAROC SARL')
-			if attended_time:
+			if i.failure_date_and_time:
 				i.update({
-					'first_responded': attended_time
+					'failure_date_and_time': (i.failure_date_and_time).strftime("%d/%m/%Y, %I:%M:%S %p")
 				})
+			if i.first_responded_on:
+				i.update({
+					'first_responded_on': (i.first_responded_on).strftime("%d/%m/%Y, %I:%M:%S %p")
+				})
+			if attended_time:
 				response_time = attended_time - i.opening_date_time
 				i.update({
 					'response_time':get_working_hrs(response_time, i.opening_date_time, attended_time, company)
 				})
 			if i.resolution_date:
-				time_resolution = i.resolution_date - i.opening_date_time
+				time_resolution = i.resolution_date - attended_time
 				i.update({
-					'time_resolution':get_working_hrs(time_resolution, i.opening_date_time,i.resolution_date, company),
+					'time_resolution':get_working_hrs(time_resolution, attended_time,i.resolution_date, company),
+					'resolution_date': (i.resolution_date).strftime("%d/%m/%Y, %I:%M:%S %p")
 				})
+			i.update({
+				'opening_date_time': (i.opening_date_time).strftime("%d/%m/%Y, %I:%M:%S %p")
+			})
 		data.append(i)
 	return data
 
