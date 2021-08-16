@@ -12,7 +12,8 @@ frappe.query_reports["Pending Spares"] = {
 		"label":"Company Name",
 		"fieldname":"company_name",
 		"fieldtype":"Link",
-		"options":"Company"	
+		"options":"Company"	,
+		"reqd": 1
 	}
 
 	]

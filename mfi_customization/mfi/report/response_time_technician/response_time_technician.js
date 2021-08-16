@@ -28,7 +28,8 @@ frappe.query_reports["Response Time Technician"] = {
 			"label":"Company",
 			"fieldname":"c_name",
 			"fieldtype":"Link",
-			"options":"Company"	
+			"options":"Company"	,
+			"reqd": 1
 	
 		}
 

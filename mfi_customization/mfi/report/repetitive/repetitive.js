@@ -22,7 +22,8 @@ frappe.query_reports["Repetitive"] = {
 			"label":"Company",
 			"fieldname":"company",
 			"fieldtype":"Link",
-			"options":"Company"	
+			"options":"Company"	,
+			"reqd": 1
 
 		},
 		{

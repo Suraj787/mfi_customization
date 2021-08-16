@@ -8,7 +8,8 @@ frappe.query_reports["Customer Issue Status"] = {
 			"label":"Company",
 			"fieldname":"company",
 			"fieldtype":"Link",
-			"options":"Company"	
+			"options":"Company"	,
+			"reqd": 1
 
 		}
 	]

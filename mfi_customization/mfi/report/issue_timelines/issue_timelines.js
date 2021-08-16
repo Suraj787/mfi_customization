@@ -8,7 +8,8 @@ frappe.query_reports["Issue Timelines"] = {
 			"label":"Company",
 			"fieldname":"company",
 			"fieldtype":"Link",
-			"options":"Company"	
+			"options":"Company"	,
+			"reqd": 1
 
 		}
 	]

@@ -19,7 +19,8 @@ frappe.query_reports["Response Time Client"] = {
 				"label":"Company Name",
 				"fieldname":"c_name",
 				"fieldtype":"Link",
-				"options":"Company"	
+				"options":"Company"	,
+				"reqd": 1
 
 			}
 
