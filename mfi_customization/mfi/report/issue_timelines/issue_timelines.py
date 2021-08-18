@@ -85,6 +85,10 @@ def prepare_data(filters):
 
 	for i in frappe.get_all('Issue',filters=fltr,fields=["name","status","issue_type","description","failure_date_and_time","opening_date_time","first_responded_on","resolution_date","company","closing_date_time"]):
 		attended_time=frappe.db.get_value("Task",{"issue":i.name},"attended_date_time")
+		if i.closing_date_time:
+			i.update({
+						'resolution_date': (i.closing_date_time).strftime("%d/%m/%Y, %I:%M:%S %p")
+					})
 		if i.opening_date_time :
 			company = fltr.get("company") if fltr.get("company") else ( i.get('company') if  i.get('company') else 'MFI MAROC SARL')
 			if i.failure_date_and_time:
@@ -104,7 +108,6 @@ def prepare_data(filters):
 					time_resolution = i.closing_date_time - attended_time
 					i.update({
 						'time_resolution':get_working_hrs(time_resolution, attended_time,i.closing_date_time, company),
-						'resolution_date': (i.closing_date_time)
 					})
 			i.update({
 				'opening_date_time': (i.opening_date_time).strftime("%d/%m/%Y, %I:%M:%S %p")
