@@ -4,6 +4,10 @@ frappe.ui.form.on('Task', {
             let today = new Date()
             frappe.model.set_value("Issue", frm.doc.issue, 'first_responded_on',today);
         }
+        if (frm.doc.status == "Completed"){
+            frm.set_df_property('status','read_only',1);
+            frm.set_df_property('current_reading','read_only',1);
+        }
         
     },
 asset:function(frm){
@@ -84,58 +88,29 @@ refresh:function(frm){
 		},__("View"));
     }
     frm.trigger('customer');
-    
-    // if (!frm.doc.__islocal && !frappe.user.has_role('Morocco ATM')){
-    //     frm.add_custom_button(__("Asset Movement"), function() {
-    //         frappe.model.open_mapped_doc({
-    //             method: "mfi_customization.mfi.doctype.task.make_asset_movement",
-    //            frm : me.frm
-    //         })
-    //         }, __('Make'))}
-    
-    
+
     frm.add_custom_button('Material Request', () => {
         frappe.model.open_mapped_doc({
             method: "mfi_customization.mfi.doctype.task.make_material_req",
             frm: me.frm
         })
 
-        },
-        __('Make')
-        )
-        frm.set_query("completed_by", function() {
-               return {
-                    query: 'mfi_customization.mfi.doctype.task.get_tech',
-                    filters: {
-                        "user":frappe.session.user
-                    }
-                };
-            
-        });
+        }, __('Make'))
+    frm.set_query("completed_by", function() {
+            return {
+                query: 'mfi_customization.mfi.doctype.task.get_tech',
+                filters: {
+                    "user":frappe.session.user
+                }
+            };
+        
+    });
+    if (frm.doc.status == "Completed"){
+        frm.set_df_property('status','read_only',1);
+        frm.set_df_property('current_reading','read_only',1);
+    }
        
 },
-// status:function(frm){
-//     if(frm.doc.status == 'Completed'){
-//         frm.set_df_property('asset',"reqd",1);
-//         frappe.call({
-//         method: "mfi_customization.mfi.doctype.task.check_material_request_status",
-//         args: {
-//             "task":frm.doc.name
-//         },
-//         callback: function(r) {
-//           if (r.message){
-//               frm.set_value('status','Working');
-//               frappe.throw("Material Request is not completed yet.");
-              
-//           }  
-               				
-//         }
-
-        
-// });
-// }
-        
-// },	
 
 setup:function(frm){
     frm.set_query("location", function() {

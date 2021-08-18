@@ -1,4 +1,9 @@
 frappe.ui.form.on('Issue', {
+	before_save:function(frm){
+		if(!frm.doc.first_responded_on && frm.doc.status == 'Closed'){
+			frappe.throw("Status Cannot be Closed before working")
+		}
+	},
 	raised_by: function ( frm ) {
 	
 	if (!(frappe.utils.validate_type(frm.doc.raised_by, "email")) && !(frappe.utils.validate_type(frm.doc.raised_by, "number"))) {
@@ -66,11 +71,14 @@ frappe.ui.form.on('Issue', {
 	},
 	status:function(frm){
 		if(frm.doc.status == 'Working'){
+			// frm.set_value('closing_date_time',"");
 			let today = new Date()
 			frm.set_value('first_responded_on',today);
 		}
 		if(frm.doc.status == 'Closed'){
 			frm.set_df_property('current_reading','reqd',1);
+			let today = new Date()
+			frm.set_value('closing_date_time',today);
 		}
 	},
 	details_available:function(frm){
@@ -201,6 +209,10 @@ frappe.ui.form.on('Issue', {
 					frm: frm
 				});
 			}, __("Make"));
+		}
+		if (frm.doc.status == "Closed" || frm.doc.status == "Task Completed"){
+			frm.set_df_property('current_reading','reqd',1);
+			frm.set_df_property('current_reading','read_only',1);
 		}
 	}
 	else{

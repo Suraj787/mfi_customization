@@ -17,7 +17,7 @@ def validate(doc,method):
 
 	last_reading=today()
 	if doc.asset and  len(doc.get("last_readings"))==0:
-		# doc.set("last_readings", [])
+		doc.set("last_readings", [])
 		fltr={"project":doc.project,"asset":doc.asset,"reading_date":("<=",last_reading)}
 		# if machine_reading:
 			# fltr.update({"name":("!=",machine_reading)})
@@ -64,7 +64,13 @@ def on_change(doc,method):
 	if doc.get("issue"):
 		set_reading_from_task_to_issue(doc)
 	validate_reading(doc)
-	create_machine_reading(doc)
+	existed_mr=[]
+	for d in doc.get('current_reading'):
+		existed_mr = frappe.get_all("Machine Reading",{"task":doc.name,"project":doc.project, 'row_id':d.get('name')}, 'name')
+	if existed_mr :
+		update_machine_reading(doc, existed_mr)
+	else:
+		create_machine_reading(doc)
 	if doc.issue and doc.status != 'Open':
 		frappe.db.set_value("Issue",doc.issue,'status',doc.status)	
 		if doc.status == 'Completed':
@@ -72,6 +78,7 @@ def on_change(doc,method):
 			attachment_validation(doc)
 			issue=frappe.get_doc("Issue",doc.issue)
 			issue.status="Task Completed"
+			issue.closing_date_time=doc.completion_date_time
 			issue.set("task_attachments",[])
 			for d in doc.get("attachments"):
 				issue.append("task_attachments",{
@@ -189,6 +196,7 @@ def check_material_request_status(task):
 		if i.get('status') not in ['Stopped','Cancelled','Issued']:
 			flag = True
 	return flag
+
 @frappe.whitelist()
 def get_location(doctype, txt, searchfield, start, page_len, filters):
 	lst = []
@@ -225,10 +233,10 @@ def get_asset_in_task(doctype, txt, searchfield, start, page_len, filters):
 
 @frappe.whitelist()
 def get_serial_no_list(doctype, txt, searchfield, start, page_len, filters):
- 	if txt:
- 		filters.update({"name": ("like", "{0}%".format(txt))})
+	if txt:
+		filters.update({"name": ("like", "{0}%".format(txt))})
 		
- 	return frappe.get_all("Asset Serial No",filters=filters,fields = ["name"], as_list=1)
+	return frappe.get_all("Asset Serial No",filters=filters,fields = ["name"], as_list=1)
 
 
 @frappe.whitelist()
@@ -303,9 +311,21 @@ def create_machine_reading(doc):
 			mr.total=d.get("total")
 			mr.project=doc.project
 			mr.task=doc.name
+			mr.row_id = d.name
 			mr.save()
 			# d.machine_reading=mr.name
-	
+def update_machine_reading(doc, existed_mr):
+	for d in doc.get('current_reading'):
+		for mr in existed_mr:
+			mr_doc=frappe.get_doc("Machine Reading", mr)
+			mr_doc.reading_date=d.get('date')
+			mr_doc.asset=d.get('asset')
+			mr_doc.black_and_white_reading=d.get("reading")
+			mr_doc.colour_reading=d.get("reading_2")
+			mr_doc.machine_type=d.get('type')
+			mr_doc.total=d.get("total")
+			mr_doc.save()
+
 def set_reading_from_task_to_issue(doc):
 	issue_doc=frappe.get_doc('Issue',{'name':doc.get("issue")})
 	for d in doc.get('current_reading'):

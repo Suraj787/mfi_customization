@@ -43,19 +43,19 @@ def get_columns(filters=None):
 	"label": "Failure Date",
 	"fieldtype": "Data",
 	"fieldname": "failure_date_and_time",
-	'width':150
+	'width':180
 	},
 	{
 	"label": "Opening Date",
 	"fieldtype": "Data",
 	"fieldname": "opening_date_time",
-	'width':150
+	'width':180
 	},
 	{
 	"label": "First Responded On",
 	"fieldtype": "Data",
 	"fieldname": "first_responded_on",
-	'width':120
+	'width':180
 	},
 	{
 	"label": "Response Time",
@@ -67,7 +67,7 @@ def get_columns(filters=None):
 	"label": "Closing Date",
 	"fieldtype": "Data",
 	"fieldname": "resolution_date",
-	'width':150
+	'width':180
 	},
 	{
 	"label": "Time Resolution",
@@ -83,7 +83,7 @@ def prepare_data(filters):
 	if filters.get("company"):
 		fltr.update({"company":filters.get("company")})
 
-	for i in frappe.get_all('Issue',filters=fltr,fields=["name","status","issue_type","description","failure_date_and_time","opening_date_time","first_responded_on","resolution_date","company"]):
+	for i in frappe.get_all('Issue',filters=fltr,fields=["name","status","issue_type","description","failure_date_and_time","opening_date_time","first_responded_on","resolution_date","company","closing_date_time"]):
 		attended_time=frappe.db.get_value("Task",{"issue":i.name},"attended_date_time")
 		if i.opening_date_time :
 			company = fltr.get("company") if fltr.get("company") else ( i.get('company') if  i.get('company') else 'MFI MAROC SARL')
@@ -100,11 +100,11 @@ def prepare_data(filters):
 				i.update({
 					'response_time':get_working_hrs(response_time, i.opening_date_time, attended_time, company)
 				})
-				if i.resolution_date:
-					time_resolution = i.resolution_date - attended_time
+				if i.closing_date_time:
+					time_resolution = i.closing_date_time - attended_time
 					i.update({
-						'time_resolution':get_working_hrs(time_resolution, attended_time,i.resolution_date, company),
-						'resolution_date': (i.resolution_date).strftime("%d/%m/%Y, %I:%M:%S %p")
+						'time_resolution':get_working_hrs(time_resolution, attended_time,i.closing_date_time, company),
+						'resolution_date': (i.closing_date_time)
 					})
 			i.update({
 				'opening_date_time': (i.opening_date_time).strftime("%d/%m/%Y, %I:%M:%S %p")

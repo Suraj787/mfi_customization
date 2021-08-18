@@ -14,7 +14,8 @@
   "machine_type",
   "colour_reading",
   "black_and_white_reading",
-  "total"
+  "total",
+  "row_id"
  ],
  "fields": [
   {
@@ -72,9 +73,14 @@
    "fieldtype": "Link",
    "label": "task",
    "options": "Task"
+  },
+  {
+   "fieldname": "row_id",
+   "fieldtype": "Data",
+   "label": "Row ID"
   }
  ],
- "modified": "2021-05-27 15:21:45.279067",
+ "modified": "2021-08-16 11:38:25.933173",
  "modified_by": "Administrator",
  "module": "mfi",
  "name": "Machine Reading",
