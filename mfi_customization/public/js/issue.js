@@ -68,7 +68,6 @@ frappe.ui.form.on('Issue', {
 
 	asset:function(frm){
 		if (frm.doc.asset){
-            console.log("????????????eeeeeeeeeeee",frm.doc.asset)
 		frappe.db.get_value('Asset',{'name':frm.doc.asset,'docstatus':1},['asset_name','company','serial_no'])
 		.then(({ message }) => {
 			frm.set_value('asset_name',message.asset_name);
@@ -88,7 +87,17 @@ frappe.ui.form.on('Issue', {
 			frm.set_value('first_responded_on',today);
 		}
 		if(frm.doc.status == 'Closed'){
-			frm.set_df_property('current_reading','reqd',1);
+			if(frm.doc.type_of_call){
+                frappe.db.get_value('Type of Call',{'name':frm.doc.type_of_call},'ignore_reading', (r) => {
+                    if(r.ignore_reading == 1){
+                        frm.set_df_property('current_reading','hidden',1);
+                    }
+                    else{
+                        frm.set_df_property('current_reading','hidden',0);
+                        frm.set_df_property('current_reading','reqd',1);
+                    }
+                });
+            }
 			let today = new Date()
 			frm.set_value('closing_date_time',today);
 		}
@@ -223,8 +232,17 @@ frappe.ui.form.on('Issue', {
 			}, __("Make"));
 		}
 		if (frm.doc.status == "Closed" || frm.doc.status == "Task Completed"){
-			frm.set_df_property('current_reading','reqd',1);
-			frm.set_df_property('current_reading','read_only',1);
+            if(frm.doc.type_of_call){
+                frappe.db.get_value('Type of Call',{'name':frm.doc.type_of_call},'ignore_reading', (r) => {
+                    if(r.ignore_reading == 1){
+                        frm.set_df_property('current_reading','hidden',1);
+                    }
+                    else{
+                        frm.set_df_property('current_reading','hidden',0);
+                        frm.set_df_property('current_reading','read_only',1);
+                    }
+                });
+            }
 		}
 	}
 	else{
