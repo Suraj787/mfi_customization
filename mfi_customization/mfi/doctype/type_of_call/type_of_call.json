@@ -7,7 +7,8 @@
  "field_order": [
   "name1",
   "waitage",
-  "description"
+  "description",
+  "ignore_reading"
  ],
  "fields": [
   {
@@ -25,9 +26,15 @@
    "fieldname": "description",
    "fieldtype": "Small Text",
    "label": "Description"
+  },
+  {
+   "default": "0",
+   "fieldname": "ignore_reading",
+   "fieldtype": "Check",
+   "label": "Ignore Reading"
   }
  ],
- "modified": "2021-07-29 08:20:03.605234",
+ "modified": "2021-08-19 14:37:11.965841",
  "modified_by": "Administrator",
  "module": "mfi",
  "name": "Type of Call",

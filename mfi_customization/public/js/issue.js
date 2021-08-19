@@ -10,9 +10,19 @@ frappe.ui.form.on('Issue', {
 		frappe.msgprint('Please Enter valid email or contact');
 		
 	}
-   }
-	,
-
+   },
+   type_of_call: function (frm) {
+		if(frm.doc.type_of_call){
+			frappe.db.get_value('Type of Call',{'name':frm.doc.type_of_call},'ignore_reading', (r) => {
+				if(r.ignore_reading == 1){
+					frm.set_df_property('current_reading','hidden',1);
+				}
+				else{
+					frm.set_df_property('current_reading','hidden',0);
+				}
+			});
+		}
+   },
 	serial_no:function(frm){
 		if(frm.doc.serial_no){
 		frm.set_value('asset','');
@@ -63,7 +73,8 @@ frappe.ui.form.on('Issue', {
 			frm.set_value('asset_name',message.asset_name);
 			frm.set_value('company',message.company);
 			frm.set_value('serial_no',message.serial_no);
-		});    
+		});  
+		
 	} 
 		if (!frm.doc.asset){
 			frm.set_value('asset_name','');
@@ -76,7 +87,17 @@ frappe.ui.form.on('Issue', {
 			frm.set_value('first_responded_on',today);
 		}
 		if(frm.doc.status == 'Closed'){
-			frm.set_df_property('current_reading','reqd',1);
+			if(frm.doc.type_of_call){
+                frappe.db.get_value('Type of Call',{'name':frm.doc.type_of_call},'ignore_reading', (r) => {
+                    if(r.ignore_reading == 1){
+                        frm.set_df_property('current_reading','hidden',1);
+                    }
+                    else{
+                        frm.set_df_property('current_reading','hidden',0);
+                        frm.set_df_property('current_reading','reqd',1);
+                    }
+                });
+            }
 			let today = new Date()
 			frm.set_value('closing_date_time',today);
 		}
@@ -112,15 +133,15 @@ frappe.ui.form.on('Issue', {
 			}
 			}
 		});
-		frm.set_query("asset", "current_reading", function() {
+		// frm.set_query("asset", "current_reading", function() {
 			
-			return {
-				filters: {
-					"name": frm.doc.asset || ""
-				}
+		// 	return {
+		// 		filters: {
+		// 			"name": frm.doc.asset || ""
+		// 		}
 			
-		}
-		});
+		// }
+		// });
 		frm.set_query("asset", function() {
 			if (frm.doc.project) {
 				return {
@@ -211,8 +232,17 @@ frappe.ui.form.on('Issue', {
 			}, __("Make"));
 		}
 		if (frm.doc.status == "Closed" || frm.doc.status == "Task Completed"){
-			frm.set_df_property('current_reading','reqd',1);
-			frm.set_df_property('current_reading','read_only',1);
+            if(frm.doc.type_of_call){
+                frappe.db.get_value('Type of Call',{'name':frm.doc.type_of_call},'ignore_reading', (r) => {
+                    if(r.ignore_reading == 1){
+                        frm.set_df_property('current_reading','hidden',1);
+                    }
+                    else{
+                        frm.set_df_property('current_reading','hidden',0);
+                        frm.set_df_property('current_reading','read_only',1);
+                    }
+                });
+            }
 		}
 	}
 	else{
@@ -291,7 +321,8 @@ frappe.ui.form.on("Asset Readings", "type", function(frm, cdt, cdn) {
         $("div[data-idx='"+d.idx+"']").find("input[data-fieldname='reading_2']").css('pointer-events','all')
 		$("div[data-idx='"+d.idx+"']").find("input[data-fieldname='reading']").css('pointer-events','all')
 	}
-	refresh_field("asset", d.name, d.parentfield);
+	d.asset = frm.doc.asset
+    refresh_field("asset", d.name, d.parentfield);
 });
 
 frappe.ui.form.on("Asset Readings", "date", function(frm, cdt, cdn) {
@@ -299,6 +330,8 @@ frappe.ui.form.on("Asset Readings", "date", function(frm, cdt, cdn) {
 	if (d.idx>1){
         frappe.throw("More than one row not allowed")
     }
+    d.asset = frm.doc.asset
+    refresh_field("asset", d.name, d.parentfield);
 });
 frappe.ui.form.on("Asset Details", "location", function(frm, cdt, cdn) {
     
@@ -360,4 +393,6 @@ frappe.ui.form.on("Asset Details", "serial_no", function(frm, cdt, cdn) {
         refresh_field("asset_name", d.name, d.parentfield);
        })
       }
+    d.asset = frm.doc.asset
+    refresh_field("asset", d.name, d.parentfield);
 });

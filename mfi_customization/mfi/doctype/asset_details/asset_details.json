@@ -22,7 +22,8 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Asset",
-   "options": "Asset"
+   "options": "Asset",
+   "read_only": 1
   },
   {
    "fetch_from": "asset.asset_name",
@@ -41,7 +42,7 @@
   }
  ],
  "istable": 1,
- "modified": "2021-05-14 21:08:31.683577",
+ "modified": "2021-08-19 16:41:31.914064",
  "modified_by": "Administrator",
  "module": "mfi",
  "name": "Asset Details",
