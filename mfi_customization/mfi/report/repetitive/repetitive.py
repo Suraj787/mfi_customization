@@ -12,13 +12,21 @@ def execute(filters=None):
 def get_column(filters = None):
 	return[
 		{
-			"label":"Client Name",
+			"label":"Customer ID",
 			"fieldname":"customer",
 			"fieldtype":"Link",
 			"options":"Customer",
-			"width":180	
+			"width":150	
 
-		},{
+		},
+		{
+			"label":"Customer Name",
+			"fieldname":"customer_name",
+			"fieldtype":"Data",
+			"width":190	
+
+		},
+		{
 			"label":"Serial Number",
 			"fieldname":"serial_no",
 			"fieldtype":"Link",
@@ -69,6 +77,7 @@ def get_data(filters):
 		if count>=1:
 			data.append({
 					"customer":frappe.db.get_value("Project",ast.project,"customer"),
+					"customer_name":frappe.db.get_value("Customer",frappe.db.get_value("Project",ast.project,"customer"),"customer_name"),
 					"serial_no":ast.get('serial_no'),
 					"machine_model":ast.name,
 					"calls":count

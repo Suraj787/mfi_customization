@@ -48,9 +48,10 @@ def get_columns(filters = None):
 			"fieldtype":"Data"	
 
 		},{
-			"label":"Client Name",
+			"label":"Customer Name",
 			"fieldname":"client_name",
-			"fieldtype":"Data"	
+			"fieldtype":"Data"	,
+			"width":190
 
 		},{
 			"label":"Machine Model",
@@ -131,7 +132,7 @@ def get_data(filters):
 	if filters.get("c_name"):
 		fltr2.update({"company":filters.get("c_name")})
 
-	for i in frappe.get_all('Issue',fltr2,['name','company','failure_date_and_time','response_date_time','resolution_date','customer','asset','serial_no','issue_type']):
+	for i in frappe.get_all('Issue',fltr2,['name','company','failure_date_and_time','response_date_time','resolution_date','customer','asset','serial_no','issue_type','name_of_the_customer']):
 		
 		for tk in frappe.db.get_all('Task',{'issue':i.get("name")},['completion_date_time','issue','name','creation','assign_date','attended_date_time']):
 			resolution_date =""
@@ -177,7 +178,7 @@ def get_data(filters):
 				'call_assign_date':call_assign_date ,
 				'call_attended': attended_date,
 				'call_resolution_date': resolution_date,
-				'client_name':i.get("customer"),
+				'client_name':i.get("name_of_the_customer"),
 				'machine_model':i.get("asset"),
 				'serial_no':i.get("serial_no"),
 				'nature_of_prob': i.get("issue_type"),
@@ -194,7 +195,7 @@ def get_data(filters):
 				'call_assign_date':call_assign_date ,
 				'call_attended': attended_date,
 				'call_resolution_date':resolution_date,
-				'client_name':i.get("customer"),
+				'client_name':i.get("name_of_the_customer"),
 				'machine_model':i.get("asset"),
 				'serial_no':i.get("serial_no"),
 				'nature_of_prob': i.get("issue_type"),
@@ -213,7 +214,7 @@ def get_data(filters):
 				'call_assign_date':call_assign_date ,
 				'call_attended': attended_date,
 				'call_resolution_date': resolution_date,
-				'client_name':i.get("customer"),
+				'client_name':i.get("name_of_the_customer"),
 				'machine_model':i.get("asset"),
 				'serial_no':i.get("serial_no"),
 				'nature_of_prob': i.get("issue_type"),

@@ -18,9 +18,10 @@ def get_column(filters = None):
 
 		},
 		{
-			"label":"Client Name",
+			"label":"Customer Name",
 			"fieldname":"client_name",
-			"fieldtype":"Data"	
+			"fieldtype":"Data"	,
+			"width":190
 
 		},
 		{
@@ -56,7 +57,7 @@ def get_data(filters):
 	if filters.get("company_name"):
 		fltr.update({"company":filters.get("company_name")})
 
-	for issue in frappe.get_all('Issue',fltr,['name','subject','customer','issue_type','asset_name','failure_date_and_time','serial_no']):
+	for issue in frappe.get_all('Issue',fltr,['name','subject','customer','issue_type','asset_name','failure_date_and_time','serial_no','name_of_the_customer']):
 		if not issue.failure_date_and_time == None:
 			call_date = issue.failure_date_and_time.strftime("%d-%m-%Y")
 		
@@ -72,7 +73,7 @@ def get_data(filters):
 				print(s)
 		row = {
 				"call_date":call_date,
-				"client_name":issue.customer,
+				"client_name":issue.name_of_the_customer,
 				"serial_no":issue.serial_no,
 				"nature_of_problem":issue.issue_type,
 				"machine_model":issue.asset_name,
