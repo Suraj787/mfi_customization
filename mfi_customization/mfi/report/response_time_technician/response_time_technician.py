@@ -18,7 +18,8 @@ def get_columns(filters = None):
         },{
             "label":"Technician Name",
             "fieldname":"techn_name",
-            "fieldtype":"Data"  
+            "fieldtype":"Data",
+            "width":190
 
         },{
             "label":">4",
@@ -85,9 +86,10 @@ def get_data(filters):
         fltr.update({'assign_date':['between',(filters.get('from_date'),filters.get('to_date'))]})
     if filters.get("c_name"):
         fltr.update({"company":filters.get("c_name")})
-    for ur in frappe.get_all("User",fltr1):
+    for ur in frappe.get_all("User",fltr1,["name","full_name"]):
+        
         row={
-                "techn_name":ur.name,
+                "techn_name":ur.full_name,
             }
         
         gt4_count=0

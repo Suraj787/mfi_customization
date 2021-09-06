@@ -54,7 +54,7 @@ def get_columns(filters = None):
 			"width":190
 
 		},{
-			"label":"Machine Model",
+			"label":"Asset Code",
 			"fieldname":"machine_model",
 			"fieldtype":"Data"	
 
