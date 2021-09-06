@@ -18,7 +18,8 @@ def get_columns(filters = None):
 			"label":"Task",
 			"fieldname":"name",
 			"fieldtype":"Link",
-			"options":"Task"	
+			"options":"Task",
+			"width":140	
 
 		},
 			{
@@ -26,10 +27,19 @@ def get_columns(filters = None):
 			"fieldname":"response_time",
 			"fieldtype":"Data"	
 
-		},{
+		},
+		{
+			"label":"Assigned Technician",
+			"fieldname":"technician",
+			"fieldtype":"Data"	,
+			"width":170
+
+		},
+		{
 			"label":"Call Logging",
 			"fieldname":"creation",
-			"fieldtype":"Data"	
+			"fieldtype":"Data",
+			"width":160	
 
 		},{
 			"label":"Call Assign Date",
@@ -134,7 +144,7 @@ def get_data(filters):
 
 	for i in frappe.get_all('Issue',fltr2,['name','company','failure_date_and_time','response_date_time','resolution_date','customer','asset','serial_no','issue_type','name_of_the_customer']):
 		
-		for tk in frappe.db.get_all('Task',{'issue':i.get("name")},['completion_date_time','issue','name','creation','assign_date','attended_date_time']):
+		for tk in frappe.db.get_all('Task',{'issue':i.get("name")},['completion_date_time','issue','name','creation','assign_date','attended_date_time','completed_by']):
 			resolution_date =""
 			attended_date= ""
 			call_to_fix =""
@@ -170,9 +180,9 @@ def get_data(filters):
 			#applying filters according to condition set
 			if tk.get('attended_date_time') != None:
 				call_assign_date = (tk.get('attended_date_time')).strftime("%d/%m/%Y")
-			if lgc_value == '>' and  int(digit) <= response_time_int_value:
-				row = {
+			row = {
 				'name': tk.get('name'),
+				'technician':frappe.db.get_value("User",tk.completed_by,"full_name"),
 				'response_time': response_time,
 				'creation':logging,
 				'call_assign_date':call_assign_date ,
@@ -185,42 +195,13 @@ def get_data(filters):
 				'call_to_fix':call_to_fix,
 				'call_resolution_time':call_resolution_time
 						}
+			if lgc_value == '>' and  int(digit) <= response_time_int_value:
 				data.append(row)
 			elif lgc_value == '<' and  int(digit) >= response_time_int_value and response_time_int_value >= 0  and call_resolution_time:
-
-				row = {
-				'name': tk.get('name'),
-				'response_time': response_time,
-				'creation':logging,
-				'call_assign_date':call_assign_date ,
-				'call_attended': attended_date,
-				'call_resolution_date':resolution_date,
-				'client_name':i.get("name_of_the_customer"),
-				'machine_model':i.get("asset"),
-				'serial_no':i.get("serial_no"),
-				'nature_of_prob': i.get("issue_type"),
-				'call_to_fix':call_to_fix,
-				'call_resolution_time':call_resolution_time
-						}
 				data.append(row)
 
 			#if no condition filter is applied
 			elif lgc_value == '' and response_time_int_value >= 0 and call_resolution_time:
-
-				row = {
-				'name': tk.get('name'),
-				'response_time': response_time,
-				'creation':logging,
-				'call_assign_date':call_assign_date ,
-				'call_attended': attended_date,
-				'call_resolution_date': resolution_date,
-				'client_name':i.get("name_of_the_customer"),
-				'machine_model':i.get("asset"),
-				'serial_no':i.get("serial_no"),
-				'nature_of_prob': i.get("issue_type"),
-				'call_to_fix':call_to_fix,
-				'call_resolution_time':call_resolution_time
-						}
 				data.append(row)
 			
 

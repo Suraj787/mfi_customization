@@ -34,8 +34,8 @@ def get_column(filters = None):
 			"width":150	
 
 		},{
-			"label":"Machine Model",
-			"fieldname":"machine_model",
+			"label":"Asset Code",
+			"fieldname":"asset_code",
 			"fieldtype":"Link",
 			"options":"Asset",
 			"width":120	
@@ -79,7 +79,7 @@ def get_data(filters):
 					"customer":frappe.db.get_value("Project",ast.project,"customer"),
 					"customer_name":frappe.db.get_value("Customer",frappe.db.get_value("Project",ast.project,"customer"),"customer_name"),
 					"serial_no":ast.get('serial_no'),
-					"machine_model":ast.name,
+					"asset_code":ast.name,
 					"calls":count
 			})
 	

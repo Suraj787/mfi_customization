@@ -25,8 +25,8 @@ def get_column(filters = None):
 
 		},
 		{
-			"label":"Machine Model",
-			"fieldname":"machine_model",
+			"label":"Asset Code",
+			"fieldname":"asset_code",
 			"fieldtype":"Data"	
 
 		},
@@ -76,7 +76,7 @@ def get_data(filters):
 				"client_name":issue.name_of_the_customer,
 				"serial_no":issue.serial_no,
 				"nature_of_problem":issue.issue_type,
-				"machine_model":issue.asset_name,
+				"asset_code":issue.asset_name,
 				"spare_needed":s
 			}
 		data.append(row)

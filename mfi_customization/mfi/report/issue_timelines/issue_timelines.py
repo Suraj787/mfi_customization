@@ -34,7 +34,13 @@ def get_columns(filters=None):
 	'width':110
 	},
 	{
-	"label": "Technician",
+	"label": "Customer Name",
+	"fieldtype": "Data",
+	"fieldname": "customer_name",
+	'width':170
+	},
+	{
+	"label": "Assigned Technician",
 	"fieldtype": "Data",
 	"fieldname": "technician",
 	'width':170
@@ -89,9 +95,10 @@ def prepare_data(filters):
 	if filters.get("company"):
 		fltr.update({"company":filters.get("company")})
 
-	for i in frappe.get_all('Issue',filters=fltr,fields=["name","status","issue_type","description","failure_date_and_time","opening_date_time","first_responded_on","resolution_date","company","closing_date_time","assign_to"]):
+	for i in frappe.get_all('Issue',filters=fltr,fields=["name","status","issue_type","description","failure_date_and_time","opening_date_time","first_responded_on","resolution_date","company","closing_date_time","assign_to","name_of_the_customer"]):
 		attended_time=frappe.db.get_value("Task",{"issue":i.name},"attended_date_time")
-		i.update({"technician":frappe.db.get_value("User",i.assign_to,"full_name")})
+		i.update({"technician":frappe.db.get_value("User",frappe.db.get_value("Task",{"issue":i.name},"completed_by"),"full_name")})
+		i.update({"customer_name":i.name_of_the_customer})
 		if i.closing_date_time:
 			i.update({
 						'resolution_date': (i.closing_date_time).strftime("%d/%m/%Y, %I:%M:%S %p")
