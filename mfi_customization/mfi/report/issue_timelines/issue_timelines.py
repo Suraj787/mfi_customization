@@ -34,6 +34,12 @@ def get_columns(filters=None):
 	'width':110
 	},
 	{
+	"label": "Technician",
+	"fieldtype": "Data",
+	"fieldname": "technician",
+	'width':170
+	},
+	{
 	"label": "Description",
 	"fieldtype": "Data",
 	"fieldname": "description",
@@ -83,8 +89,9 @@ def prepare_data(filters):
 	if filters.get("company"):
 		fltr.update({"company":filters.get("company")})
 
-	for i in frappe.get_all('Issue',filters=fltr,fields=["name","status","issue_type","description","failure_date_and_time","opening_date_time","first_responded_on","resolution_date","company","closing_date_time"]):
+	for i in frappe.get_all('Issue',filters=fltr,fields=["name","status","issue_type","description","failure_date_and_time","opening_date_time","first_responded_on","resolution_date","company","closing_date_time","assign_to"]):
 		attended_time=frappe.db.get_value("Task",{"issue":i.name},"attended_date_time")
+		i.update({"technician":frappe.db.get_value("User",i.assign_to,"full_name")})
 		if i.closing_date_time:
 			i.update({
 						'resolution_date': (i.closing_date_time).strftime("%d/%m/%Y, %I:%M:%S %p")
