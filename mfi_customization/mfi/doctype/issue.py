@@ -9,6 +9,7 @@ from frappe.utils.data import today,getdate
 
 def validate(doc,method):
 	email_validation(doc)
+	validate_issue(doc)
 	# machine_reading=""
 	for d in doc.get("current_reading"):
 		# machine_reading=d.machine_reading
@@ -217,3 +218,7 @@ def get_issue_types(doctype, txt, searchfield, start, page_len, filters):
 	if txt:
 		fltr.update({"name": ("like", "{0}%".format(txt))})
 	return frappe.get_all("Issue Type",filters=fltr,fields = ["name"], as_list=1)
+
+def validate_issue(doc):
+	for issue in frappe.get_all("Issue",{"asset":doc.asset,"name":("!=",doc.name),"status":["NOT IN",["Closed","Cancelled"]]}):
+		frappe.throw("Issue already exists with <b>{0}</b>".format(issue.name))
