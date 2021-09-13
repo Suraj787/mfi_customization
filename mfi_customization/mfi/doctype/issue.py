@@ -10,6 +10,7 @@ from frappe.utils.data import today,getdate
 def validate(doc,method):
 	email_validation(doc)
 	validate_issue(doc)
+	set_task_status_cancelled(doc)
 	# machine_reading=""
 	for d in doc.get("current_reading"):
 		# machine_reading=d.machine_reading
@@ -222,3 +223,10 @@ def get_issue_types(doctype, txt, searchfield, start, page_len, filters):
 def validate_issue(doc):
 	for issue in frappe.get_all("Issue",{"asset":doc.asset,"name":("!=",doc.name),"status":["NOT IN",["Closed","Cancelled"]]}):
 		frappe.throw("Issue already exists with <b>{0}</b>".format(issue.name))
+
+def set_task_status_cancelled(doc):
+	if doc.status=="Cancelled":
+		for tk in frappe.get_all("Task",{"issue":doc.name}):
+			task=frappe.get_doc("Task",tk.name)
+			task.status="Cancelled"
+			task.save()
