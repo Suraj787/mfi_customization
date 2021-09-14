@@ -101,13 +101,13 @@ frappe.ui.form.on('Issue', {
 			let today = new Date()
 			frm.set_value('closing_date_time',today);
 		}
-		if (frm.doc.status!="Cancelled"){
-			frm.add_custom_button(__('Cancelled'), function() {
+		if (!["Cancelled","Closed"].includes(frm.doc.status)){
+			frm.add_custom_button(__('Cancel'), function() {
 				frm.set_value("status","Cancelled")
 				frm.save()
 			})
 		}
-		if (frm.doc.status=="Cancelled"){
+		if (["Cancelled","Closed"].includes(frm.doc.status)){
 			frm.remove_custom_button("Cancelled");
 		}
 	},
@@ -228,8 +228,8 @@ frappe.ui.form.on('Issue', {
 			}
 		});
 		if (!frm.doc.__islocal ){
-			if (frm.doc.status!="Cancelled"){
-				frm.add_custom_button(__('Cancelled'), function() {
+			if (!["Cancelled","Closed"].includes(frm.doc.status)){
+				frm.add_custom_button(__('Cancel'), function() {
 					frm.set_value("status","Cancelled")
 					frm.save()
 				})
