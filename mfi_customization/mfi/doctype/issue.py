@@ -41,6 +41,7 @@ def validate(doc,method):
 
 def on_change(doc,method):
 	validate_reading(doc)
+	set_task_status_cancelled(doc)
 
 def email_validation(doc):
 	if doc.email_conact and "@" not in 	doc.email_conact:
