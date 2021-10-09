@@ -119,7 +119,7 @@
    "columns": 0,
    "creation": "2020-09-19 20:53:39.817062",
    "default": null,
-   "depends_on": null,
+   "depends_on": "eval:doc.type_of_call!='MIS'",
    "description": null,
    "docstatus": 0,
    "dt": "Issue",
