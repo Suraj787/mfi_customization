@@ -110,16 +110,26 @@ def get_data(filters):
 			company = fltr3.get("company") if fltr3.get("company") else ( i.get('company') if  i.get('company') else 'MFI MAROC SARL')
 
 			fltr2.update({"completed_by":usr.get("email")})
+			# if filters.get("type_of_call"):
 			fltr2.update({'type_of_call':filters.get("type_of_call")})
+
 			no_of_day_productivity = date_diff(filters.get("to_date"),filters.get("from_date"))
 			type_of_call = len(frappe.get_all("Task",{'type_of_call':filters.get("type_of_call")}))
-			for tk2 in frappe.get_all('Task',fltr2,['completed_by','"completion_date_time"','attended_date_time','status','completion_date_time']):
+			holidayList=get_holiday_dates(filters.get("c_name"))
+			for tk2 in frappe.get_all('Task',fltr2,['completed_by','"completion_date_time"','attended_date_time','status','completion_date_time','type_of_call']):
 				total_calls_cnt += 1
 				company = fltr3.get("company") if fltr3.get("company") else ( frappe.db.get_value("Issue", {'name':tk2.issue}, 'company') if tk2.issue else 'MFI MAROC SARL')
 				if tk2.get('completion_date_time') and tk2.get('attended_date_time'):
 					response_time_diff = (tk2.get("completion_date_time") - tk2.get('attended_date_time')) 
 					hrs = get_working_hrs(response_time_diff,tk2.get('attended_date_time'), tk2.get('completion_date_time'), company)
-					productivity_by_wtg+=round(( float(type_of_call)* float(frappe.db.get_value("Type of Call",filters.get("type_of_call"),"waitage")) *  float(hrs)),2)
+					task_days_diff=0
+					start_date=getdate(tk2.get('attended_date_time'))
+					end_date=getdate(tk2.get("completion_date_time"))
+					while start_date <= end_date:
+						if start_date not in holidayList:
+							task_days_diff+=1
+						start_date=add_days(start_date,1)
+					productivity_by_wtg+=round(( float(type_of_call)* float(frappe.db.get_value("Type of Call",tk2.get("type_of_call"),"waitage")) *  float(hrs)),2)/task_days_diff
 				
 				if tk2.get("attended_date_time") and tk2.get("assign_date"):
 					cnt += 1
@@ -129,7 +139,7 @@ def get_data(filters):
 					avg_on_call_cnt +=  date_diff(tk2.get("completion_date_time"), tk2.get("assign_date"))
 				if tk2.get("status") == 'Completed':
 					resolved_call_cnt += 1
-				if tk2.get("status") in ['Open','Pending Review','Overdue','Working']:
+				if tk2.get("status") in ['Open','Pending Review','Overdue','Working','Awaiting for Material']:
 					pending_calls_cnt += 1
 				
 			if no_of_day_productivity != 0:
@@ -185,3 +195,12 @@ def get_working_hrs(call_to,opening_date_time, attended_time, company):
 		return total_hours
 	else:
 		return total_hours
+
+
+def get_holiday_dates(company):
+	holidayList=[]
+	for hl in frappe.get_all("Holiday List",{"company":company}):
+		holidayDoc=frappe.get_doc('Holiday List',hl.name)
+		for d in holidayDoc.get('holidays'):
+			holidayList.append(d.holiday_date)
+	return holidayList

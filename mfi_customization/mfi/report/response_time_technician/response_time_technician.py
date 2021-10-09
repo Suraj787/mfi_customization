@@ -42,7 +42,7 @@ def get_columns(filters = None):
             "fieldtype":"Data"  
 
         },{
-            "label":"Repetitive",
+            "label":"Total Assigned Task",
             "fieldname":"asset_cnt",
             "fieldtype":"Data"  
 
@@ -105,15 +105,15 @@ def get_data(filters):
                 response_time_diff = (tk.get("attended_date_time") - tk.get('assign_date')) 
                 company = fltr.get('company') if fltr.get('company') else frappe.db.get_value('Issue', {'name': tk.issue}, 'company') or "MFI MAROC SARL"
                 response_time = get_working_hrs(response_time_diff, tk.get('assign_date'), tk.get('attended_date_time'), company)
-                if response_time > 4:
+                if response_time >= 4.01:
                     gt4_count+=1
-                if response_time < 4:
+                if response_time <= 4:
                     lt4_count+=1
-                if response_time > 8:
+                if response_time >= 8:
                     gt8_count+=1
-                if response_time > 8:
+                if response_time >= 48:
                     gt48_count+1
-                asset_cnt = len(frappe.get_all("Task",{'completed_by':ur.name,'asset':tk.asset}))
+                asset_cnt += len(frappe.get_all("Task",{'completed_by':ur.name,'asset':tk.asset}))
                 month.append(tk.get("assign_date").strftime("%B"))
         for i in set(month):
             mon_st += "{0},".format(i)  

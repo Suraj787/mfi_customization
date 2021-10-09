@@ -22,7 +22,7 @@ frappe.query_reports["Call Data Monthly"] = {
 			"fieldname":"type_of_call",
 			"fieldtype":"Link",
 			"options":"Type of Call",
-			"reqd": 0
+			"reqd": 1
 
 		},{
 			"fieldname": "from_date",
