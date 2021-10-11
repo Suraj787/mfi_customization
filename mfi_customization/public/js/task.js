@@ -21,54 +21,45 @@ frappe.ui.form.on('Task', {
     },
     
 asset:function(frm){
-    if(frm.doc.asset){
-    frappe.db.get_value('Asset',{'name':frm.doc.asset,'docstatus':1},['asset_name','location','serial_no','project'])
-    .then(({ message }) => {
-        frm.set_value('asset_name',message.asset_name);
-        frm.set_value('location',message.location);
-        frm.set_value('serial_no',message.serial_no);
-        frm.set_value('project',message.project);
-    });
- 
-}
+        if(frm.doc.asset){
+        frappe.db.get_value('Asset',{'name':frm.doc.asset,'docstatus':1},['asset_name','location','serial_no','project'])
+        .then(({ message }) => {
+            frm.set_value('asset_name',message.asset_name);
+            frm.set_value('location',message.location);
+            frm.set_value('serial_no',message.serial_no);
+            // frm.set_value('project',message.project);
+        });
+    }
+    else{
+        frm.set_value('asset_name',"");
+        frm.set_value('serial_no',"");
+    }
 },serial_no:function(frm){
     if(frm.doc.serial_no && !frm.doc.asset){
-    frm.set_value('asset','');
-    frm.set_value('asset_name','');
-    frm.set_value('location','');
-    frm.set_value('customer','');
-    
-    frappe.call({
-        method: "mfi_customization.mfi.doctype.task.get_customer",
-        args: {
-            "serial_no":frm.doc.serial_no,
-            "asset":frm.doc.asset
-        },
-        callback: function(r) {
-        
-                frm.set_value('customer',r.message);				
-            }
-
-        
-});
         frappe.db.get_value('Asset',{'serial_no':frm.doc.serial_no,'docstatus':1},['project'])
         .then(({ message }) => {
             frm.set_value('project',message.project);
         });
-    
-
-    frappe.db.get_value('Asset Serial No',{'name':frm.doc.serial_no},['asset','location'])
-    .then(({ message }) => {
         
-        if (!frm.doc.asset){
-                frm.set_value('asset',message.asset);
-            }
 
-        if (!frm.doc.location){
-                frm.set_value('location',message.location);
-            }
-    });                                                                                  
-}},
+        frappe.db.get_value('Asset Serial No',{'name':frm.doc.serial_no},['asset','location'])
+        .then(({ message }) => {
+            
+            if (!frm.doc.asset){
+                    frm.set_value('asset',message.asset);
+                }
+
+            if (!frm.doc.location){
+                    frm.set_value('location',message.location);
+                }
+        }); 
+        
+                                                                                        
+    }
+    if(!frm.doc.serial_no){
+        frm.set_value('asset',"");
+    }
+},
 onload:function(frm){
     if(frm.doc.type_of_call){
         frappe.db.get_value('Type of Call',{'name':frm.doc.type_of_call},'ignore_reading', (r) => {
@@ -87,20 +78,14 @@ onload:function(frm){
         frm.set_df_property('serial_no',"read_only",0);
         frm.set_df_property('project',"read_only",0);
         frm.set_df_property('clear',"hidden",0);
-
-        // frm.set_value('project','');
+    }
+    if(frm.doc.issue){
+        frm.set_df_property('customer',"read_only",1);
+        frm.set_df_property('location',"read_only",1);
+        frm.set_df_property('project',"read_only",1);
     }
 
 },
-clear:function(frm){
-    frm.set_value('asset','');
-    frm.set_value('location','');
-    frm.set_value('serial_no','');
-    frm.set_value('customer','');
-    
-}
-,
-
 refresh:function(frm){
     if (!frm.doc.__islocal ){
 		frm.add_custom_button(__('Material Request'), function() {
@@ -125,10 +110,6 @@ refresh:function(frm){
             };
         
     });
-    // if (frm.doc.status == "Completed"){
-    //     frm.set_df_property('status','read_only',1);
-    //     frm.set_df_property('current_reading','read_only',1);
-    // }
        
 },
 
@@ -157,7 +138,6 @@ setup:function(frm){
             return {
                 query: 'mfi_customization.mfi.doctype.task.get_asset_on_cust',
                 filters: {
-                    // "location":frm.doc.location,
                     "customer":frm.doc.customer
                 }
             };
@@ -167,32 +147,31 @@ setup:function(frm){
 
 		frm.set_query("serial_no", function() {
 			if(frm.doc.location && frm.doc.asset){	
-			return {
-					query: 'mfi_customization.mfi.doctype.task.get_serial_no_list',
-					filters: {
-						"location":frm.doc.location
-						,"asset":frm.doc.asset
-					}
-				};}
-				if (frm.doc.customer && !frm.doc.location) {
-					return {
-						query: 'mfi_customization.mfi.doctype.task.get_asset_serial_on_cust',
-						filters: {
-							// "location":frm.doc.location,
-							"customer":frm.doc.customer
-						}
-					};
-				}
-				if(frm.doc.customer &&  frm.doc.location){
-					return {
-						query: 'mfi_customization.mfi.doctype.task.get_serial_on_cust_loc',
-						filters: {
-							"location":frm.doc.location,
-							"customer":frm.doc.customer
-						}
-					};
+                return {
+                        query: 'mfi_customization.mfi.doctype.task.get_serial_no_list',
+                        filters: {
+                            "location":frm.doc.location
+                            ,"asset":frm.doc.asset
+                        }
+                    };}
+            if (frm.doc.customer && !frm.doc.location) {
+                return {
+                    query: 'mfi_customization.mfi.doctype.task.get_asset_serial_on_cust',
+                    filters: {
+                        "customer":frm.doc.customer
+                    }
+                };
+            }
+            if(frm.doc.customer &&  frm.doc.location){
+                return {
+                    query: 'mfi_customization.mfi.doctype.task.get_serial_on_cust_loc',
+                    filters: {
+                        "location":frm.doc.location,
+                        "customer":frm.doc.customer
+                    }
+                };
 
-				}
+            }
 		});
     frm.set_query("asset", "current_reading", function() {
         // if(frm.doc.asset){

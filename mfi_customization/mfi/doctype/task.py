@@ -39,7 +39,9 @@ def validate(doc,method):
 			frappe.throw("Task <b>{0}</b> Already Exist Against This Issue".format(doc.name))
 	else:
 		create_user_permission(doc)
-		
+
+	validate_link_fileds(doc)	
+
 def after_insert(doc,method):
 	if doc.get('issue'):
 		frappe.db.set_value('Issue',doc.get('issue'),'status','Assigned')
@@ -385,3 +387,49 @@ def assign_task_validation(doc):
 	if doc.status=="Working":
 		for d in frappe.get_all("Task",{"status":"Working","completed_by":doc.completed_by,"name":("!=",doc.name)}):
 			frappe.throw("Task <b>{0}</b> is already in working".format(d.name))
+
+def validate_link_fileds(doc):
+	if doc.get('issue'):
+		issue=frappe.get_doc("Issue",doc.get('issue'))
+		validate_customer(doc,issue)
+		validate_location(doc,issue)
+		validate_asset(doc,issue)
+		validate_serial_no(doc,issue)
+
+def validate_customer(doc,issue):
+	if doc.customer and issue.customer and doc.customer != issue.customer:
+		frappe.throw("Please Enter Valid Customer,Which exists in Issue {0}".format(issue.get('name')))
+
+
+def validate_location(doc,issue):
+	if doc.location and  issue.location and doc.location != issue.location:
+		frappe.throw("Please Enter Valid Location,Which exists in Issue {0}".format(issue.get('name')))
+
+
+def validate_asset(doc,issue):
+	if doc.asset and issue.asset and doc.asset != issue.asset:
+		frappe.throw("Please Enter Valid Asset,Which exists in Issue {0}".format(issue.get('name')))
+
+def validate_serial_no(doc,issue):
+	if doc.serial_no and issue.serial_no and doc.serial_no != issue.serial_no:
+		frappe.throw("Please Enter Valid Serial No,Which exists in Issue {0}".format(issue.get('name')))
+
+	if doc.serial_no and doc.serial_no not in get_serial_no(doc.customer,doc.location):
+		frappe.throw("Please Enter Valid Serial No")
+
+@frappe.whitelist()
+def get_serial_no(customer,location=None):
+	fltr1 = {}
+	fltr2 = {}
+	lst = []
+	if customer:
+		fltr1.update({'customer':customer})
+	if location:
+		fltr2.update({'location':location})
+
+	for i in frappe.get_all('Project',fltr1,['name']):
+		fltr2.update({'project':i.get('name'),'docstatus':1})
+		for j in frappe.get_all('Asset',fltr2,['serial_no']):
+			if j.serial_no not in lst:
+					lst.append(j.serial_no)
+	return lst
