@@ -44,7 +44,8 @@ def get_columns(filters = None):
         },{
             "label":"Total Assigned Task",
             "fieldname":"asset_cnt",
-            "fieldtype":"Data"  
+            "fieldtype":"Int" ,
+            "width":80
 
         }]
 

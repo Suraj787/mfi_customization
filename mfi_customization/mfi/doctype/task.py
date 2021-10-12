@@ -417,6 +417,10 @@ def validate_serial_no(doc,issue):
 	if doc.serial_no and doc.serial_no not in get_serial_no(doc.customer,doc.location):
 		frappe.throw("Please Enter Valid Serial No")
 
+def validate_location(doc,issue):
+	if doc.location and doc.location not in get_location_validation(doc.customer):
+		frappe.throw("Please Enter Valid Location")
+
 @frappe.whitelist()
 def get_serial_no(customer,location=None):
 	fltr1 = {}
@@ -433,3 +437,11 @@ def get_serial_no(customer,location=None):
 			if j.serial_no not in lst:
 					lst.append(j.serial_no)
 	return lst
+
+def get_location_validation(customer):
+	lst = []
+	for i in frappe.get_all('Project',{"customer":customer},['name']):
+		for a in frappe.get_all('Asset',{'project':i.get('name')},['location']):
+			if a.location not in lst:
+				lst.append(a.location)
+	return lst	

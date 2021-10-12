@@ -117,6 +117,7 @@ frappe.ui.form.on('Issue', {
 				frm.set_df_property('serial_no','reqd',0);
 				frm.set_df_property('asset','read_only',1);
 				frm.set_df_property('serial_no','read_only',1);
+				frm.set_df_property('location','reqd',0);
 			}
 			if(frm.doc.details_available){
 				frm.set_df_property('asset','reqd',1);

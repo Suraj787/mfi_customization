@@ -81,7 +81,7 @@ onload:function(frm){
     }
     if(frm.doc.issue){
         frm.set_df_property('customer',"read_only",1);
-        frm.set_df_property('location',"read_only",1);
+        // frm.set_df_property('location',"read_only",1);
         frm.set_df_property('project',"read_only",1);
     }
 
