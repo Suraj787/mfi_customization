@@ -223,6 +223,8 @@ frappe.ui.form.on('Issue', {
 		});
 	},
 	refresh: function (frm) {
+		cur_frm.dashboard.hide()
+		
         frappe.db.get_value("Task", {"issue": frm.doc.name}, 'name',(r) =>{
 			if(r.name){
 				frm.set_df_property('status','read_only',1);
