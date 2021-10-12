@@ -4,6 +4,7 @@
 from __future__ import unicode_literals
 import frappe
 from frappe.utils import date_diff, add_days, getdate
+import datetime
 
 
 def execute(filters=None):
@@ -49,6 +50,11 @@ def get_columns(filters = None):
 			"fieldtype":"Data"	
 
 		},{
+			"label":"Cancelled Calls",
+			"fieldname":"cancelled_calls",
+			"fieldtype":"Data"	
+
+		},{
 			"label":"Productivity Per Day (%)",
 			"fieldname":"prod_per_day",
 			"fieldtype":"Data"	
@@ -57,7 +63,11 @@ def get_columns(filters = None):
 			"label":"Average Time On Call",
 			"fieldname":"average_time_on_call",
 			"fieldtype":"Data"	
-
+		},
+		{
+			"label":"Average Travel Time",
+			"fieldname":"average_travel_time",
+			"fieldtype":"Data"	
 		}
 
 		]
@@ -107,6 +117,9 @@ def get_data(filters):
 			prod_per_day = 0
 			productivity_by_wtg = 0
 			response_time_diff = 0
+			cancelled_call=0
+			not_cancelled_task=0
+			total_task_time=0
 			company = fltr3.get("company") if fltr3.get("company") else ( i.get('company') if  i.get('company') else 'MFI MAROC SARL')
 
 			fltr2.update({"completed_by":usr.get("email")})
@@ -116,7 +129,7 @@ def get_data(filters):
 			no_of_day_productivity = date_diff(filters.get("to_date"),filters.get("from_date"))
 			type_of_call = len(frappe.get_all("Task",{'type_of_call':filters.get("type_of_call")}))
 			holidayList=get_holiday_dates(filters.get("c_name"))
-			for tk2 in frappe.get_all('Task',fltr2,['completed_by','"completion_date_time"','attended_date_time','status','completion_date_time','type_of_call']):
+			for tk2 in frappe.get_all('Task',fltr2,['completed_by','"completion_date_time"','attended_date_time','status','completion_date_time','type_of_call','assign_date']):
 				total_calls_cnt += 1
 				company = fltr3.get("company") if fltr3.get("company") else ( frappe.db.get_value("Issue", {'name':tk2.issue}, 'company') if tk2.issue else 'MFI MAROC SARL')
 				if tk2.get('completion_date_time') and tk2.get('attended_date_time'):
@@ -141,7 +154,13 @@ def get_data(filters):
 					resolved_call_cnt += 1
 				if tk2.get("status") in ['Open','Pending Review','Overdue','Working','Awaiting for Material']:
 					pending_calls_cnt += 1
-				
+				if tk2.get("status") == 'Cancelled':
+					cancelled_call += 1
+				if tk2.get("status") != 'Cancelled':
+					not_cancelled_task+=1
+					if tk2.get('attended_date_time') and tk2.get('assign_date'):
+						total_task_time+=((tk2.get('attended_date_time')-tk2.get('assign_date')).seconds)/60
+
 			if no_of_day_productivity != 0:
 				prod_per_day = round(((resolved_call_cnt/no_of_day_productivity) * 100),2)
 				
@@ -149,17 +168,18 @@ def get_data(filters):
 				avg_wait_time = (avg_wt/cnt)
 			if on_call_cnt != 0:
 				avg_time_on_call = (avg_on_call_cnt/on_call_cnt)
-			
+	
 			row.update({
 				'no_of_calls':total_calls_cnt,
 				'support_tech': usr.get("first_name"),
-				'avg_wait_time': avg_wait_time,
+				'avg_wait_time': round(avg_wait_time,3),
 				'resolved': resolved_call_cnt,
 				'pending_calls': pending_calls_cnt,
+				'cancelled_calls':cancelled_call,
 				'prod_per_day': prod_per_day,
-				'average_time_on_call': avg_time_on_call,
-				'productivity':productivity_by_wtg
-
+				'average_time_on_call': round(avg_time_on_call,3),
+				'productivity':productivity_by_wtg,
+				'average_travel_time':str(datetime.timedelta(minutes=total_task_time/not_cancelled_task)).rsplit(':', 1)[0] if not_cancelled_task>0 else ''
 			})
 			
 			if len(frappe.get_all("Task",{'completed_by':usr.email})) > 0 and total_calls_cnt>=1:
