@@ -99,7 +99,6 @@ def get_data(filters):
         gt48_count=0
         month =[]
         mon_st =""
-        asset_cnt =0
         fltr.update({'completed_by':ur.name})
         for tk in frappe.get_all("Task",fltr,['attended_date_time','assign_date','asset','completed_by', 'issue']):
             if tk.get('attended_date_time') and tk.get('assign_date'):
@@ -114,11 +113,11 @@ def get_data(filters):
                     gt8_count+=1
                 if response_time >= 48:
                     gt48_count+1
-                asset_cnt += len(frappe.get_all("Task",{'completed_by':ur.name,'asset':tk.asset}))
+                
                 month.append(tk.get("assign_date").strftime("%B"))
         for i in set(month):
             mon_st += "{0},".format(i)  
-                    
+        asset_cnt = len(frappe.get_all("Task",{'completed_by':ur.name,"company":fltr.get('company'),"status":("!=","Cancelled"),'assign_date':['between',(filters.get('from_date'),filters.get('to_date'))]}))      
         mon_st = mon_st.rstrip(',')
         row.update({
             "month":mon_st,
