@@ -391,7 +391,7 @@ def assign_task_validation(doc):
 def validate_link_fileds(doc):
 	if doc.get('issue'):
 		issue=frappe.get_doc("Issue",doc.get('issue'))
-		validate_customer(doc,issue)
+		# validate_customer(doc,issue)
 		validate_location(doc,issue)
 		validate_asset(doc,issue)
 		validate_serial_no(doc,issue)
@@ -401,28 +401,27 @@ def validate_customer(doc,issue):
 		frappe.throw("Please Enter Valid Customer,Which exists in Issue {0}".format(issue.get('name')))
 
 
-def validate_location(doc,issue):
-	if doc.location and  issue.location and doc.location != issue.location:
-		frappe.throw("Please Enter Valid Location,Which exists in Issue {0}".format(issue.get('name')))
-
 
 def validate_asset(doc,issue):
 	if doc.asset and issue.asset and doc.asset != issue.asset:
 		frappe.throw("Please Enter Valid Asset,Which exists in Issue {0}".format(issue.get('name')))
 
+	if doc.asset and doc.asset not in get_asset(doc.customer,doc.location):
+		frappe.throw("Please Enter Valid Asset")
+
 def validate_serial_no(doc,issue):
 	if doc.serial_no and issue.serial_no and doc.serial_no != issue.serial_no:
 		frappe.throw("Please Enter Valid Serial No,Which exists in Issue {0}".format(issue.get('name')))
 
-	if doc.serial_no and doc.serial_no not in get_serial_no(doc.customer,doc.location):
+	if doc.serial_no and doc.serial_no not in get_serial_no(doc.customer,doc.location,doc.asset):
 		frappe.throw("Please Enter Valid Serial No")
 
-def validate_location(doc,issue):
+def validate_location(doc):
 	if doc.location and doc.location not in get_location_validation(doc.customer):
 		frappe.throw("Please Enter Valid Location")
 
 @frappe.whitelist()
-def get_serial_no(customer,location=None):
+def get_serial_no(customer,location,asset):
 	fltr1 = {}
 	fltr2 = {}
 	lst = []
@@ -430,6 +429,8 @@ def get_serial_no(customer,location=None):
 		fltr1.update({'customer':customer})
 	if location:
 		fltr2.update({'location':location})
+	if asset:
+		fltr2.update({'name':asset})
 
 	for i in frappe.get_all('Project',fltr1,['name']):
 		fltr2.update({'project':i.get('name'),'docstatus':1})
@@ -444,4 +445,21 @@ def get_location_validation(customer):
 		for a in frappe.get_all('Asset',{'project':i.get('name')},['location']):
 			if a.location not in lst:
 				lst.append(a.location)
+	return lst	
+
+
+def get_asset(customer,location):
+	fltr1 = {}
+	fltr2 = {}
+	lst = []
+	if customer:
+		fltr1.update({'customer':customer})
+	if location:
+		fltr2.update({'location':location})
+	
+	for i  in frappe.get_all('Project',fltr1,['name']):
+		fltr2.update({'project':i.get('name'),'docstatus':1})
+		for ass in frappe.get_all('Asset',fltr2,['name']):
+			if ass.name not in lst:
+				lst.append(ass.name)
 	return lst	
