@@ -392,7 +392,7 @@ def validate_link_fileds(doc):
 	if doc.get('issue'):
 		issue=frappe.get_doc("Issue",doc.get('issue'))
 		# validate_customer(doc,issue)
-		validate_location(doc,issue)
+		validate_location(doc)
 		validate_asset(doc,issue)
 		validate_serial_no(doc,issue)
 
