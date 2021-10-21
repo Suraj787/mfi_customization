@@ -74,23 +74,25 @@ def on_change(doc,method):
 		update_machine_reading(doc, existed_mr)
 	else:
 		create_machine_reading(doc)
+	issue=frappe.get_doc("Issue",doc.issue)
+	issue.response_date_time=doc.attended_date_time
 	if doc.issue and doc.status != 'Open':
-		frappe.db.set_value("Issue",doc.issue,'status',doc.status)	
+		issue.status=doc.status
 		if doc.status == 'Completed':
 			validate_if_material_request_is_not_submitted(doc)
+			validate_current_reading(doc)
 			attachment_validation(doc)
-			issue=frappe.get_doc("Issue",doc.issue)
+			
 			issue.status="Task Completed"
-			issue.closing_date_time=doc.completion_date_time
 			issue.set("task_attachments",[])
 			for d in doc.get("attachments"):
 				issue.append("task_attachments",{
 					"attach":d.attach
 				})
-			issue.save()
-		elif doc.status=="Working" and doc.attended_date_time:	
-			frappe.db.set_value("Issue",doc.issue,'first_responded_on',doc.attended_date_time)		
-
+			
+		elif doc.status=="Working" and doc.attended_date_time:
+			issue.first_responded_on=doc.attended_date_time
+	issue.save()
 def after_delete(doc,method):
 	for t in frappe.get_all('Asset Repair',filters={'task':doc.name}):
 		frappe.delete_doc('Asset Repair',t.name)
@@ -463,3 +465,7 @@ def get_asset(customer,location):
 			if ass.name not in lst:
 				lst.append(ass.name)
 	return lst	
+
+def validate_current_reading(doc):
+	if frappe.db.get_value('Type of Call',{'name':doc.type_of_call},'ignore_reading')==0 and len(doc.get("current_reading"))==0:
+		frappe.throw("Cann't Complete Task Without Current Reading")

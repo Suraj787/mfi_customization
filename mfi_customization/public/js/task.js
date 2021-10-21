@@ -5,7 +5,7 @@ frappe.ui.form.on('Task', {
             frappe.model.set_value("Issue", frm.doc.issue, 'first_responded_on',today);
         }
         if (frm.doc.status == "Completed"){
-            frm.set_df_property('status','read_only',1);
+            // frm.set_df_property('status','read_only',1);
             if(frm.doc.type_of_call){
                 frappe.db.get_value('Type of Call',{'name':frm.doc.type_of_call},'ignore_reading', (r) => {
                     if(r.ignore_reading == 1){
@@ -239,22 +239,7 @@ validate:function(frm){
     if(frm.doc.status == 'Completed'  ){
         if(!frm.doc.asset){
         frappe.throw('Asset details missing.');
-    }
-    if(frm.doc.type_of_call){
-        frappe.db.get_value('Type of Call',{'name':frm.doc.type_of_call},'ignore_reading', (r) => {
-            if(r.ignore_reading == 1){
-                frm.set_df_property('current_reading','hidden',1);
-            }
-            else{
-                frm.set_df_property('current_reading','hidden',0);
-                frm.set_df_property('current_reading','read_only',1);
-                if(!frm.doc.current_reading.length){
-                    frappe.throw('Current readings missing.');
-                }
-            }
-        });
-    }
-    
+    } 
 
 }
     frm.set_df_property('failure_date_and_time','read_only',1);
@@ -290,17 +275,28 @@ cur_frm.dashboard.add_transactions([
 ]);
 frappe.ui.form.on("Asset Readings", "type", function(frm, cdt, cdn) {
 	var d = locals[cdt][cdn];
-	if (d.type=='Black & White'){
-	$("div[data-idx='"+d.idx+"']").find("input[data-fieldname='reading_2']").css('pointer-events','none')
-    $("div[data-idx='"+d.idx+"']").find("input[data-fieldname='reading']").css('pointer-events','all')
-	}
-	if (d.type=="Colour"){
-        $("div[data-idx='"+d.idx+"']").find("input[data-fieldname='reading_2']").css('pointer-events','all')
-		$("div[data-idx='"+d.idx+"']").find("input[data-fieldname='reading']").css('pointer-events','all')
-	}
+
+    var bl_and_wht = frappe.meta.get_docfield("Asset Readings","reading",d.name);
+    var clr = frappe.meta.get_docfield("Asset Readings","reading_2",d.name);
+
+    if (d.type=='Black & White'){
+        bl_and_wht.reqd=1;
+        bl_and_wht.read_only=0;
+        clr.reqd=0;
+        clr.read_only=1;
+    }
+    if (d.type=="Colour"){
+        bl_and_wht.reqd=1;
+        bl_and_wht.read_only=0;
+        clr.reqd=1;
+        clr.read_only=0;
+    }
+
     d.asset = frm.doc.asset
     frm.set_df_property('asset','read_only',1);
 	refresh_field("asset", d.name, d.parentfield);
+    refresh_field("reading", d.name, d.parentfield);
+    refresh_field("reading_2", d.name, d.parentfield);
 });
     
 frappe.ui.form.on("Asset Readings", "date", function(frm, cdt, cdn) {

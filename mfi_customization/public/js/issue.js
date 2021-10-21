@@ -278,18 +278,6 @@ frappe.ui.form.on('Issue', {
 	}
 	
 	},
-	validate:function(frm){
-		if(!frm.response_date_time){
-			frappe.db.get_value('Task',{'issue':frm.doc.name},['attended_date_time'],(val) =>
-			{
-				frm.set_value('response_date_time',val.attended_date_time);
-			});
-
-
-		}
-		
-
-	},
 	customer:function(frm){
 		if (frm.doc.customer){
 			frappe.db.get_value("Project",{'customer':frm.doc.customer},["name"], (val) => {
