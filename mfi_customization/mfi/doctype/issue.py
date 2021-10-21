@@ -43,6 +43,7 @@ def validate(doc,method):
 def on_change(doc,method):
 	validate_reading(doc)
 	set_task_status_cancelled(doc)
+	validate_location(doc)
 
 def email_validation(doc):
 	if doc.email_conact and "@" not in 	doc.email_conact:
@@ -275,5 +276,9 @@ def get_asset(customer,location):
 		for ass in frappe.get_all('Asset',fltr2,['name']):
 			if ass.name not in lst:
 				lst.append(ass.name)
-	return lst	
+	return lst
+
+def validate_location(doc):
+	if doc.status=="Closed" and not doc.location:
+		frappe.throw("Can't Closed Issue Without <b>Location</b>")
 
