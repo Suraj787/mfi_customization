@@ -104,6 +104,7 @@ def get_data(filters):
 		
 		
 		for usr in frappe.get_all("User",fltr,["first_name","last_name","email"]):
+			print(usr)
 			row = {}
 			cnt = 0
 			avg_wt = 0
@@ -142,7 +143,8 @@ def get_data(filters):
 						if start_date not in holidayList:
 							task_days_diff+=1
 						start_date=add_days(start_date,1)
-					productivity_by_wtg+=round(( float(type_of_call)* float(frappe.db.get_value("Type of Call",tk2.get("type_of_call"),"waitage")) *  float(hrs)),2)/task_days_diff
+					if task_days_diff:
+						productivity_by_wtg+=round(( float(type_of_call)* float(frappe.db.get_value("Type of Call",tk2.get("type_of_call"),"waitage")) *  float(hrs)),2)/task_days_diff
 				
 				if tk2.get("attended_date_time") and tk2.get("assign_date"):
 					cnt += 1
