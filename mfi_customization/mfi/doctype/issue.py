@@ -214,8 +214,9 @@ def set_task_status_cancelled(doc):
 	if doc.status=="Cancelled":
 		for tk in frappe.get_all("Task",{"issue":doc.name}):
 			task=frappe.get_doc("Task",tk.name)
-			task.status="Cancelled"
-			task.save()
+			if task.status!="Cancelled":
+				task.status="Cancelled"
+				task.save()
 
 def validate_link_fileds(doc):
 	validate_location(doc)
