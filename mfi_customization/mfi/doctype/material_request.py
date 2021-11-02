@@ -165,7 +165,7 @@ def make_po(checked_values):
 							warehouse=mr_item.warehouse
 					if i.name not in duplicate_items:
 						duplicate_items.append(i.name)
-						if not frappe.db.get_value("Item Price",{"item_code":id,"price_list":itm.price_list},"price_list_rate"):
+						if not frappe.db.get_value("Item Price",{"item_code":itm.item,"price_list":itm.price_list},"price_list_rate"):
 							frappe.throw("Item Price Not Exists for Item <b>{0}</b>".format(itm.item))
 						po.append("items",{
 							"item_code":i.item,
