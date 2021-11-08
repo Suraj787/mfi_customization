@@ -162,16 +162,16 @@ frappe.ui.form.on('Issue', {
 				};
 			}
 		});
-		frm.set_query("location", function() {
-			if (frm.doc.customer) {
-				return {
-					query: 'mfi_customization.mfi.doctype.issue.get_location',
-					filters: {
-						"customer":frm.doc.customer
-					}
-				};
-			}
-		});
+		// frm.set_query("location", function() {
+		// 	if (frm.doc.customer) {
+		// 		return {
+		// 			query: 'mfi_customization.mfi.doctype.issue.get_location',
+		// 			filters: {
+		// 				"customer":frm.doc.customer
+		// 			}
+		// 		};
+		// 	}
+		// });
 		frm.set_query("asset", function() {
 			if (frm.doc.customer && frm.doc.location) {
 				return {
@@ -287,14 +287,14 @@ frappe.ui.form.on('Issue', {
 			})
 	}
 	if(frm.doc.customer){
-		frm.set_query('location', 'asset_details', function() {
-			if(frm.doc.customer){return {
-				query: 'mfi_customization.mfi.doctype.issue.get_location',
-				filters: {
-					"customer":frm.doc.customer
-				}
-			};}
-		});	
+		// frm.set_query('location', 'asset_details', function() {
+		// 	if(frm.doc.customer){return {
+		// 		query: 'mfi_customization.mfi.doctype.issue.get_location',
+		// 		filters: {
+		// 			"customer":frm.doc.customer
+		// 		}
+		// 	};}
+		// });	
 		frm.set_query('asset', 'asset_details', function() {
 			if(frm.doc.customer){return {
 				query: 'mfi_customization.mfi.doctype.issue.get_asset_on_cust',

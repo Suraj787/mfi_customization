@@ -114,16 +114,16 @@ refresh:function(frm){
 },
 
 setup:function(frm){
-    frm.set_query("location", function() {
-        if (frm.doc.customer) {
-            return {
-                query: 'mfi_customization.mfi.doctype.task.get_location',
-                filters: {
-                    "customer":frm.doc.customer
-                }
-            };
-        }
-    });
+    // frm.set_query("location", function() {
+    //     if (frm.doc.customer) {
+    //         return {
+    //             query: 'mfi_customization.mfi.doctype.task.get_location',
+    //             filters: {
+    //                 "customer":frm.doc.customer
+    //             }
+    //         };
+    //     }
+    // });
     frm.set_query("asset", function() {
         if (frm.doc.customer && frm.doc.location) {
             return {
@@ -194,14 +194,14 @@ setup:function(frm){
 },
 customer:function(frm){
     if(frm.doc.customer){
-        frm.set_query('location', 'asset_details_table', function() {
-            if(frm.doc.customer){return {
-                query: 'mfi_customization.mfi.doctype.task.get_location',
-                filters: {
-                    "customer":frm.doc.customer
-                }
-            };}
-        });	
+        // frm.set_query('location', 'asset_details_table', function() {
+        //     if(frm.doc.customer){return {
+        //         query: 'mfi_customization.mfi.doctype.task.get_location',
+        //         filters: {
+        //             "customer":frm.doc.customer
+        //         }
+        //     };}
+        // });	
         frm.set_query('asset', 'asset_details_table', function() {
             if(frm.doc.customer){return {
                 query: 'mfi_customization.mfi.doctype.task.get_asset_on_cust',

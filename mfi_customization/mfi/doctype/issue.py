@@ -43,7 +43,6 @@ def validate(doc,method):
 def on_change(doc,method):
 	validate_reading(doc)
 	set_task_status_cancelled(doc)
-	validate_location(doc)
 
 def email_validation(doc):
 	if doc.email_conact and "@" not in 	doc.email_conact:
@@ -223,10 +222,6 @@ def validate_link_fileds(doc):
 	validate_asset(doc)
 	validate_serial_no(doc)
 
-
-def validate_location(doc):
-	if doc.location and doc.location not in get_location_validation(doc.customer):
-		frappe.throw("Please Enter Valid Location")
 
 def validate_asset(doc):
 	if doc.asset and doc.asset not in get_asset(doc.customer,doc.location):
