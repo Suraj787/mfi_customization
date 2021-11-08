@@ -5,61 +5,31 @@
 frappe.query_reports["Purchase Request Template"] = {
 	"filters": [
 		{
-			"label":"Item",
-			"fieldname":"item",
-			"fieldtype":"Link",
-			"options":"Item",
-			"reqd": 0,
-			get_query:function(){
+			"fieldname":"item_list",
+			"label": __("Item"),
+			"fieldtype": "MultiSelectList",
+			get_data: function(txt) {
 				if (frappe.query_report.get_filter_value('item_group_list') && frappe.query_report.get_filter_value('brand_list')){
-					return {    
-						filters:
-							{
-								'item_group': ["in",frappe.query_report.get_filter_value('item_group_list')],
-								'brand': ["in",frappe.query_report.get_filter_value('brand_list')]
-								
-							}
-						
-					}
+					return frappe.db.get_link_options('Item', txt, {
+						item_group: ["in",frappe.query_report.get_filter_value('item_group_list')],
+						brand: ["in",frappe.query_report.get_filter_value('brand_list')]
+					});
 				}
 				else if (frappe.query_report.get_filter_value('item_group_list')){
-					return {    
-						filters:
-							{
-								'item_group': ["in",frappe.query_report.get_filter_value('item_group_list')]
-							}
-						
-					}
+					return frappe.db.get_link_options('Item', txt, {
+						item_group: ["in",frappe.query_report.get_filter_value('item_group_list')]
+					});
 				}
 				else if (frappe.query_report.get_filter_value('brand_list')){
-					return {    
-						filters:
-							{
-								'brand': ["in",frappe.query_report.get_filter_value('brand_list')]
-							}
-						
-					}
+					return frappe.db.get_link_options('Item', txt, {
+						brand: ["in",frappe.query_report.get_filter_value('brand_list')]
+					});
 				}
+				else{
+					return frappe.db.get_link_options('Item', txt);
+				}
+			
 			},
-			on_change: () => {
-				var item = frappe.query_report.get_filter_value('item');
-				if (item){
-					var item_list=frappe.query_report.get_filter_value('item_list');
-					if (item_list){
-					frappe.query_report.set_filter_value('item_list',item_list+','+item);
-					}
-					else{
-					frappe.query_report.set_filter_value('item_list',item);
-				}
-				}
-				
-			}
-		},
-		{
-			"fieldname":"item_list",
-			"label": __("Item List"),
-			"fieldtype": "Data",
-			"read_only":0
 		},
 		{
 			"fieldname":"clear_item",
