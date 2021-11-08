@@ -11,11 +11,31 @@ frappe.query_reports["Purchase Request Template"] = {
 			"options":"Item",
 			"reqd": 0,
 			get_query:function(){
-				if (frappe.query_report.get_filter_value('item_group_list')){
+				if (frappe.query_report.get_filter_value('item_group_list') && frappe.query_report.get_filter_value('brand_list')){
+					return {    
+						filters:
+							{
+								'item_group': ["in",frappe.query_report.get_filter_value('item_group_list')],
+								'brand': ["in",frappe.query_report.get_filter_value('brand_list')]
+								
+							}
+						
+					}
+				}
+				else if (frappe.query_report.get_filter_value('item_group_list')){
 					return {    
 						filters:
 							{
 								'item_group': ["in",frappe.query_report.get_filter_value('item_group_list')]
+							}
+						
+					}
+				}
+				else if (frappe.query_report.get_filter_value('brand_list')){
+					return {    
+						filters:
+							{
+								'brand': ["in",frappe.query_report.get_filter_value('brand_list')]
 							}
 						
 					}
@@ -97,6 +117,7 @@ frappe.query_reports["Purchase Request Template"] = {
 					var brand_list=frappe.query_report.get_filter_value('brand_list');
 					if (brand_list){
 					frappe.query_report.set_filter_value('brand_list',brand_list+','+brand);
+
 					}
 					else{
 					frappe.query_report.set_filter_value('brand_list',brand);
@@ -109,7 +130,7 @@ frappe.query_reports["Purchase Request Template"] = {
 			"fieldname":"brand_list",
 			"label": __("Brand List"),
 			"fieldtype": "Data",
-			"read_only":1
+			"read_only":1,
 		},
 		{
 			"fieldname":"clear_brand",
