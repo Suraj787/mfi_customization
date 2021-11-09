@@ -61,21 +61,29 @@ def get_column(filters = None):
 def get_data(filters, columns,months_list,warehouse_list,shipment_list_by_month,po):
 	data = []
 	fltr={"is_stock_item":1}
+	order_by=''
 
 	if filters.get('item_list'):
 		fltr.update({"name":["IN",filters.get('item_list')]})
-
+		items=''
+		for d in filters.get('item_list'):
+			items+=("'"+d+"'"+',')
+		order_by="field(item_code,{0}) ".format(items[:-1])
+		
 	if filters.get('item_group_list'):
-		fltr.update({"item_group":["IN",[d for d in (filters.get('item_group_list')).split(',')]]})
+		fltr.update({"item_group":["IN",filters.get('item_group_list')]})
 
 	if filters.get('brand_list'):
-		fltr.update({"brand":["IN",[d for d in (filters.get('brand_list')).split(',')]]})
+		fltr.update({"brand":["IN",filters.get('brand_list')]})
 
 	last_90_days="""and PR.posting_date between '{0}' and '{1}'""".format(add_days(today(),-90),today())
 	between_91_to_180="""and PR.posting_date between '{0}' and '{1}'""".format(add_days(today(),-180),add_days(today(),-91))
 	between_181_to_365="""and PR.posting_date between '{0}' and '{1}'""".format(add_days(today(),-365),add_days(today(),-181))
 	greater_than_365="""and PR.posting_date<'{0}'""".format(add_days(today(),-365))
-	for itm in frappe.get_all('Item',fltr,['item_code','item_name','brand']):
+
+
+
+	for itm in frappe.get_all('Item',filters=fltr,fields=['item_code','item_name','brand'],order_by=order_by):
 		total_qty=0
 		row = {
 				'part_number': itm.item_code,
@@ -88,7 +96,8 @@ def get_data(filters, columns,months_list,warehouse_list,shipment_list_by_month,
 			on S.name= SI.parent where SI.item_code = '{0}' 
 			and S.stock_entry_type='Material Issue' 
 			and S.company = '{1}' """.format(itm.item_code, filters.get('company')), as_dict=1):
-			months[st.posting_date]+=st.qty
+			if months.get(st.posting_date):
+				months[st.posting_date]+=st.qty
 			total_qty+=st.qty
 		for dl in frappe.db.sql("""SELECT DLI.qty, DATE_FORMAT(DL.posting_date, '%c-%y') posting_date, DLI.item_code 
 			from `tabDelivery Note` as DL inner join `tabDelivery Note Item` as DLI 
