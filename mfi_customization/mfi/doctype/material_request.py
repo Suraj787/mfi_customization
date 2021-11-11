@@ -296,7 +296,8 @@ def run(report_name, filters=None, user=None, ignore_prepared_report=False, cust
 			filters.pop("prepared_report_name", None)
 		else:
 			dn = ""
-		result = get_prepared_report_result(report, filters, dn, user)
+		# result = get_prepared_report_result(report, filters, dn, user)
+		result = generate_report_result(report, filters, user, custom_columns)
 	else:
 		result = generate_report_result(report, filters, user, custom_columns)
 
