@@ -162,8 +162,23 @@ frappe.ui.form.on('Sales Order Item','purchase_detail',function(frm,cdt,cdn){
 							'company': frm.doc.company
 						}
 					
-				}}
+				}},
+				onchange:function(){
+					var price_list=dialog.get_value("price_list");
+					if (price_list && child.item_code){
+						frappe.db.get_value('Item Price',{'item_code':child.item_code,"price_list":price_list},['price_list_rate'],(val) =>{
+							dialog.set_value("rate",val.price_list_rate||0)
+							child.item_purchase_rate=val.price_list_rate||0
+							refresh_field("item_purchase_rate", child.name, child.parentfield);
+						})
+					}
+					if (!child.item_code){
+						dialog.hide();
+						frappe.throw("Please Specify Item First")
+					}
+				}
 			},
+			{fieldtype: "Currency", fieldname: "rate", label:"Rate",read_only:1},
 			{fieldtype: "Link", fieldname: "ship_to", label:"Ship To", options:"Customer", default: child.ship_to, get_query:function(){
 				return {    
 					query: 'mfi_customization.mfi.doctype.sales_order.get_customer_by_price_list',
@@ -174,7 +189,6 @@ frappe.ui.form.on('Sales Order Item','purchase_detail',function(frm,cdt,cdn){
 					
 				}}
 			},
-			// {fieldtype: "Link", fieldname: "address", label:"Address", options:"Address"},
 		],
 		primary_action: function() {
 			child.price_list=dialog.get_value("price_list")
@@ -191,11 +205,6 @@ frappe.ui.form.on('Sales Order Item','purchase_detail',function(frm,cdt,cdn){
 					})
 				});
 			}
-
-			frappe.db.get_value('Item Price',{'item_code':child.item_code,"price_list":child.price_list},['price_list_rate'],(val) =>{
-				child.item_purchase_rate=val.price_list_rate||0
-				refresh_field("item_purchase_rate", child.name, child.parentfield);
-			})
 
 			refresh_field("price_list", child.name, child.parentfield);
 			refresh_field("ship_to", child.name, child.parentfield);
