@@ -1,10 +1,5 @@
 frappe.listview_settings['Material Request'] = {
 	onload: function(listview) {
-       if (frappe.user.has_role("Morocco ATM")){
-        frappe.route_options = {
-            "approver": ["=", frappe.session.user]
-        };
-    }
     const action = () => {
         const selected_docs = listview.get_checked_items();
         const docnames = listview.get_checked_items(true);
