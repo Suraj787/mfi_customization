@@ -6,12 +6,14 @@ from __future__ import unicode_literals
 import frappe
 from frappe.model.mapper import get_mapped_doc
 from frappe.utils.data import today,getdate
-from frappe import format
 
 def validate(doc,method):
 	email_validation(doc)
-	# validate_issue(doc)
+	validate_link_fileds(doc)
+# 	validate_issue(doc)
+	# machine_reading=""
 	for d in doc.get("current_reading"):
+		# machine_reading=d.machine_reading
 		d.total=( int(d.get('reading') or 0)  + int(d.get('reading_2') or 0))
 		if d.idx>1:
 			frappe.throw("More than one row not allowed")
@@ -25,8 +27,9 @@ def validate(doc,method):
 	last_reading=today()
 	if doc.asset and len(doc.get("last_readings"))==0:
 		# doc.set("last_readings", [])
-		fltr={"project":doc.project,"asset":doc.asset,"reading_date":("<=",last_reading),"reading_type":"Maintenance"}
-
+		fltr={"project":doc.project,"asset":doc.asset,"reading_date":("<=",last_reading)}
+		# if machine_reading:
+		# 	fltr.update({"name":("!=",machine_reading)})
 		for d in frappe.get_all("Machine Reading",filters=fltr,fields=["name","reading_date","asset","black_and_white_reading","colour_reading","total","machine_type"],limit=1,order_by="reading_date desc,name desc"):
 			doc.append("last_readings", {
 				"date" : d.get('reading_date'),
@@ -126,6 +129,8 @@ def get_asset_on_cust(doctype, txt, searchfield, start, page_len, filters):
 				if ass.name not in lst:
 					lst.append(ass.name)
 		return [(d,) for d in lst]	
+		
+
 
 @frappe.whitelist()
 def get_asset_serial_on_cust(doctype, txt, searchfield, start, page_len, filters):
@@ -146,6 +151,7 @@ def get_asset_serial_on_cust(doctype, txt, searchfield, start, page_len, filters
 
 @frappe.whitelist()
 def get_serial_on_cust_loc(doctype, txt, searchfield, start, page_len, filters):
+	# data = frappe.db.sql("""select name from `tabProject` """)
 	fltr1 = {}
 	fltr2 = {}
 	lst = []
@@ -207,5 +213,68 @@ def set_task_status_cancelled(doc):
 	if doc.status=="Cancelled":
 		for tk in frappe.get_all("Task",{"issue":doc.name}):
 			task=frappe.get_doc("Task",tk.name)
-			task.status="Cancelled"
-			task.save()
+			if task.status!="Cancelled":
+				task.status="Cancelled"
+				task.save()
+
+def validate_link_fileds(doc):
+	validate_location(doc)
+	validate_asset(doc)
+	validate_serial_no(doc)
+
+
+def validate_asset(doc):
+	if doc.asset and doc.asset not in get_asset(doc.customer,doc.location):
+		frappe.throw("Please Enter Valid Asset")
+
+
+def validate_serial_no(doc):
+	if doc.serial_no and doc.serial_no not in get_serial_no(doc.customer,doc.location,doc.asset):
+		frappe.throw("Please Enter Valid Serial No")
+
+def get_serial_no(customer,location,asset):
+	fltr1 = {}
+	fltr2 = {}
+	lst = []
+	if customer:
+		fltr1.update({'customer':customer})
+	if location:
+		fltr2.update({'location':location})
+	if asset:
+		fltr2.update({'name':asset})
+
+	for i in frappe.get_all('Project',fltr1,['name']):
+		fltr2.update({'project':i.get('name'),'docstatus':1})
+		for j in frappe.get_all('Asset',fltr2,['serial_no']):
+			if j.serial_no not in lst:
+					lst.append(j.serial_no)
+	return lst
+
+def get_location_validation(customer):
+	lst = []
+	for i in frappe.get_all('Project',{"customer":customer},['name']):
+		for a in frappe.get_all('Asset',{'project':i.get('name')},['location']):
+			if a.location not in lst:
+				lst.append(a.location)
+	return lst	
+
+def get_asset(customer,location):
+	fltr1 = {}
+	fltr2 = {}
+	lst = []
+	if customer:
+		fltr1.update({'customer':customer})
+	if location:
+		fltr2.update({'location':location})
+	
+	for i  in frappe.get_all('Project',fltr1,['name']):
+		fltr2.update({'project':i.get('name'),'docstatus':1})
+		for ass in frappe.get_all('Asset',fltr2,['name']):
+			if ass.name not in lst:
+				lst.append(ass.name)
+	return lst
+
+def validate_location(doc):
+	if doc.status=="Closed" and not doc.location:
+		frappe.throw("Can't Closed Issue Without <b>Location</b>")
+

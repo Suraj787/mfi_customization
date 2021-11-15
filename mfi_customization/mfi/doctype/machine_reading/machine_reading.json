@@ -1,8 +1,5 @@
 {
- "actions": [],
- "allow_import": 1,
- "allow_rename": 1,
- "autoname": "MCN-RDG-.####",
+ "autoname": "MCN-RDG-.####S",
  "creation": "2021-05-26 21:07:49.333414",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -14,8 +11,6 @@
   "task",
   "project",
   "column_break_4",
-  "billing_status",
-  "reading_type",
   "machine_type",
   "colour_reading",
   "black_and_white_reading",
@@ -40,8 +35,7 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Asset",
-   "options": "Asset",
-   "reqd": 1
+   "options": "Asset"
   },
   {
    "fieldname": "column_break_4",
@@ -56,14 +50,12 @@
   {
    "fieldname": "colour_reading",
    "fieldtype": "Data",
-   "label": "Colour reading",
-   "reqd": 1
+   "label": "Colour reading"
   },
   {
    "fieldname": "black_and_white_reading",
    "fieldtype": "Data",
-   "label": "Black and white Reading",
-   "mandatory_depends_on": "eval:doc.machine_type==\"Black & White\""
+   "label": "Black and white Reading"
   },
   {
    "fieldname": "total",
@@ -83,26 +75,12 @@
    "options": "Task"
   },
   {
-   "fieldname": "reading_type",
-   "fieldtype": "Select",
-   "label": "Reading Type",
-   "options": "\nBilling\nMaintenance\nInstallation"
-  },
-  {
-   "fieldname": "billing_status",
-   "fieldtype": "Select",
-   "label": "Billing Status",
-   "options": "\nBilled"
-  },
-  {
    "fieldname": "row_id",
    "fieldtype": "Data",
    "label": "Row ID"
   }
  ],
- "index_web_pages_for_search": 1,
- "links": [],
- "modified": "2021-09-28 10:25:37.701378",
+ "modified": "2021-08-16 11:38:25.933173",
  "modified_by": "Administrator",
  "module": "mfi",
  "name": "Machine Reading",
@@ -123,6 +101,5 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
- "track_changes": 1,
- "track_seen": 1
+ "track_changes": 1
 }
