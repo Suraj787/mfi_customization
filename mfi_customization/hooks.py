@@ -189,9 +189,9 @@ fixtures = [
 # Overriding Methods
 # ------------------------------
 #
-# override_whitelisted_methods = {
-# 	"frappe.desk.doctype.event.event.get_events": "mfi_customization.event.get_events"
-# }
+override_whitelisted_methods = {
+	"erpnext.buying.doctype.purchase_order.purchase_order.make_purchase_invoice": "mfi_customization.mfi.doctype.purchase_order.make_purchase_invoice"
+}
 #
 # each overriding function accepts a `data` argument;
 # generated from the base implementation of the doctype dashboard,

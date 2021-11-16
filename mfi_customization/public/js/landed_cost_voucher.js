@@ -8,6 +8,14 @@ frappe.ui.form.on('Landed Cost Voucher', {
 			
 		}
 		});
+        frm.set_query("cost_center","items", function() {
+			return {
+				filters: {
+					"company": frm.doc.company
+				}
+			
+		}
+		});
     },
     calculate_cost:function(frm){
         if (frm.doc.distribute_charges_based_on=="Distribute Manually"){
