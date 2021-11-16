@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "autoname": "MCN-RDG-.####S",
  "creation": "2021-05-26 21:07:49.333414",
  "doctype": "DocType",
@@ -11,7 +12,9 @@
   "task",
   "project",
   "column_break_4",
+  "billing_status",
   "machine_type",
+  "reading_type",
   "colour_reading",
   "black_and_white_reading",
   "total",
@@ -75,12 +78,26 @@
    "options": "Task"
   },
   {
+   "fieldname": "reading_type",
+   "fieldtype": "Select",
+   "label": "Reading Type",
+   "options": "\nBilling\nMaintenance\nInstallation"
+  },
+  {
+   "fieldname": "billing_status",
+   "fieldtype": "Select",
+   "label": "Billing Status",
+   "options": "\nBilled"
+  },
+  {
    "fieldname": "row_id",
    "fieldtype": "Data",
-   "label": "Row ID"
+   "label": "Row ID",
+   "read_only": 1
   }
  ],
- "modified": "2021-08-16 11:38:25.933173",
+ "links": [],
+ "modified": "2021-11-16 07:27:59.403129",
  "modified_by": "Administrator",
  "module": "mfi",
  "name": "Machine Reading",
