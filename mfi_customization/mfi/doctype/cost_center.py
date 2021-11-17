@@ -10,7 +10,7 @@ def update_cost(doc):
 			itm.update({"rate":item_price.price_list_rate})
 		items.append(itm)
 
-	update_child_qty_rate('Sales Order', json.dumps(items), doc.get("name"))
+	update_child_qty_rate(doc.get("doctype"), json.dumps(items), doc.get("name"))
 	return "ok"
 
 	

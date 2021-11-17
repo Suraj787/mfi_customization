@@ -1,5 +1,20 @@
 
 frappe.ui.form.on('Purchase Order', {
+    refresh:function(frm){
+        if(frm.doc.docstatus==1) {
+			frm.add_custom_button(__('Update Cost'), function() {
+				frappe.call({
+					method: "mfi_customization.mfi.doctype.cost_center.update_cost",
+					args: {
+						"doc": frm.doc,
+					},
+					callback: function(r) {
+						frm.reload_doc()
+					}
+				})
+			});
+		}
+    },
     address:function(frm){
         frm.set_value('address_detail', "");
 		if (frm.doc.address!=undefined){

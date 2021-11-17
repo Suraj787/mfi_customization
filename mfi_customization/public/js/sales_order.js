@@ -19,17 +19,19 @@ frappe.ui.form.on('Sales Order', {
                 // }
             }
         }
-		frm.add_custom_button(__('Update Cost'), function() {
-			frappe.call({
-				method: "mfi_customization.mfi.doctype.cost_center.update_cost",
-				args: {
-					"doc": frm.doc,
-				},
-				callback: function(r) {
-					frm.reload_doc()
-				}
-			})
-		});
+		if(frm.doc.docstatus==1) {
+			frm.add_custom_button(__('Update Cost'), function() {
+				frappe.call({
+					method: "mfi_customization.mfi.doctype.cost_center.update_cost",
+					args: {
+						"doc": frm.doc,
+					},
+					callback: function(r) {
+						frm.reload_doc()
+					}
+				})
+			});
+		}
     },
 
 	make_delivery_note_on_delivery_date: function(frm) {
