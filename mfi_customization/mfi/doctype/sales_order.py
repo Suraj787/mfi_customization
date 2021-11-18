@@ -108,6 +108,8 @@ def create_po(doc):
 				po.schedule_date=doc.delivery_date
 				po.company=doc.company
 				po.mode_of_shipment=doc.mode_of_shipment
+				po.order_confirmation_no=doc.name
+				po.order_confirmation_date=doc.transaction_date
 				for row in i:
 					po.ship_to=row.ship_to
 					po.address=row.address

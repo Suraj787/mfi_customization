@@ -179,9 +179,14 @@ frappe.ui.form.on('Sales Order Item','purchase_detail',function(frm,cdt,cdn){
 				onchange:function(){
 					var price_list=dialog.get_value("price_list");
 					if (price_list && child.item_code){
-						frappe.db.get_value('Item Price',{'item_code':child.item_code,"price_list":price_list},['price_list_rate'],(val) =>{
+						frappe.db.get_value('Item Price',{'item_code':child.item_code,"price_list":price_list},['price_list_rate','currency'],(val) =>{
 							dialog.set_value("rate",val.price_list_rate||0)
-							child.item_purchase_rate=val.price_list_rate||0
+
+							if (!child.currency){
+								dialog.set_value("currency",val.currency)
+							}
+							
+							child.item_purchase_rate=child.item_purchase_rate>0?child.item_purchase_rate:(val.price_list_rate||0)
 							refresh_field("item_purchase_rate", child.name, child.parentfield);
 						})
 					}
@@ -191,7 +196,8 @@ frappe.ui.form.on('Sales Order Item','purchase_detail',function(frm,cdt,cdn){
 					}
 				}
 			},
-			{fieldtype: "Currency", fieldname: "rate", label:"Rate",read_only:1},
+			{fieldtype: "Link", fieldname: "currency", label:"Currency",read_only:1,default: child.currency},
+			{fieldtype: "Float", fieldname: "rate", label:"Rate",read_only:1,default: child.item_purchase_rate},
 			{fieldtype: "Link", fieldname: "ship_to", label:"Ship To", options:"Customer", default: child.ship_to, get_query:function(){
 				return {    
 					query: 'mfi_customization.mfi.doctype.sales_order.get_customer_by_price_list',
@@ -206,6 +212,7 @@ frappe.ui.form.on('Sales Order Item','purchase_detail',function(frm,cdt,cdn){
 		primary_action: function() {
 			child.price_list=dialog.get_value("price_list")
 			child.ship_to=dialog.get_value("ship_to")
+			child.currency=dialog.get_value("currency")
 			dialog.hide();
 
 			if (child.price_list && child.ship_to){
@@ -221,6 +228,7 @@ frappe.ui.form.on('Sales Order Item','purchase_detail',function(frm,cdt,cdn){
 
 			refresh_field("price_list", child.name, child.parentfield);
 			refresh_field("ship_to", child.name, child.parentfield);
+			refresh_field("currency", child.name, child.parentfield);
 		},
 		primary_action_label: __('Add')
 	});
