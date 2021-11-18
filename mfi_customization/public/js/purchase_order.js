@@ -1,7 +1,7 @@
 
 frappe.ui.form.on('Purchase Order', {
     refresh:function(frm){
-        if(frm.doc.docstatus==1) {
+        if(frm.doc.docstatus==1 && ["To Receive and Bill","To Receive"].includes(frm.doc.status)) {
 			frm.add_custom_button(__('Update Cost'), function() {
 				frappe.call({
 					method: "mfi_customization.mfi.doctype.cost_center.update_cost",

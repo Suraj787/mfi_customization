@@ -29,6 +29,7 @@ def create_sales_order(doc):
 		sales_doc.company =company if company else ''
 		sales_doc.po_no=doc.name
 		sales_doc.po_date=doc.creation
+		sales_doc.selling_price_list=doc.buying_price_list
 		for d in sales_doc.get("items"):
 			d.warehouse="Stores - MFIINTL"
 		sales_doc.save()

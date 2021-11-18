@@ -8,7 +8,6 @@ def update_cost(doc):
 	updated_items=""
 	for itm in doc.get('items'):
 		for item_price in frappe.get_all("Item Price",{"item_code":itm.get("item_code"),"price_list":doc.get("selling_price_list")},['price_list_rate']):
-			print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
 			if itm.get("rate")!=item_price.price_list_rate:
 				itm.update({"rate":item_price.price_list_rate})
 				updated_items+=(itm.get("item_code")+',')
