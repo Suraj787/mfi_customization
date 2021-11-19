@@ -18,6 +18,8 @@ def update_cost(doc):
 
 	if updated_items:
 		frappe.msgprint("Items Updated <b>{0}</b>".format(updated_items.rstrip(',')))
+	else:
+		frappe.msgprint("No changes found")
 	return "ok"
 
 	
