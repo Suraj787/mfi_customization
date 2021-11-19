@@ -7,10 +7,11 @@ def update_cost(doc):
 	items=[]
 	updated_items=""
 	for itm in doc.get('items'):
-		for item_price in frappe.get_all("Item Price",{"item_code":itm.get("item_code"),"price_list":doc.get("selling_price_list")},['price_list_rate']):
+		for item_price in frappe.get_all("Item Price",filters={"item_code":itm.get("item_code"),"price_list":doc.get("selling_price_list") or doc.get("buying_price_list")},fields=['price_list_rate'],order_by="creation desc"):
 			if itm.get("rate")!=item_price.price_list_rate:
 				itm.update({"rate":item_price.price_list_rate})
 				updated_items+=(itm.get("item_code")+',')
+			break
 		items.append(itm)
 
 	update_child_qty_rate(doc.get("doctype"), json.dumps(items), doc.get("name"))
