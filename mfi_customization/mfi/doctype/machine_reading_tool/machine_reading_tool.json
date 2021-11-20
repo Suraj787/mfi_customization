@@ -10,6 +10,8 @@
   "column_break_2",
   "reading_date",
   "column_break_4",
+  "machine_type",
+  "column_break_6",
   "reading_type",
   "section_break_4",
   "reading_items"
@@ -43,21 +45,32 @@
    "fieldtype": "Section Break"
   },
   {
-   "default": "Black & White",
+   "default": "Maintenance",
    "fieldname": "reading_type",
    "fieldtype": "Select",
    "label": "Reading Type",
-   "options": "\nBlack & White\nColour"
+   "options": "\nBilling\nMaintenance\nInstallation"
   },
   {
    "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Black & White",
+   "fieldname": "machine_type",
+   "fieldtype": "Select",
+   "label": "Machine Type",
+   "options": "\nBlack & White\nColour"
+  },
+  {
+   "fieldname": "column_break_6",
    "fieldtype": "Column Break"
   }
  ],
  "hide_toolbar": 1,
  "issingle": 1,
  "links": [],
- "modified": "2021-08-30 10:02:52.130768",
+ "modified": "2021-11-20 08:38:33.855772",
  "modified_by": "Administrator",
  "module": "mfi",
  "name": "Machine Reading Tool",

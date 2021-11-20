@@ -1,7 +1,7 @@
 # Copyright (c) 2021, bizmap technologies and contributors
 # For license information, please see license.txt
 
-import frappe
+import frappe,json
 from frappe.model.document import Document
 from frappe.utils import today
 
@@ -19,6 +19,15 @@ def get_machine_reading(project,reading_date,reading_type):
 
 @frappe.whitelist()
 def create_machine_reading(readings):
-	print("###########")
-	print(readings)
+	readings=json.loads(readings)
+	for r in readings.get("reading_details"):
+		if readings.get("reading_details")[r].get('black_and_white_reading') or readings.get("reading_details")[r].get('colour_reading'):
+			make_machine_reading(readings.get("reading_details")[r])
 	return []
+
+def make_machine_reading(doc):
+
+	mr=frappe.new_doc("Machine Reading")
+	for key in doc.keys():
+		mr.set(key,doc[key])
+	mr.save()

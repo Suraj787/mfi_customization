@@ -1,49 +1,93 @@
-<table class="table table-bordered">
+<head>
+	<style>
+	table {
+			display: block;
+			margin: 0 auto;
+			overflow-x: auto;
+			white-space: nowrap;
+			height: 450px;
+			border-collapse: collapse;
+		}
+	table, th, td {
+	  border: 1px solid #F4F5F6;
+	}
+	td{
+		padding-left: 10px;
+		height: 40px;
+	}
+	th{
+		text-align: center;
+		height: 50px;
+	}
+	input {
+	width: 70%;
+	margin-left:18px;
+	}
+	</style>
+</head>
+<script>
+	function calculateTotal(Id,value){
+		document.getElementById("total_reading+"+Id).value=((parseFloat(document.getElementById("bw_reading+"+Id).value || 0)) + (parseFloat(document.getElementById("colour_reading+"+Id).value || 0)));
+	}
+</script>
+<table class="reading_table">
 	<thead>
 		<tr>
-			<th style="width: 90px" >Asset</th>
-			<th style="width: 170px" >Asset Name</th>
-			<th style="width: 90px" >Reading Date</th>
-			<th style="width: 90px" >Machine Type</th>
-			<th style="width: 140px" >Black and White Reading</th>
-			<th style="width: 140px" >Colour Reading</th>
-			<th style="width: 90px" >Total Reading</th>
+			<th >Asset</th>
+			<th >Asset Name</th>
+			<th >Reading Date</th>
+			<th >Machine Type</th>
+			<th >Reading Type</th>
+			<th >Black & White Reading</th>
+			<th >Colour Reading</th>
+			<th >Total Reading</th>
 		</tr>
 	</thead>
 	<tbody>
 		{% for s in assets %}
 		<tr data-asset="{{s.asset}}">
 
-			<td>{{ s.asset }}</td>
+			<td class="result-asset" id="{{ s.asset }}">{{ s.asset }}</td>
 			<td>{{ s.asset_name }}</td>
 			<td>
-				<input type="date" class="result-reading_date" data-asset="{{s.asset}}" value="{{s.reading_date}}" style="width:65%;">
+				<input type="date" class="result-reading_date" data-asset="{{s.asset}}" id="reading_date+{{s.asset}}"  value="{{reading_date}}">
 			</td>
 			<td>
-				  <input type="text" class="result-reading_type"  data-asset="{{s.asset}}" list="readingname" style="width:80%;">
+				<input type="text" class="result-machine_type"  data-asset="{{s.asset}}" list="machinename"  id="machine_type+{{s.asset}}" value="{{machine_type}}">
+				  <datalist id="machinename">
+					  <option value="Black & White">
+					  <option value="Colour">
+				  </datalist>
+		  </td>
+
+			<td>
+				  <input type="text" class="result-reading_type"  data-asset="{{s.asset}}" list="readingname"  id="reading_type+{{s.asset}}" >
 					<datalist id="readingname">
-						<option value="Black & White">
-						<option value="Colour">
+						<option value="Billing">
+						<option value="Maintenance">
+						<option value="Installation">
 					</datalist>
 			</td>
 			
 			<td>
-				<input type="text" class="result-bw-reading" data-asset="{{s.asset}}" style="width:100%;"
+				<input type="number" class="result-bw_reading" data-asset="{{s.asset}}"  id="bw_reading+{{s.asset}}"
+				onchange="calculateTotal(`{{s.asset}}`,this.value)"
 				{% if(s.reading_details && s.docstatus && s.docstatus == 1) { %} disabled {% } %}
 				{% if(s.reading_details) { %}
 					value="{{s.reading_details.bw_reading}}"
 				{% } %}>
 			</td>
 			<td>
-				<input type="text" class="result-colour-reading" data-asset="{{s.asset}}" style="width:100%;"
+				<input type="number" class="result-colour_reading" data-asset="{{s.asset}}" id="colour_reading+{{s.asset}}"
+				onchange="calculateTotal(`{{s.asset}}`,this.value)"
 				{% if(s.reading_details && s.docstatus && s.docstatus == 1) { %} disabled {% } %}
 				{% if(s.reading_details) { %}
 					value="{{s.reading_details.colour}}"
 				{% } %}>
 			</td>
 			<td>
-				<input type="text" class="result-total-reading" data-asset="{{s.asset}}" style="width:70%;"
-				{% if(s.reading_details && s.docstatus && s.docstatus == 1) { %} disabled {% } %}
+				<input type="number" class="result-total_reading" data-asset="{{s.asset}}"  id="total_reading+{{s.asset}}"
+				disabled
 				{% if(s.reading_details) { %}
 					value="{{s.reading_details.total_reading}}"
 				{% } %}>

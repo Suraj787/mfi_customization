@@ -16,7 +16,9 @@ frappe.ui.form.on('Machine Reading Tool', {
 				args: {
 					"project": frm.doc.project,
 					"reading_date":frm.doc.reading_date,
-					"reading_type":frm.doc.reading_type
+					"machine_type":frm.doc.machine_type,
+					"reading_type":frm.doc.reading_type,
+					
 				},
 				callback: function(r) {
 					if (r.message) {
@@ -33,7 +35,21 @@ frappe.ui.form.on('Machine Reading Tool', {
 			});
 		}
 	},
-
+	machine_type:function(frm){
+		$(".result-asset").each(function () { 
+			document.getElementById("machine_type+"+this.id).value=frm.doc.machine_type;
+		})
+	},
+	reading_type:function(frm){
+		$(".result-asset").each(function () { 
+			document.getElementById("reading_type+"+this.id).value=frm.doc.reading_type;
+		})
+	},
+	reading_date:function(frm){
+		$(".result-asset").each(function () { 
+			document.getElementById("reading_date+"+this.id).value=frm.doc.reading_date;
+		})
+	},
 	render_table: function(frm,asset_list) {
 		$(frm.fields_dict.reading_items.wrapper).empty();
 		frm.events.get_marks(frm,asset_list);
@@ -43,109 +59,49 @@ frappe.ui.form.on('Machine Reading Tool', {
 		var result_table = $(frappe.render_template('machine_reading_tool', {
 			frm: frm,
 			assets: asset_list,
+			reading_date:frm.doc.reading_date,
+			reading_type:frm.doc.reading_type,
+			machine_type:frm.doc.machine_type,
 		}));
 		result_table.appendTo(frm.fields_dict.reading_items.wrapper);
-		console.log(result_table)
-		result_table.on('change', 'input', function(e) {
-			let $input = $(e.target);
-			let asset = $input.data().asset;
-			let max_score = $input.data().maxScore;
-			let value = $input.val();
-			if(value < 0) {
-				$input.val(0);
-			} else if(value > max_score) {
-				$input.val(max_score);
-			}
-			let total_score = 0;
-			let asset_readings = {};
-	
-			asset_readings["reading_details"] = {}
-			asset_readings["reading_details"]["asset"] = asset;
-			result_table.find(`[data-asset=${asset}].result-bw-reading`).each(function(el, input){
-				asset_readings["reading_details"]["bw_reading"] = $(input).val();
-			});
-			result_table.find(`[data-asset=${asset}].result-colour-reading`).each(function(el, input){
-				asset_readings["reading_details"]["colour"] = $(input).val();
-			});
-			result_table.find(`[data-asset=${asset}].result-reading_date`).each(function(el, input){
-				asset_readings["reading_details"]["reading_date"] = $(input).val();
-			});
-			result_table.find(`[data-asset=${asset}].result-reading_type`).each(function(el, input){
-				asset_readings["reading_details"]["reading_type"] = $(input).val();
-			});
-			result_table.find(`[data-asset=${asset}].result-total_reading`).each(function(el, input){
-				asset_readings["reading_details"]["total_reading"] = $(input).val();
-			});
-			frappe.call({
-				method: "mfi_customization.mfi.doctype.machine_reading_tool.machine_reading_tool.create_machine_reading",
-				args: {
-					"readings": asset_readings
-				},
-				callback: function(r) {
-					console.log(r.message)
-					// let assessment_result = r.message;
-					// if (!frm.doc.show_submit) {
-					// 	frm.doc.show_submit = true;
-					// 	frm.events.submit_result;
-					// }
-					// for (var criteria of Object.keys(assessment_result.details)) {
-					// 	result_table.find(`[data-criteria=${criteria}][data-asset=${assessment_result
-					// 		.asset}].asset-result-grade`).each(function(e1, input) {
-					// 			$(input).html(assessment_result.details[criteria]);
-					// 	});
-					// }
-					// result_table.find(`span[data-asset=${assessment_result.asset}].total-score-grade`).html(assessment_result.grade);
-					// let link_span = result_table.find(`span[data-asset=${assessment_result.asset}].total-result-link`);
-					// $(link_span).css("display", "block");
-					// $(link_span).find("a").attr("href", "/app/assessment-result/"+assessment_result.name);
-				}
-			});
-			// if (Object.keys(asset_readings["reading_details"]).length === criteria_list.length) {
-			// 	asset_readings["asset"] = asset;
-			// 	asset_readings["total_score"] = total_score;
-
-
-			// 	result_table.find(`[data-asset=${asset}].result-comment`)
-			// 		.each(function(el, input){
-			// 		asset_readings["comment"] = $(input).val();
-			// 	});
-			// 	console.log(asset_readings)
-			// 	frappe.call({
-			// 		method: "erpnext.education.api.mark_assessment_result",
-			// 		args: {
-			// 			"assessment_plan": frm.doc.assessment_plan,
-			// 			"scores": asset_readings
-			// 		},
-			// 		callback: function(r) {
-			// 			let assessment_result = r.message;
-			// 			if (!frm.doc.show_submit) {
-			// 				frm.doc.show_submit = true;
-			// 				frm.events.submit_result;
-			// 			}
-			// 			for (var criteria of Object.keys(assessment_result.details)) {
-			// 				result_table.find(`[data-criteria=${criteria}][data-asset=${assessment_result
-			// 					.asset}].asset-result-grade`).each(function(e1, input) {
-			// 						$(input).html(assessment_result.details[criteria]);
-			// 				});
-			// 			}
-			// 			result_table.find(`span[data-asset=${assessment_result.asset}].total-score-grade`).html(assessment_result.grade);
-			// 			let link_span = result_table.find(`span[data-asset=${assessment_result.asset}].total-result-link`);
-			// 			$(link_span).css("display", "block");
-			// 			$(link_span).find("a").attr("href", "/app/assessment-result/"+assessment_result.name);
-			// 		}
-			// 	});
-			// }
-		});
 	},
 
 	submit_result: function(frm) {
 		if (frm.doc.show_submit) {
-			console.log("******************")
 			frm.page.set_primary_action(__("Submit"), function() {
+				let result_table=cur_frm.fields_dict.reading_items.wrapper;
+				let asset_readings = {};
+	
+				asset_readings["reading_details"] = {}
+				$(".result-asset").each(function () { 
+					var row={};
+
+					row["asset"]=this.id;
+
+					$(result_table).find(`[data-asset=${this.id}].result-bw_reading`).each(function(el, input){
+						row["black_and_white_reading"] = $(input).val();
+					});
+					$(result_table).find(`[data-asset=${this.id}].result-colour_reading`).each(function(el, input){
+						row["colour_reading"] = $(input).val();
+					});
+					$(result_table).find(`[data-asset=${this.id}].result-reading_date`).each(function(el, input){
+						row["reading_date"] = $(input).val();
+					});
+					$(result_table).find(`[data-asset=${this.id}].result-machine_type`).each(function(el, input){
+						row["machine_type"] = $(input).val();
+					});
+					$(result_table).find(`[data-asset=${this.id}].result-reading_type`).each(function(el, input){
+						row["reading_type"] = $(input).val();
+					});
+					$(result_table).find(`[data-asset=${this.id}].result-total_reading`).each(function(el, input){
+						row["total"] = $(input).val();
+					});
+					asset_readings["reading_details"][this.id] =row;
+				})
 				frappe.call({
 					method: "mfi_customization.mfi.doctype.machine_reading_tool.machine_reading_tool.create_machine_reading",
 					args: {
-						"readings": asset_readings
+						"readings": asset_readings,
 					},
 					callback: function(r) {
 						if (r.message) {
