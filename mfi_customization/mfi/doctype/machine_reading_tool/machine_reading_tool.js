@@ -105,9 +105,9 @@ frappe.ui.form.on('Machine Reading Tool', {
 					},
 					callback: function(r) {
 						if (r.message) {
-							frappe.msgprint(__("{0} Result submittted", [r.message]));
+							frappe.msgprint(__("{0} Readings submittted", [r.message]));
 						} else {
-							frappe.msgprint(__("No Result to submit"));
+							frappe.msgprint(__("No Readings to submit"));
 						}
 						frm.events.project(frm);
 					}
