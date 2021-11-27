@@ -50,7 +50,7 @@ def get_data(filters,type_of_call):
 		if filters.get("company"):
 			tsk_fltr.update({'company':filters.get("company")})
 		
-		for usr in frappe.get_all("User",["first_name","last_name","email","name"]):
+		for usr in frappe.get_all("User",["first_name","last_name","email","name","full_name"]):
 			row = {}
 			call_dict={}
 			resolved_call_cnt=0
@@ -79,7 +79,7 @@ def get_data(filters,type_of_call):
 					cancelled_call += 1
 
 			row.update({
-				'support_tech': usr.get("first_name"),
+				'support_tech': usr.get("full_name"),
 				'resolved': resolved_call_cnt,
 				'pending_calls': pending_calls_cnt,
 			})
