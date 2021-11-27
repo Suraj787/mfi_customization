@@ -5,23 +5,10 @@
 frappe.query_reports["Call Data Monthly"] = {
 	"filters": [
 		{
-			"label":"Support Technician Name",
-			"fieldname":"support_tech",
-			"fieldtype":"Link",
-			"options":"User"	
-
-		},{
 			"label":"Company",
-			"fieldname":"c_name",
+			"fieldname":"company",
 			"fieldtype":"Link",
 			"options":"Company"	,
-			"reqd": 1
-
-		},{
-			"label":"Type of Calls",
-			"fieldname":"type_of_call",
-			"fieldtype":"Link",
-			"options":"Type of Call",
 			"reqd": 1
 
 		},{
