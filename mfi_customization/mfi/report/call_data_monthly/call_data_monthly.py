@@ -37,6 +37,16 @@ def get_columns(filters,type_of_call):
 			"fieldtype":"Data"	
 
 		},
+		{
+			"label":"Productivity",
+			"fieldname":"productivity",
+			"fieldtype":"Data"	
+		},
+		{
+			"label":"Avg. Productivity",
+			"fieldname":"avg_productivity",
+			"fieldtype":"Data"	
+		},
 		
 	])
 	return columns
@@ -56,20 +66,26 @@ def get_data(filters,type_of_call):
 			resolved_call_cnt=0
 			pending_calls_cnt=0
 			cancelled_call=0
+			productivity=0
 
 			for d in type_of_call:
 				call_dict[type_of_call[d]]=0
+				
 			tsk_fltr.update({'completed_by':usr.name})
-			for tk in frappe.get_all('Task',tsk_fltr,['completed_by','"completion_date_time"','attended_date_time','status','completion_date_time','type_of_call','assign_date']):
 
-				# call count
-				if tk.type_of_call:
-					call_dict[type_of_call[tk.type_of_call]]+=1
-
-				# resolve calls
+			for tk in frappe.get_all('Task',tsk_fltr,['completed_by','"completion_date_time"','attended_date_time','status','completion_date_time','type_of_call','assign_date','issue']):
 				if tk.get("status") == 'Completed':
+
+					# resolve calls
 					resolved_call_cnt += 1
-					
+
+					for issue in frappe.get_all("Issue",{"name":tk.issue,'status':'Closed'}):
+
+						# call count
+						if tk.type_of_call:
+							call_dict[type_of_call[tk.type_of_call]]+=1
+
+						
 				# pending calls
 				if tk.get("status") in ['Open','Pending Review','Overdue','Working','Awaiting for Material']:
 					pending_calls_cnt += 1
@@ -77,11 +93,16 @@ def get_data(filters,type_of_call):
 				# cancelled calls
 				if tk.get("status") == 'Cancelled':
 					cancelled_call += 1
-
+			
+			for call in type_of_call:
+				productivity+=(call_dict[type_of_call[call]]*frappe.db.get_value("Type of Call",call,'waitage'))
+			
 			row.update({
 				'support_tech': usr.get("full_name"),
 				'resolved': resolved_call_cnt,
 				'pending_calls': pending_calls_cnt,
+				'productivity':productivity,
+				'avg_productivity':productivity/len(type_of_call)
 			})
 
 			row.update(call_dict)
