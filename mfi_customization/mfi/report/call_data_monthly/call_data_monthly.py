@@ -3,7 +3,7 @@
 
 from __future__ import unicode_literals
 import frappe
-from frappe.utils import date_diff, add_days, getdate
+from frappe.utils import date_diff, add_days, getdate, flt
 import datetime
 
 
@@ -47,6 +47,11 @@ def get_columns(filters,type_of_call):
 			"fieldname":"avg_productivity",
 			"fieldtype":"Data"	
 		},
+		{
+			"label":"Achivment",
+			"fieldname":"achivment",
+			"fieldtype":"Data"	
+		},
 		
 	])
 	return columns
@@ -79,11 +84,9 @@ def get_data(filters,type_of_call):
 					# resolve calls
 					resolved_call_cnt += 1
 
-					for issue in frappe.get_all("Issue",{"name":tk.issue,'status':'Closed'}):
-
-						# call count
-						if tk.type_of_call:
-							call_dict[type_of_call[tk.type_of_call]]+=1
+					# call count
+					if tk.type_of_call:
+						call_dict[type_of_call[tk.type_of_call]]+=1
 
 						
 				# pending calls
@@ -96,54 +99,17 @@ def get_data(filters,type_of_call):
 			
 			for call in type_of_call:
 				productivity+=(call_dict[type_of_call[call]]*frappe.db.get_value("Type of Call",call,'waitage'))
-			
+			achivment=flt(productivity/len(type_of_call), 2)/flt(frappe.db.get_value("Support Setting","Support Setting","achievement_factor"))
 			row.update({
 				'support_tech': usr.get("full_name"),
 				'resolved': resolved_call_cnt,
 				'pending_calls': pending_calls_cnt,
 				'productivity':productivity,
-				'avg_productivity':productivity/len(type_of_call)
+				'avg_productivity':flt(productivity/len(type_of_call), 2),
+				'achivment':str(flt(achivment*100,2))+"%"
 			})
 
 			row.update(call_dict)
 			data.append(row)
 		
 		return data
-
-
-def get_working_hrs(call_to,opening_date_time, attended_time, company):
-	holidays = frappe.db.sql("""select count(distinct holiday_date) from `tabHoliday` h1, `tabHoliday List` h2
-	where h1.parent = h2.name and h1.holiday_date between %s and %s
-	and h2.company = %s""", (opening_date_time, attended_time, company))[0][0]
-	total_hours=0
-	if holidays:
-		days = call_to.days - holidays
-	else:
-		days = call_to.days
-	hrs = call_to.seconds//3600
-	minutes = int(call_to.seconds % 3600 / 60.0)
-	daily_hrs_data = frappe.db.get_all("Support Hours", {'parent': 'Support Setting', 'company':company}, ['start_time', 'end_time'])
-	if daily_hrs_data:
-		daily_hrs = daily_hrs_data[0].get('end_time') - daily_hrs_data[0].get('start_time')  
-		daily_hrs = daily_hrs.seconds//3600
-		daily_hrs = daily_hrs if daily_hrs else 9
-		if days != 0 :
-			total_hours = (days * daily_hrs) + hrs
-		else:
-			total_hours = hrs
-	else:
-		frappe.msgprint("Please set start time and end time in Support Setting for '{0}'".format(company))
-	if minutes :
-		total_hours = float(str(total_hours)+"."+str(minutes))
-		return total_hours
-	else:
-		return total_hours
-
-
-def get_holiday_dates(company):
-	holidayList=[]
-	for hl in frappe.get_all("Holiday List",{"company":company}):
-		holidayDoc=frappe.get_doc('Holiday List',hl.name)
-		for d in holidayDoc.get('holidays'):
-			holidayList.append(d.holiday_date)
-	return holidayList

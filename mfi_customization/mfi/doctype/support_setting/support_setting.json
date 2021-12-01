@@ -5,7 +5,8 @@
  "engine": "InnoDB",
  "field_order": [
   "support_setting_details",
-  "support_hours"
+  "support_hours",
+  "achievement_factor"
  ],
  "fields": [
   {
@@ -19,10 +20,15 @@
    "fieldtype": "Table",
    "label": "Support Hours",
    "options": "Support Hours"
+  },
+  {
+   "fieldname": "achievement_factor",
+   "fieldtype": "Float",
+   "label": "Achievement Factor"
   }
  ],
  "issingle": 1,
- "modified": "2021-08-04 12:32:39.639605",
+ "modified": "2021-12-01 07:15:52.701476",
  "modified_by": "Administrator",
  "module": "mfi",
  "name": "Support Setting",
