@@ -59,11 +59,14 @@ def get_columns(filters,type_of_call):
 def get_data(filters,type_of_call):
 		data = []
 		tsk_fltr = {}
-	
+		no_of_working_days=0
 		if filters.get('from_date') and filters.get('to_date') :
+			day_diff=date_diff(getdate(filters.get('to_date')),getdate(filters.get('from_date')))
+			no_of_working_days=day_diff-get_no_of_holidays(filters.get('from_date'), filters.get('to_date'),filters.get("company"))
 			tsk_fltr.update({'assign_date':['between',(filters.get('from_date'),filters.get('to_date'))]})
 		if filters.get("company"):
 			tsk_fltr.update({'company':filters.get("company")})
+		
 		
 		for usr in frappe.get_all("User",["first_name","last_name","email","name","full_name"]):
 			row = {}
@@ -99,13 +102,13 @@ def get_data(filters,type_of_call):
 			
 			for call in type_of_call:
 				productivity+=(call_dict[type_of_call[call]]*frappe.db.get_value("Type of Call",call,'waitage'))
-			achivment=flt(productivity/len(type_of_call), 2)/flt(frappe.db.get_value("Support Setting","Support Setting","achievement_factor"))
+			achivment=flt(productivity/no_of_working_days, 2)/flt(frappe.db.get_value("Support Setting","Support Setting","achievement_factor"))
 			row.update({
 				'support_tech': usr.get("full_name"),
 				'resolved': resolved_call_cnt,
 				'pending_calls': pending_calls_cnt,
 				'productivity':productivity,
-				'avg_productivity':flt(productivity/len(type_of_call), 2),
+				'avg_productivity':flt(productivity/no_of_working_days, 2),
 				'achivment':str(flt(achivment*100,2))+"%"
 			})
 
@@ -113,3 +116,10 @@ def get_data(filters,type_of_call):
 			data.append(row)
 		
 		return data
+
+def get_no_of_holidays(from_date, to_date, company):
+	holidays = frappe.db.sql("""select count(distinct holiday_date) from `tabHoliday` h1, `tabHoliday List` h2
+	where h1.parent = h2.name and h1.holiday_date between %s and %s
+	and h2.company = %s""", (from_date, to_date, company))[0][0]
+	if holidays:
+		return holidays
