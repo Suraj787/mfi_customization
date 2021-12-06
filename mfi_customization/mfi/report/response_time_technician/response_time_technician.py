@@ -3,6 +3,8 @@
 
 from __future__ import unicode_literals
 import frappe
+from frappe.utils import  getdate,today,add_days,flt
+
 
 def execute(filters=None):
     columns = get_columns()
@@ -47,7 +49,13 @@ def get_columns(filters = None):
             "fieldtype":"Int" ,
             "width":80
 
-        }]
+        },
+        	{
+			"label":"Repetitive",
+			"fieldname":"repetitive",
+			"fieldtype":"Data"	
+		},
+        ]
 
 #calculate response_time_diff in hours with holiday validation - 05/08/21[Anuradha]
 def get_working_hrs(call_to, assign_date, attended_date_time, company):
@@ -100,6 +108,9 @@ def get_data(filters):
         month =[]
         mon_st =""
         fltr.update({'completed_by':ur.name})
+        repetitive=0
+        for ast in frappe.get_all("Asset",{"company":filters.get("company"),"name":["IN",get_asset_list(fltr)]},['name','customer','serial_no','item_code','project']):
+            repetitive+=get_count(ast.name,ast.item_code,filters)
         for tk in frappe.get_all("Task",fltr,['attended_date_time','assign_date','asset','completed_by', 'issue']):
             if tk.get('attended_date_time') and tk.get('assign_date'):
                 response_time_diff = (tk.get("attended_date_time") - tk.get('assign_date')) 
@@ -125,8 +136,31 @@ def get_data(filters):
             "lt4":lt4_count,
             "gt8":gt8_count,
             "gt48":gt48_count,
-            "asset_cnt":asset_cnt
+            "asset_cnt":asset_cnt,
+            'repetitive':repetitive
         })
         if len(frappe.get_all("Task",{'completed_by':ur.name})) > 0:
             data.append(row)
     return data
+
+
+def get_count(asset,item_code,filters):
+	count=0
+	records=frappe.get_all("Machine Reading",{"asset":asset,"reading_date":['between',(filters.get('from_date'),filters.get('to_date'))]},["colour_reading","black_and_white_reading"])
+	
+	for i,d in enumerate(records):
+		colour_diff=0
+		bw_diff=0
+		if i!=0:
+			colour_diff=flt(records[i-1].colour_reading)-flt(records[i].colour_reading)
+			bw_diff=flt(records[i-1].black_and_white_reading)-flt(records[i].black_and_white_reading)
+			if frappe.db.get_value("Item",item_code,'avg_duty_cycle')>colour_diff or frappe.db.get_value("Item",item_code,'avg_duty_cycle')>bw_diff:
+				count+=1
+
+	return count
+
+
+def get_asset_list(filters):
+	return [d.asset for d in frappe.get_all('Task',filters,['asset'])]
+
+    

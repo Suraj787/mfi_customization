@@ -52,6 +52,11 @@ def get_columns(filters,type_of_call):
 			"fieldname":"achivment",
 			"fieldtype":"Data"	
 		},
+		{
+			"label":"Repetitive",
+			"fieldname":"repetitive",
+			"fieldtype":"Data"	
+		},
 		
 	])
 	return columns
@@ -79,7 +84,10 @@ def get_data(filters,type_of_call):
 			for d in type_of_call:
 				call_dict[type_of_call[d]]=0
 				
-			tsk_fltr.update({'completed_by':usr.name})
+			tsk_fltr.update({'completed_by':usr.name,"asset":("!=","")})
+			repetitive=0
+			for ast in frappe.get_all("Asset",{"company":filters.get("company"),"name":["IN",get_asset_list(tsk_fltr)]},['name','customer','serial_no','item_code','project']):
+				repetitive+=get_count(ast.name,ast.item_code,filters)
 
 			for tk in frappe.get_all('Task',tsk_fltr,['completed_by','"completion_date_time"','attended_date_time','status','completion_date_time','type_of_call','assign_date','issue']):
 				if tk.get("status") == 'Completed':
@@ -109,7 +117,8 @@ def get_data(filters,type_of_call):
 				'pending_calls': pending_calls_cnt,
 				'productivity':productivity,
 				'avg_productivity':flt(productivity/no_of_working_days, 2),
-				'achivment':str(flt(achivment*100,2))+"%"
+				'achivment':str(flt(achivment*100,2))+"%",
+				'repetitive':repetitive
 			})
 
 			row.update(call_dict)
@@ -123,3 +132,24 @@ def get_no_of_holidays(from_date, to_date, company):
 	and h2.company = %s""", (from_date, to_date, company))[0][0]
 	if holidays:
 		return holidays
+
+def get_count(asset,item_code,filters):
+	count=0
+	records=frappe.get_all("Machine Reading",{"asset":asset,"reading_date":['between',(filters.get('from_date'),filters.get('to_date'))]},["colour_reading","black_and_white_reading"])
+	
+	for i,d in enumerate(records):
+		colour_diff=0
+		bw_diff=0
+		if i!=0:
+			colour_diff=flt(records[i-1].colour_reading)-flt(records[i].colour_reading)
+			bw_diff=flt(records[i-1].black_and_white_reading)-flt(records[i].black_and_white_reading)
+			if frappe.db.get_value("Item",item_code,'avg_duty_cycle')>colour_diff or frappe.db.get_value("Item",item_code,'avg_duty_cycle')>bw_diff:
+				count+=1
+
+	return count
+
+
+def get_asset_list(filters):
+	return [d.asset for d in frappe.get_all('Task',filters,['asset'])]
+
+
