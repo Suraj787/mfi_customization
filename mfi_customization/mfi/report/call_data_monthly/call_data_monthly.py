@@ -101,7 +101,7 @@ def get_data(filters,type_of_call):
 
 						
 				# pending calls
-				if tk.get("status") in ['Open','Pending Review','Overdue','Working','Awaiting for Material']:
+				if tk.get("status") in ['Open','Pending Review','Overdue','Working','Awaiting for Material','Open']:
 					pending_calls_cnt += 1
 
 				# cancelled calls
