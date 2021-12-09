@@ -74,55 +74,56 @@ def get_data(filters,type_of_call):
 		
 		
 		for usr in frappe.get_all("User",["first_name","last_name","email","name","full_name"]):
-			row = {}
-			call_dict={}
-			resolved_call_cnt=0
-			pending_calls_cnt=0
-			cancelled_call=0
-			productivity=0
+			for emp in frappe.get_all("Employee",{"user_id":usr.name},):
+				row = {}
+				call_dict={}
+				resolved_call_cnt=0
+				pending_calls_cnt=0
+				cancelled_call=0
+				productivity=0
 
-			for d in type_of_call:
-				call_dict[type_of_call[d]]=0
-				
-			tsk_fltr.update({'completed_by':usr.name,"asset":("!=","")})
-			repetitive=0
-			for ast in frappe.get_all("Asset",{"company":filters.get("company"),"name":["IN",get_asset_list(tsk_fltr)]},['name','customer','serial_no','item_code','project']):
-				repetitive+=get_count(ast.name,ast.item_code,filters)
+				for d in type_of_call:
+					call_dict[type_of_call[d]]=0
 
-			for tk in frappe.get_all('Task',tsk_fltr,['completed_by','"completion_date_time"','attended_date_time','status','completion_date_time','type_of_call','assign_date','issue']):
-				if tk.get("status") == 'Completed':
+				tsk_fltr.update({'completed_by':usr.name,"asset":("!=","")})
+				repetitive=0
+				for ast in frappe.get_all("Asset",{"company":filters.get("company"),"name":["IN",get_asset_list(tsk_fltr)]},['name','customer','serial_no','item_code','project']):
+					repetitive+=get_count(ast.name,ast.item_code,filters)
 
-					# resolve calls
-					resolved_call_cnt += 1
+				for tk in frappe.get_all('Task',tsk_fltr,['completed_by','"completion_date_time"','attended_date_time','status','completion_date_time','type_of_call','assign_date','issue']):
+					if tk.get("status") == 'Completed':
 
-					# call count
-					if tk.type_of_call:
-						call_dict[type_of_call[tk.type_of_call]]+=1
+						# resolve calls
+						resolved_call_cnt += 1
 
-						
-				# pending calls
-				if tk.get("status") in ['Open','Pending Review','Overdue','Working','Awaiting for Material','Open']:
-					pending_calls_cnt += 1
+						# call count
+						if tk.type_of_call:
+							call_dict[type_of_call[tk.type_of_call]]+=1
 
-				# cancelled calls
-				if tk.get("status") == 'Cancelled':
-					cancelled_call += 1
-			
-			for call in type_of_call:
-				productivity+=(call_dict[type_of_call[call]]*frappe.db.get_value("Type of Call",call,'waitage'))
-			achivment=flt(productivity/no_of_working_days, 2)/flt(frappe.db.get_value("Support Setting","Support Setting","achievement_factor"))
-			row.update({
-				'support_tech': usr.get("full_name"),
-				'resolved': resolved_call_cnt,
-				'pending_calls': pending_calls_cnt,
-				'productivity':productivity,
-				'avg_productivity':flt(productivity/no_of_working_days, 2),
-				'achivment':str(flt(achivment*100,2))+"%",
-				'repetitive':repetitive
-			})
 
-			row.update(call_dict)
-			data.append(row)
+					# pending calls
+					if tk.get("status") in ['Open','Pending Review','Overdue','Working','Awaiting for Material','Open']:
+						pending_calls_cnt += 1
+
+					# cancelled calls
+					if tk.get("status") == 'Cancelled':
+						cancelled_call += 1
+
+				for call in type_of_call:
+					productivity+=(call_dict[type_of_call[call]]*frappe.db.get_value("Type of Call",call,'waitage'))
+				achivment=flt(productivity/no_of_working_days, 2)/flt(frappe.db.get_value("Support Setting","Support Setting","achievement_factor"))
+				row.update({
+					'support_tech': usr.get("full_name"),
+					'resolved': resolved_call_cnt,
+					'pending_calls': pending_calls_cnt,
+					'productivity':productivity,
+					'avg_productivity':flt(productivity/no_of_working_days, 2),
+					'achivment':str(flt(achivment*100,2))+"%",
+					'repetitive':repetitive
+				})
+
+				row.update(call_dict)
+				data.append(row)
 		
 		return data
 
