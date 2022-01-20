@@ -3,7 +3,6 @@
 # For license information, please see license.txt
 
 from __future__ import unicode_literals
-from apps.mfi_customization.mfi_customization.mfi.patch.update_issue import set_location
 import frappe
 from frappe.utils.data import getdate,today
 from frappe.model.mapper import get_mapped_doc
