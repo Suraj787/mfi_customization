@@ -3,6 +3,7 @@
 # For license information, please see license.txt
 
 from __future__ import unicode_literals
+from apps.mfi_customization.mfi_customization.mfi.patch.update_issue import set_location
 import frappe
 from frappe.utils.data import getdate,today
 from frappe.model.mapper import get_mapped_doc
@@ -397,6 +398,7 @@ def validate_link_fileds(doc):
 		# validate_location(doc)
 		validate_asset(doc,issue)
 		validate_serial_no(doc,issue)
+		set_location(doc,issue)
 
 def validate_customer(doc,issue):
 	if doc.customer and issue.customer and doc.customer != issue.customer:
@@ -422,6 +424,10 @@ def validate_location(doc):
 	if doc.location and doc.location not in get_location_validation(doc.customer):
 		frappe.throw("Please Enter Valid Location")
 
+def set_location(doc,issue):
+	if doc.location and not issue.location:
+		frappe.db.set_value("Issue",{"name":issue.name},"location",doc.location)
+		
 @frappe.whitelist()
 def get_serial_no(customer,location,asset):
 	fltr1 = {}
