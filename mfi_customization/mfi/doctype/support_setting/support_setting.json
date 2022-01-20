@@ -28,7 +28,7 @@
   }
  ],
  "issingle": 1,
- "modified": "2021-12-01 07:15:52.701476",
+ "modified": "2021-12-06 13:47:20.090158",
  "modified_by": "Administrator",
  "module": "mfi",
  "name": "Support Setting",
@@ -41,6 +41,16 @@
    "print": 1,
    "read": 1,
    "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Morocco Technical head",
    "share": 1,
    "write": 1
   }
