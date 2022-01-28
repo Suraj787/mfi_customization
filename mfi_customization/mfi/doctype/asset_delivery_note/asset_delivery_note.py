@@ -4,7 +4,7 @@
 import frappe,json
 from frappe.model.delete_doc import delete_doc
 from frappe.model.document import Document
-from frappe.utils import today
+from frappe.utils import today,comma_and
 from mfi_customization.mfi.doctype.issue import validate
 
 class AssetDeliveryNote(Document):
@@ -15,11 +15,16 @@ class AssetDeliveryNote(Document):
 	# 	create_stock_entry(self)
 	# 	create_assets(self)
 	def on_submit(self):
+		self.validate_if_asset_not_exist()
 		create_stock_entry(self)
 	def on_cancel(self):
 		delete_or_cancel_asset_and_asset_installation_note(self)
 		delete_stock_entry_and_journal_entry(self)
 
+	def validate_if_asset_not_exist(self):
+		if len(frappe.get_all("Asset",{"asset_delivery_note":self.name}))==0:
+			frappe.throw("Please Create Asset Before Submit")
+			
 def validation(doc):
 	for am in doc.get('asset_models'):
 		count=0
@@ -93,6 +98,7 @@ def create_stock_entry(doc):
 def create_assets(doc):
 	doc=json.loads(doc)
 	# if len(frappe.get_all("Asset",{"asset_delivery_note":doc.name}))==0:
+	records=[]
 	for i,d in enumerate(doc.get("model_serial_nos")):
 		# frappe.publish_realtime('update_progress',{"progress": [i, len(doc.get("model_serial_nos"))]}, user=frappe.session.user)
 		# frappe.publish_progress(i / len(doc.get("model_serial_nos"))* 100, title=("Updating Assets..."))
@@ -122,6 +128,9 @@ def create_assets(doc):
 		asset_installation_note.asset_serial_no=asset.serial_no
 		asset_installation_note.asset_delivery_note=doc.get("name")
 		asset_installation_note.save()
+		records.append(asset_installation_note.name)
+	if records:
+		frappe.msgprint("Asset Records Created <b>{0}</b>".format(comma_and(records)))
 
 
 
