@@ -124,6 +124,7 @@ def create_po(doc):
 						row[key]=itm.get(key)
 					row["warehouse"]=doc.get("set_warehouse")
 					row["price_list_rate"]=itm.get("item_purchase_rate")
+					row["rate"]=itm.get("item_purchase_rate")
 					po.append("items",row)
 
 				po.save()
