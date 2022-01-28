@@ -97,9 +97,9 @@ def create_po(doc):
 		for itm in doc.get("items"):
 			rows=[]
 			for itm2 in doc.get("items"):
-				if itm.price_list==itm2.price_list and itm.price_list not in duplicate:
+				if itm.buying_price_list==itm2.buying_price_list and itm.buying_price_list not in duplicate:
 					rows.append(itm2)
-			duplicate.append(itm.price_list)
+			duplicate.append(itm.buying_price_list)
 			items.append(rows)
 			
 		for i in items:
@@ -114,9 +114,9 @@ def create_po(doc):
 					po.ship_to=row.ship_to
 					po.address=row.address
 					po.address_detail=get_address_display({"address_dict": row.address})
-					po.currency=frappe.db.get_value("Price List",row.price_list,"currency")
-					po.buying_price_list=row.price_list
-					for sup in frappe.get_all("Price List Supplier",{"parent":row.price_list,"company":doc.company},["supplier"]):
+					po.currency=frappe.db.get_value("Price List",row.buying_price_list,"currency")
+					po.buying_price_list=row.buying_price_list
+					for sup in frappe.get_all("Price List Supplier",{"parent":row.buying_price_list,"company":doc.company},["supplier"]):
 						po.supplier=sup.supplier
 				for itm in i:
 					row={}
