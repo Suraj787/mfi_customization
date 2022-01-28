@@ -124,12 +124,12 @@ frappe.ui.form.on('Sales Order', {
 				query: 'mfi_customization.mfi.doctype.sales_order.get_customer_by_price_list',
                 filters:
 					{
-						'price_list': child.price_list
+						'price_list': child.buying_price_list
 					}
                 
             }
         }
-		frm.fields_dict['items'].grid.get_field('price_list').get_query = function(doc, cdt, cdn) {
+		frm.fields_dict['items'].grid.get_field('buying_price_list').get_query = function(doc, cdt, cdn) {
             return {    
                 filters:
 					{
@@ -141,9 +141,9 @@ frappe.ui.form.on('Sales Order', {
 	}
 });
 
-frappe.ui.form.on('Sales Order Item','price_list',function(frm,cdt,cdn){
+frappe.ui.form.on('Sales Order Item','buying_price_list',function(frm,cdt,cdn){
 	var d = locals[cdt][cdn];
-	frappe.db.get_value('Item Price',{'item_code':d.item_code,"price_list":d.price_list},['price_list_rate'],(val) =>{
+	frappe.db.get_value('Item Price',{'item_code':d.item_code,"price_list":d.buying_price_list},['price_list_rate'],(val) =>{
 		d.item_purchase_rate=val.price_list_rate||0
 		refresh_field("item_purchase_rate", d.name, d.parentfield);
 	})
@@ -151,8 +151,8 @@ frappe.ui.form.on('Sales Order Item','price_list',function(frm,cdt,cdn){
 
 frappe.ui.form.on('Sales Order Item','ship_to',function(frm,cdt,cdn){
 	var d = locals[cdt][cdn];
-	if (d.ship_to && d.price_list){
-		frappe.db.get_doc("Price List", d.price_list).then(( pr ) => {
+	if (d.ship_to && d.buying_price_list){
+		frappe.db.get_doc("Price List", d.buying_price_list).then(( pr ) => {
 			(pr.countries).forEach((  pr_row ) => {
 				if (pr_row.customer==d.ship_to){
 					d.address=pr_row.address
@@ -168,7 +168,7 @@ frappe.ui.form.on('Sales Order Item','purchase_detail',function(frm,cdt,cdn){
 	var dialog = new frappe.ui.Dialog({
 		title: __("Add Purchase Details"),
 		fields: [
-			{fieldtype: "Link", fieldname: "price_list", label:"Price List", options:"Price List", default: child.price_list, get_query:function(){
+			{fieldtype: "Link", fieldname: "price_list", label:"Price List", options:"Price List", default: child.buying_price_list, get_query:function(){
 				return {    
 					filters:
 						{
@@ -183,7 +183,7 @@ frappe.ui.form.on('Sales Order Item','purchase_detail',function(frm,cdt,cdn){
 							dialog.set_value("rate",val.price_list_rate||0)
 
 							if (!child.currency){
-								dialog.set_value("currency",val.currency)
+								dialog.set_value("purchase_currency",val.currency)
 							}
 							
 							child.item_purchase_rate=child.item_purchase_rate>0?child.item_purchase_rate:(val.price_list_rate||0)
@@ -196,7 +196,7 @@ frappe.ui.form.on('Sales Order Item','purchase_detail',function(frm,cdt,cdn){
 					}
 				}
 			},
-			{fieldtype: "Link", fieldname: "currency", label:"Currency",read_only:1,default: child.currency},
+			{fieldtype: "Link", fieldname: "currency", label:"Currency",read_only:1,default: child.purchase_currency,hidden:1},
 			{fieldtype: "Float", fieldname: "rate", label:"Rate",read_only:1,default: child.item_purchase_rate},
 			{fieldtype: "Link", fieldname: "ship_to", label:"Ship To", options:"Customer", default: child.ship_to, get_query:function(){
 				return {    
@@ -210,13 +210,13 @@ frappe.ui.form.on('Sales Order Item','purchase_detail',function(frm,cdt,cdn){
 			},
 		],
 		primary_action: function() {
-			child.price_list=dialog.get_value("price_list")
+			child.buying_price_list=dialog.get_value("price_list")
 			child.ship_to=dialog.get_value("ship_to")
-			child.currency=dialog.get_value("currency")
+			child.purchase_currency=dialog.get_value("currency")
 			dialog.hide();
 
-			if (child.price_list && child.ship_to){
-				frappe.db.get_doc("Price List", child.price_list).then(( pr ) => {
+			if (child.buying_price_list && child.ship_to){
+				frappe.db.get_doc("Price List", child.buying_price_list).then(( pr ) => {
 					(pr.countries).forEach((  pr_row ) => {
 						if (pr_row.customer==child.ship_to){
 							child.address=pr_row.address
@@ -226,9 +226,9 @@ frappe.ui.form.on('Sales Order Item','purchase_detail',function(frm,cdt,cdn){
 				});
 			}
 
-			refresh_field("price_list", child.name, child.parentfield);
+			refresh_field("buying_price_list", child.name, child.parentfield);
 			refresh_field("ship_to", child.name, child.parentfield);
-			refresh_field("currency", child.name, child.parentfield);
+			refresh_field("purchase_currency", child.name, child.parentfield);
 		},
 		primary_action_label: __('Add')
 	});
