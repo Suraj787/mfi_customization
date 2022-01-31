@@ -22,7 +22,19 @@ frappe.query_reports["Response Time Client"] = {
 				"options":"Company"	,
 				"reqd": 1
 
-			}
+			},{
+				"fieldname": "from_date",
+				"label": __("Assign Date From"),
+				"fieldtype": "Date",
+				"default": frappe.datetime.add_days(frappe.datetime.get_today(), -90),
+				"reqd": 1
+			},{
+				"fieldname": "to_date",
+				"label": __("Assign Date To"),
+				"default": frappe.datetime.get_today(),
+				"fieldtype": "Date",
+				"reqd": 1
+			},
 
 	]
 };
