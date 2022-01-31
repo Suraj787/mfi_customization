@@ -3,13 +3,15 @@
 /* eslint-disable */
 
 frappe.query_reports["Response Time Client"] = {
-	"filters": [{
-				"label":"Response Time (hours)",
-				"fieldname":"response_time",
-				"fieldtype":"Select",
-				"options":"\n>1\n<1\n>2\n<2\n>4\n<4\n>8\n>48"	
+	"filters": [
+// 		{
+// 				"label":"Response Time (hours)",
+// 				"fieldname":"response_time",
+// 				"fieldtype":"Select",
+// 				"options":"\n>1\n<1\n>2\n<2\n>4\n<4\n>8\n>48"	
 
-			},{
+// 			},
+		{
 				"label":"Customer Name",
 				"fieldname":"client_name",
 				"fieldtype":"Link",
