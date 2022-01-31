@@ -10,6 +10,12 @@ import	 datetime
 def execute(filters=None):
 	columns = get_columns()
 	data  = get_data(filters)
+	for c in [">1","<1",">2","<2",">4","<4",">8",">48"]:
+		columns.extend([{
+			"label":c,
+			"fieldname":c,
+			"fieldtype":"Data"
+		}])
 	return columns, data
 
 def get_columns(filters = None):
@@ -125,16 +131,8 @@ def get_working_hrs(call_to, creation, completion_date_time, company):
 def get_data(filters):
 	data = []
 	call_assign_date = ""
-	fltr = ""
-	lgc_value = ""
-	digit = 0
 	fltr2 = {}
 	row ={}
-
-	if filters.get("response_time"):
-		fltr = filters.get("response_time")
-		lgc_value = fltr[0]
-		digit = fltr[1:]
 	
 		
 	if filters.get("client_name"):
@@ -144,7 +142,7 @@ def get_data(filters):
 
 	for i in frappe.get_all('Issue',fltr2,['name','company','failure_date_and_time','response_date_time','resolution_date','customer','asset','serial_no','issue_type','name_of_the_customer']):
 		
-		for tk in frappe.db.get_all('Task',{'issue':i.get("name")},['completion_date_time','issue','name','creation','assign_date','attended_date_time','completed_by']):
+		for tk in frappe.db.get_all('Task',{'issue':i.get("name"),'creation':['between',(filters.get('from_date'),filters.get('to_date'))]},['completion_date_time','issue','name','creation','assign_date','attended_date_time','completed_by']):
 			resolution_date =""
 			attended_date= ""
 			call_to_fix =""
@@ -195,14 +193,15 @@ def get_data(filters):
 				'call_to_fix':call_to_fix,
 				'call_resolution_time':call_resolution_time
 						}
-			if lgc_value == '>' and  int(digit) <= response_time_int_value:
-				data.append(row)
-			elif lgc_value == '<' and  int(digit) >= response_time_int_value and response_time_int_value >= 0  and call_resolution_time:
-				data.append(row)
-
-			#if no condition filter is applied
-			elif lgc_value == '' and response_time_int_value >= 0 and call_resolution_time:
-				data.append(row)
 			
+			for cmp in [">1","<1",">2","<2",">4","<4",">8",">48"]:
+				lgc_value = cmp[0]
+				digit = cmp[1:]
+				if lgc_value == '>' and  int(digit) <= response_time_int_value:
+					row[cmp]=1
+				elif lgc_value == '<' and  int(digit) >= response_time_int_value and response_time_int_value >= 0  and call_resolution_time:
+					row[cmp]=1
+			data.append(row)
+		
 
 	return data
