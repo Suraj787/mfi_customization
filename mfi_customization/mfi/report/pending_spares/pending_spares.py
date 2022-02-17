@@ -51,7 +51,7 @@ def get_column(filters = None):
 ]
 def get_data(filters):
 	data = []
-	fltr = {}
+	fltr = {"type_of_call":"CM"}
 	if filters.get("client_name"):
 		fltr.update({"customer":filters.get("client_name")})
 	if filters.get("company_name"):
@@ -61,7 +61,7 @@ def get_data(filters):
 		if not issue.failure_date_and_time == None:
 			call_date = issue.failure_date_and_time.strftime("%d-%m-%Y")
 		
-		for tk in frappe.get_all('Task',{'issue':issue.get('name')},['name']):
+		for tk in frappe.get_all('Task',{'issue':issue.get('name'),"type_of_call":"CM"},['name']):
 			s = ""
 			for rs in frappe.get_all('Repair Items',{'parent':tk.get('name')},['item']):
 				if not s:

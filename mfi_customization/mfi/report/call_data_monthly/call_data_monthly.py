@@ -85,7 +85,7 @@ def get_data(filters,type_of_call):
 				for d in type_of_call:
 					call_dict[type_of_call[d]]=0
 
-				tsk_fltr.update({'completed_by':usr.name,"asset":("!=","")})
+				tsk_fltr.update({'completed_by':usr.name,"asset":("!=",""),"type_of_call":"CM"})
 				repetitive=0
 				for ast in frappe.get_all("Asset",{"company":filters.get("company"),"name":["IN",get_asset_list(tsk_fltr)]},['name','customer','serial_no','item_code','project']):
 					repetitive+=get_count(ast.name,ast.item_code,filters)
@@ -133,6 +133,7 @@ def get_no_of_holidays(from_date, to_date, company):
 	and h2.company = %s""", (from_date, to_date, company))[0][0]
 	if holidays:
 		return holidays
+	return 0
 
 def get_count(asset,item_code,filters):
 	count=0

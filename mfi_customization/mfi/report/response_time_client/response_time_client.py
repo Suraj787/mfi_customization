@@ -131,7 +131,7 @@ def get_working_hrs(call_to, creation, completion_date_time, company):
 def get_data(filters):
 	data = []
 	call_assign_date = ""
-	fltr2 = {}
+	fltr2 = {"type_of_call":"CM"}
 	row ={}
 	
 		
@@ -142,7 +142,7 @@ def get_data(filters):
 
 	for i in frappe.get_all('Issue',fltr2,['name','company','failure_date_and_time','response_date_time','resolution_date','customer','asset','serial_no','issue_type','name_of_the_customer']):
 		
-		for tk in frappe.db.get_all('Task',{'issue':i.get("name"),'creation':['between',(filters.get('from_date'),filters.get('to_date'))]},['completion_date_time','issue','name','creation','assign_date','attended_date_time','completed_by']):
+		for tk in frappe.db.get_all('Task',{"type_of_call":"CM",'issue':i.get("name"),'creation':['between',(filters.get('from_date'),filters.get('to_date'))]},['completion_date_time','issue','name','creation','assign_date','attended_date_time','completed_by']):
 			resolution_date =""
 			attended_date= ""
 			call_to_fix =""

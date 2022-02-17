@@ -112,7 +112,7 @@ def prepare_data(filters):
 	# 	for a in frappe.get_all('Asset Readings',filters={'parent':t.name,'asset':t.asset},fields=['reading','reading_2']):
 	# 		row.update({'counter_bw':a.reading or '-','counter_color':a.reading_2 or '-','total_counter':int(a.reading or 0)+ int(a.reading_2 or 0)})
 	# 	data.append(row)
-	fltr={}
+	fltr={"type_of_call":"CM"}
 	if filters.get("company"):
 		fltr.update({"company":filters.get("company")})
 	for i in frappe.get_all('Issue',filters=fltr,fields=['name','status','description','asset','project','location','serial_no','issue_type']):
@@ -124,7 +124,7 @@ def prepare_data(filters):
 			# row.update({'sr_no':frappe.db.get_value('Asset',i.asset,'serial_no')})
 		if i.project:
 			row.update({'manager':frappe.db.get_value('Project',i.project,'manager_name')})
-		for t in frappe.get_all('Task',filters={'issue':i.name},fields=['name','issue','completed_by','asset','location','issue_type','project']):
+		for t in frappe.get_all('Task',filters={'issue':i.name,"type_of_call":"CM"},fields=['name','issue','completed_by','asset','location','issue_type','project']):
 			row.update({"call_assigned":t.completed_by})
 			for a in frappe.get_all('Asset Readings',filters={'parent':t.name,'asset':t.asset},fields=['reading','reading_2','type']):
 				row.update({'counter_bw':a.reading or '-','model':a.type,'counter_color':a.reading_2 or '-','total_counter':int(a.reading or 0)+ int(a.reading_2 or 0)})
