@@ -4,13 +4,13 @@
 
 frappe.query_reports["Response Time Technician"] = {
 	"filters": [
-		{
-			"label":"Technician Name",
-			"fieldname":"techn_name",
-			"fieldtype":"Link",
-			"options":"User"	
+		// {
+		// 	"label":"Technician Name",
+		// 	"fieldname":"techn_name",
+		// 	"fieldtype":"Link",
+		// 	"options":"User"	
 
-		},
+		// },
 		{
 			"fieldname": "from_date",
 			"label": __("Assign Date From"),

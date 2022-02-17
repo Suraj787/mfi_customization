@@ -91,13 +91,13 @@ def get_columns(filters=None):
 
 def prepare_data(filters):
 	data=[]
-	fltr={}
+	fltr={"type_of_call":"CM"}
 	if filters.get("company"):
 		fltr.update({"company":filters.get("company")})
 
 	for i in frappe.get_all('Issue',filters=fltr,fields=["name","status","issue_type","description","failure_date_and_time","opening_date_time","first_responded_on","resolution_date","company","closing_date_time","assign_to","name_of_the_customer"]):
-		attended_time=frappe.db.get_value("Task",{"issue":i.name},"attended_date_time")
-		i.update({"technician":frappe.db.get_value("User",frappe.db.get_value("Task",{"issue":i.name},"completed_by"),"full_name")})
+		attended_time=frappe.db.get_value("Task",{"issue":i.name,"type_of_call":"CM"},"attended_date_time")
+		i.update({"technician":frappe.db.get_value("User",frappe.db.get_value("Task",{"issue":i.name,"type_of_call":"CM"},"completed_by"),"full_name")})
 		i.update({"customer_name":i.name_of_the_customer})
 		if i.closing_date_time:
 			i.update({

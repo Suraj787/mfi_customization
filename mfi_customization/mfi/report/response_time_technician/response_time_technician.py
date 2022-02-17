@@ -15,7 +15,8 @@ def get_columns(filters = None):
             {
             "label":"Month",
             "fieldname":"month",
-            "fieldtype":"Data"  
+            "fieldtype":"Data" ,
+            "width":110 
 
         },{
             "label":"Technician Name",
@@ -107,7 +108,7 @@ def get_data(filters):
         gt48_count=0
         month =[]
         mon_st =""
-        fltr.update({'completed_by':ur.name})
+        fltr.update({'completed_by':ur.name,"type_of_call":"CM"})
         repetitive=0
         for ast in frappe.get_all("Asset",{"company":filters.get("company"),"name":["IN",get_asset_list(fltr)]},['name','customer','serial_no','item_code','project']):
             repetitive+=get_count(ast.name,ast.item_code,filters)
@@ -128,7 +129,7 @@ def get_data(filters):
                 month.append(tk.get("assign_date").strftime("%B"))
         for i in set(month):
             mon_st += "{0},".format(i)  
-        asset_cnt = len(frappe.get_all("Task",{'completed_by':ur.name,"company":fltr.get('company'),"status":("!=","Cancelled"),'assign_date':['between',(filters.get('from_date'),filters.get('to_date'))]}))      
+        asset_cnt = len(frappe.get_all("Task",{"type_of_call":"CM",'completed_by':ur.name,"company":fltr.get('company'),"status":("!=","Cancelled"),'assign_date':['between',(filters.get('from_date'),filters.get('to_date'))]}))      
         mon_st = mon_st.rstrip(',')
         row.update({
             "month":mon_st,
