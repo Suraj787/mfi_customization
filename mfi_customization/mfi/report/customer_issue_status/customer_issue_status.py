@@ -118,9 +118,7 @@ def prepare_data(filters):
 			row.update({"call_assigned":t.completed_by})
 			for a in frappe.get_all('Asset Readings',filters={'parent':t.name,'asset':t.asset},fields=['reading','reading_2','type']):
 				row.update({'counter_bw':a.reading or '-','model':a.type,'counter_color':a.reading_2 or '-','total_counter':int(a.reading or 0)+ int(a.reading_2 or 0)})
-		data.append(row)
-		
-		
+		data.append(row)	
 	return data
 
 

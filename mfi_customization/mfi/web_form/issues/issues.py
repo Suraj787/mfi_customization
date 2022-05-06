@@ -22,22 +22,10 @@ def get_logged_user():
         "email":user.email
     }
 	
-	
-#@frappe.whitelist()		
-#def get_location(Customer_Name):
-#    lck=[]
-#    A= frappe.db.get_all("Project", filters={"project_name":Customer_Name},fields={"name"})
-#    Project_Name = A[0]["name"]
-#    Location =frappe.db.get_all("Asset",filters={"project":Project_Name},fields={"location"})
-#    for I in Location:
-#        lck.append(I.location)
-#    return lck    
-	
 
 @frappe.whitelist()		
 def get_location(CustomerID):
     location_list=[]
-    
     project_list = [p.name for p in frappe.db.get_list("Project", filters={"customer":CustomerID},fields={"name"})]
     print("project_list",project_list)
     for p in project_list:
@@ -45,52 +33,12 @@ def get_location(CustomerID):
         [location_list.append(Location) for Location in location if Location not in location_list]
     return location_list   
         
-        
-      
-
-
 	
 @frappe.whitelist()		
 def get_Customer_name(customer):
     A=frappe.db.get_all("Customer", filters={"name":customer},fields ={"customer_name"})
     Full_Name=A[0]["customer_name"]
     return Full_Name
-
-
-#@frappe.whitelist()
-#def get_Asset(Customer,Location):
-    #print(Location)
-    #print(f"{Location}")
-#    GetCompany=[]
-#    OnBasisCompanyNcustomer=[]
-#    Final_OnBasisCompanyNcustomer = []
-#    cpny_and_locn1=[]
-#    A= frappe.db.get_all("Project", filters={"project_name":Customer},fields={"name"})
-#    Project_Name = A[0]["name"]
-#    company =frappe.db.get_all("Asset",filters={"project":Project_Name},fields={"company"})
-    #Location =frappe.db.get_all("Asset",filters={"project":Project_Name},fields={"location"})
-#    [GetCompany.append(value3) for value3 in company]
-#    for I in GetCompany:
-        #Getcompany =frappe.db.get_all("Asset",filters={"project":Project_Name},fields={"company"})
-        #GetCompany.append(I.company)
-        #print(I.company)
-#        company_customer =frappe.db.get_all("Asset",filters={"company":I["company"],"project":Project_Name},fields={"name"})
-#        [OnBasisCompanyNcustomer.append(value) for value in company_customer if value not in OnBasisCompanyNcustomer ]
-       
-#        cpny_and_locn=frappe.db.get_all("Asset",filters={"company":I["company"],"project":Project_Name,              "location":Location},fields={"name"})
-#        print(cpny_and_locn)
-#        [cpny_and_locn1.append(value1) for value1 in cpny_and_locn if value1 not in cpny_and_locn1 ]
-
-#    return Project_Name,GetCompany,OnBasisCompanyNcustomer,cpny_and_locn1
-
-    	
-  
-  
-  
-
-
-
-
 
 
 
@@ -110,39 +58,9 @@ def get_Asset(CustomerID,Location):
             cpny_and_locn=frappe.db.get_all("Asset",filters={"company":I["company"],"project":p,              "location":Location},fields={"name"})
             print(cpny_and_locn)
             [cpny_and_locn1.append(value1) for value1 in cpny_and_locn if value1 not in cpny_and_locn1 ]
-    
     return project_list,GetCompany,OnBasisCompanyNcustomer,cpny_and_locn1
 
-
-
-
-
-  
-  
-  
-  
-  
-    	
-    	
-#@frappe.whitelist()   	
-#def get_serialNo(Customer,Location):
-#    ByCustomer_Location =[]
-#    ByCustomer =[]
-#    A= frappe.db.get_all("Project", filters={"project_name":Customer},fields={"name"})
-#    Project_Name = A[0]["name"]
-#    locn_cust=frappe.db.get_all("Asset",filters={"project":Project_Name,"location":Location},fields={"serial_no"})
-#   [ByCustomer_Location.append(I) for I in locn_cust if I not in ByCustomer_Location]
-#    ByCustomerFilter= frappe.db.get_all("Asset",filters={"project":Project_Name},fields={"serial_no"})
-#    [ByCustomer.append(J) for J  in ByCustomerFilter if J not in ByCustomer]
-#    return ByCustomer_Location,ByCustomer
-    
-    
-      
-      
-     
-     
-     
-    	
+   	
 @frappe.whitelist()   	
 def get_serialNo(CustomerID,Location):
     ByCustomer_Location =[]

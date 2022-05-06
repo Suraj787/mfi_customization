@@ -146,7 +146,6 @@ setup:function(frm){
     // });
     
     
-      
     frm.set_query("location", function() {
 	return {
 	query: 'mfi_customization.mfi.doctype.task.Get_Location',

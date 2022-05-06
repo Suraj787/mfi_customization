@@ -39,10 +39,7 @@ function CustomerDefault(){
 
  A = frappe.db.get_value("Customer",{"customer_name":frappe.user_info().fullname},["name"])
  .then(({ message }) => {
-       //console.log(message.name)
          value.push(message.name)
-           
-         
         
 })
     

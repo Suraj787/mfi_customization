@@ -459,9 +459,6 @@ def Get_Location(doctype, txt, searchfield, start, page_len, filters):
     return location_list    
    
 
-
-
-
 def get_location_validation(customer):
 	lst = []
 	for i in frappe.get_all('Project',{"customer":customer},['name']):

@@ -9,7 +9,7 @@ frappe.ui.form.on('Issue', {
 			},
 			callback: function(r) {
 			
-			          //console.log(r)
+			         
 					frm.set_value("customer",r.message[0].name);				
 				}
 	
@@ -154,17 +154,6 @@ frappe.ui.form.on('Issue', {
 				frm.set_value('company',message.company);
 			});    
 		}
-		      /*
-			if (frm.doc.location){
-		frappe.db.get_value('Asset',{'project':frm.doc.project,'docstatus':1},['location'])
-		.then(({ message }) => {
-			frm.set_value('lacation',message.location);
-		});  
-		
-	}
-		*/
-		
-		
 		
 	},
 	setup:function(frm){

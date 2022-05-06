@@ -3,8 +3,6 @@ frappe.ready(function() {
 
 
 frappe.web_form.after_load = () =>{
-
-//frappe.web_form.set_df_property('name_of_the_customer', 'hidden', "undefined"); 
 	    
 frappe.call({
 
@@ -15,7 +13,6 @@ method: 'mfi_customization.mfi.web_form.issues.issues.get_logged_user',
     
     callback: function(r) {
         
-        //console.log(r.message[0].name)
        frappe.web_form.set_value("customer",r.message[0].name)
 
         
@@ -35,17 +32,12 @@ frappe.web_form.on('customer', () => {
     },
     async: true,
     callback: function(r) {
-        
-        //console.log(r)
       frappe.web_form.set_value("name_of_the_customer",r.message)
-        //frm.set_value('set_warehouse',r.message.warehouse)
-        
         
     }
 });
 
 })
-
 
 frappe.web_form.on('name_of_the_customer', () => {
 
@@ -55,31 +47,22 @@ SerianNo()
 })
 
 frappe.web_form.on('location', () => {
-
-
 Asset()
 SerianNo()
 })
 
-
 frappe.web_form.on('asset', () => {
 
 location()
-//Asset()
-//SerianNo()
 Get_Location_SerialNoBy_Asset()
 })
 
 frappe.web_form.on('serial_no', () => {
 
 location()
-//Asset()
-//SerianNo()
 Get_Location_AssetBySeriaNo()
 
 })
-
-
 
 function location(){
 		frappe.call({
@@ -90,22 +73,8 @@ function location(){
       
     callback: function(r) {
         var options =[]
-        //var p=r.message
-        //console.log(r.message)
-        /*
-        for (let i = 0; i < r.message.length; i++) {
-          
-         options.push({
-         'label':r.message[i],
-         'value':r.message[i]
-         
-         });
-   
-        }
-        */
         
         for (const [key,value] of Object.entries(r.message)) {
-         //console.log("k",value.location)
             
          options.push({
          'label':value.location,
@@ -115,7 +84,7 @@ function location(){
    
    
         }
-       // console.log("options",options)
+
         var field = frappe.web_form.get_field("location")
          field._data = options;
          field.refresh();
@@ -129,8 +98,6 @@ function location(){
 }
 
 function Asset(){
-
-//frappe.web_form.on('asset', (field, value) => {
 
 		frappe.call({
     method: 'mfi_customization.mfi.web_form.issues.issues.get_Asset',
@@ -173,9 +140,6 @@ function Asset(){
    
         }
         
-        
-        
-        
         }
         
 
@@ -197,22 +161,14 @@ function Asset(){
          field.refresh();
         
         
-        
-        
-        
     }
 });
 
 
-
-
-
-//})
-
 }
 
 function SerianNo(){
-//frappe.web_form.on('serial_no', () => {
+
 		frappe.call({
     method: 'mfi_customization.mfi.web_form.issues.issues.get_serialNo',
     args: {
@@ -222,11 +178,9 @@ function SerianNo(){
   
     callback: function(r) {
         var options =[]
-        //console.log(r)
         if(frappe.web_form.get_value("location")==""){
             
          for (const [key,value] of Object.entries(r.message[0])) {
-         //console.log("k",value.serial_no)
             
          options.push({
          'label':value.serial_no,
@@ -244,7 +198,6 @@ function SerianNo(){
         if(frappe.web_form.get_value("location")!=""){
           
          for (const [key,value] of Object.entries(r.message[0])) {
-         //console.log("k",value.serial_no)
             
          options.push({
          'label':value.serial_no,
@@ -262,7 +215,7 @@ function SerianNo(){
         
         
          for (const [key,value] of Object.entries(r.message[1])) {
-        // console.log("k",value.serial_no)
+
             
          options.push({
          'label':value.serial_no,
@@ -283,9 +236,6 @@ function SerianNo(){
         
     }
 });
-
-//})
-
 
 }
 
@@ -325,11 +275,6 @@ function Get_Location_SerialNoBy_Asset(){
 
 }
 
-
-
-
-
-
 function Get_Location_AssetBySeriaNo(){
         frappe.call({
             method: 'mfi_customization.mfi.web_form.issues.issues.Get_Location_AssetBySeriaNo',
@@ -349,8 +294,6 @@ function Get_Location_AssetBySeriaNo(){
         
            frappe.web_form.set_value("location",Location2)
            frappe.web_form.set_value("asset",Asset2)
-           //frappe.web_form.set_value("asset_name",AssetName2)
-            console.log("serial trigger")
         }
         
         
@@ -359,16 +302,6 @@ function Get_Location_AssetBySeriaNo(){
         
         
         });
-
-
-
-}
-
-
-
-
-
-
 
 
 
