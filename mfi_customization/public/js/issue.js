@@ -1,7 +1,24 @@
 frappe.ui.form.on('Issue', {
 	onload:function(frm){
 		cur_frm.dashboard.hide()
+		
+			frappe.call({
+			method: "mfi_customization.mfi.doctype.issue.get_logged_user",
+			args: {
+			
+			},
+			callback: function(r) {
+			
+			          //console.log(r)
+					frm.set_value("customer",r.message[0].name);				
+				}
+	
+			
+	});
+		
+		
 	},
+	
 	before_save:function(frm){
 		if(!frm.doc.first_responded_on && frm.doc.status == 'Closed'){
 			frappe.throw("Status Cannot be Closed before working")
@@ -71,11 +88,12 @@ frappe.ui.form.on('Issue', {
 
 	asset:function(frm){
 		if (frm.doc.asset){
-		frappe.db.get_value('Asset',{'name':frm.doc.asset,'docstatus':1},['asset_name','company','serial_no'])
+		frappe.db.get_value('Asset',{'name':frm.doc.asset,'docstatus':1},['asset_name','company','serial_no','location'])
 		.then(({ message }) => {
 			frm.set_value('asset_name',message.asset_name);
 			frm.set_value('company',message.company);
 			frm.set_value('serial_no',message.serial_no);
+			frm.set_value('location',message.location);
 		});  
 		
 	} 
@@ -129,13 +147,25 @@ frappe.ui.form.on('Issue', {
 				frm.set_df_property('serial_no','read_only',0);
 			}
 	},
-	location:function(frm){
+	location:function(frm){        
 		if (frm.doc.location){
 			frappe.db.get_value('Location',{'name':frm.doc.location},['company'])
 			.then(({ message }) => {
 				frm.set_value('company',message.company);
 			});    
-		} 
+		}
+		      /*
+			if (frm.doc.location){
+		frappe.db.get_value('Asset',{'project':frm.doc.project,'docstatus':1},['location'])
+		.then(({ message }) => {
+			frm.set_value('lacation',message.location);
+		});  
+		
+	}
+		*/
+		
+		
+		
 	},
 	setup:function(frm){
 		frm.set_query("issue_type", function() {
@@ -155,6 +185,21 @@ frappe.ui.form.on('Issue', {
 			
 		// }
 		// });
+		
+		  
+		    frm.set_query("location", function() {
+			return {
+				query: 'mfi_customization.mfi.doctype.issue.get_location',
+				filters: {
+					"Customer_Name":frm.doc.customer
+			}
+			}
+		});
+		
+		
+		
+		
+		
 		frm.set_query("asset", function() {
 			if (frm.doc.project) {
 				return {

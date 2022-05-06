@@ -441,6 +441,27 @@ def get_serial_no(customer,location,asset):
 					lst.append(j.serial_no)
 	return lst
 
+
+@frappe.whitelist()
+def get_logged_user():
+    user = frappe.db.get_value('User',{"name":frappe.session.user},"full_name")
+    A=frappe.db.get_all("Customer", filters={"customer_name":user},fields ={"name"})
+    return A
+
+
+
+@frappe.whitelist()		
+def Get_Location(doctype, txt, searchfield, start, page_len, filters):
+    location_list=[]
+    project_list = [p.name for p in frappe.db.get_list("Project", filters={"customer":filters.get("Customer_Name")},fields={"name"})]
+    for p in project_list:
+        location_list =[[l.location] for l in frappe.db.get_list("Asset",{"project":p},"location") if [l.location] not in location_list ]      
+    return location_list    
+   
+
+
+
+
 def get_location_validation(customer):
 	lst = []
 	for i in frappe.get_all('Project',{"customer":customer},['name']):
