@@ -277,4 +277,25 @@ def get_asset(customer,location):
 def validate_location(doc):
 	if doc.status=="Closed" and not doc.location:
 		frappe.throw("Can't Closed Issue Without <b>Location</b>")
+		
+        
+@frappe.whitelist()
+def get_logged_user():
+    user = frappe.db.get_value('User',{"name":frappe.session.user},"full_name")
+    A=frappe.db.get_all("Customer", filters={"customer_name":user},fields ={"name"})
+    return A
+         
+    
+@frappe.whitelist()		
+def get_location(doctype, txt, searchfield, start, page_len, filters):
+    location_list=[]
+    project_list = [p.name for p in frappe.db.get_list("Project", filters={"customer":filters.get("Customer_Name")},fields={"name"})]
+    for p in project_list:
+        location_list =[[l.location] for l in frappe.db.get_list("Asset",{"project":p},"location") if [l.location] not in location_list ]
+    return location_list    
+    
+    
+
+    
+		
 

@@ -69,6 +69,23 @@ asset:function(frm){
     }
 },
 onload:function(frm){
+    
+   frappe.call({
+     method: "mfi_customization.mfi.doctype.task.get_logged_user",
+     args: {
+			
+	},
+     callback: function(r) {
+			
+	 console.log(r)
+	frm.set_value("customer",r.message[0].name);
+					
+	}
+	
+			
+	});
+
+    
     if(frm.doc.type_of_call){
         frappe.db.get_value('Type of Call',{'name':frm.doc.type_of_call},'ignore_reading', (r) => {
             if(r.ignore_reading == 1){
@@ -132,6 +149,18 @@ setup:function(frm){
     //         };
     //     }
     // });
+    
+    
+    frm.set_query("location", function() {
+	return {
+	query: 'mfi_customization.mfi.doctype.task.Get_Location',
+	filters: {
+	"Customer_Name":frm.doc.customer
+		}
+		}
+	});
+		
+    
     frm.set_query("asset", function() {
         if (frm.doc.customer && frm.doc.location) {
             return {

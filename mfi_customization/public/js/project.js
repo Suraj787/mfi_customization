@@ -59,32 +59,33 @@ frappe.ui.form.on('Project', {
 				}
 			}
 		});
-	},
-	maintenance_team(frm){
-		if (frm.doc.maintenance_team){
-		frm.set_value('maintainance_manager','')
-		frm.set_value('manager_name','')
-		frm.set_value('maintenance_team_member',[])
-		frappe.call({
-			method:"mfi_customization.mfi.doctype.project.fetch_asset_maintenance_team",
-			args: {
-				maintenance_team:frm.doc.maintenance_team
-			},
-				callback: function (data) {
-					frm.set_value('maintainance_manager',data.message.manager)
-					frm.set_value('manager_name',data.message.name)
-					$.each(data.message.team_members_list || [], function (i, list) {
-						var d = frm.add_child("maintenance_team_member");
-						d['team_member']=list['member']
-						d['maintenance_role']=list['role']
-						d['full_name']=list['name']
-					})
-					cur_frm.refresh_field("maintenance_team_member")
-				}
-			})
-		}
 	}
-})
+})	
+// 	maintenance_team(frm){
+// 		if (frm.doc.maintenance_team){
+// 		frm.set_value('maintainance_manager','')
+// 		frm.set_value('manager_name','')
+// 		frm.set_value('maintenance_team_member',[])
+// 		frappe.call({
+// 			method:"mfi_customization.mfi.doctype.project.fetch_asset_maintenance_team",
+// 			args: {
+// 				maintenance_team:frm.doc.maintenance_team
+// 			},
+// 				callback: function (data) {
+// 					frm.set_value('maintainance_manager',data.message.manager)
+// 					frm.set_value('manager_name',data.message.name)
+// 					$.each(data.message.team_members_list || [], function (i, list) {
+// 						var d = frm.add_child("maintenance_team_member");
+// 						d['team_member']=list['member']
+// 						d['maintenance_role']=list['role']
+// 						d['full_name']=list['name']
+// 					})
+// 					cur_frm.refresh_field("maintenance_team_member")
+// 				}
+// 			})
+// 		}
+// 	}
+
 
 // frappe.ui.form.on("Asset Readings", "asset", function(frm, cdt, cdn) {
 // 	var d = locals[cdt][cdn];
