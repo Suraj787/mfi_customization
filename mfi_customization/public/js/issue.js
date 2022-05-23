@@ -178,7 +178,7 @@ frappe.ui.form.on('Issue', {
 		  
 		    frm.set_query("location", function() {
 			return {
-				query: 'mfi_customization.mfi.doctype.issue.get_location',
+				query: 'mfi_customization.mfi.doctype.issue.get_locationlist',
 				filters: {
 					"Customer_Name":frm.doc.customer
 			}
