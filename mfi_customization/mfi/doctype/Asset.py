@@ -27,18 +27,4 @@ def on_update(doc, method):
     #updating location in Serial No doctype with Asset location change.
  	frappe.db.set_value('Asset Serial No',doc.serial_no,'location',doc.location)
  	
- 
- 
-@frappe.whitelist() 	
-def fetching_child_table(name):
-    item_code_list=[]
-    item_name_list=[]
-    item_group_list=[]
-    item_name= frappe.get_doc('Item',name)
-    for i in item_name.items:
-        item_code_list.append(i.item_code)
-        item_name_list.append(i.item_name)
-        item_group_list.append(i.item_group)
-    return item_code_list , item_name_list ,item_group_list
-    
     	

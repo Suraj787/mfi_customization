@@ -503,15 +503,11 @@ frappe.ui.form.on("Material Request", 'onload_post_render', function(frm,cdt,cdn
         filters:{
             
             	"asset":frm.doc.asset
-            
-            
-        }
+             }
+          }
+       }
 
-        
-        }
-        }
-
-        });
+    });
 
 
 
@@ -523,17 +519,12 @@ frappe.ui.form.on("Material Request Item", 'item_code_on_form_rendered', functio
         query: "mfi_customization.mfi.doctype.material_request.item_child_table_filter",
         filters:{
             
-            	"asset":frm.doc.asset
-            
-            
-        }
-               
-        
-        }
-           
+            "asset":frm.doc.asset   
+              }
+           }
         }
             
-        });
+  });
 
 
 

@@ -69,18 +69,13 @@ asset:function(frm){
 onload:function(frm){
     fetch_data_material_request_item(frm)
    frappe.call({
-     method: "mfi_customization.mfi.doctype.task.get_logged_user",
+     method: "mfi_customization.mfi.doctype.issue.get_logged_user",
      args: {
 			
 	},
      callback: function(r) {
-			
-	
-	frm.set_value("customer",r.message[0].name);
-					
-	}
-	
-			
+	    frm.set_value("customer",r.message);				
+	       }		
 	});
  
            
@@ -394,23 +389,20 @@ frappe.ui.form.on("Asset Details", "serial_no", function(frm, cdt, cdn) {
 
 function fetch_data_material_request_item(frm){
 
- if(frm.doc.status=="Completed"){
+    if(frm.doc.status=="Completed"){
                             
-     frappe.call({
-    method: 'mfi_customization.mfi.doctype.task.fetch_data_from_material_request',
-    args: {
+       frappe.call({
+       method: 'mfi_customization.mfi.doctype.task.fetch_data_from_material_request',
+       args: {
         'task':frm.doc.name,
         'status':frm.doc.status
-        },
-    callback: function(r) {
-        
-    }
-});
+            }
+      
+        });
 
-       
-       }
+     }
 
-}
+  }
 
 
 

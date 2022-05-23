@@ -27,15 +27,12 @@ frappe.ui.form.on("Machine Reading", 'onload_post_render', function(frm,cdt,cdn)
         query: "mfi_customization.mfi.doctype.material_request.item_child_table_filter",
         filters:{
             
-            	"asset":frm.doc.asset
-            
-            
-        }
+            "asset":frm.doc.asset
+       
+               }
+           }
+       }
 
-        
-        }
-        }
-
-        });
+   });
 
 

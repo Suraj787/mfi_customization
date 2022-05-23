@@ -364,7 +364,6 @@ def get_requisition_analysis_data(doc):
 	
 @frappe.whitelist()	
 def item_child_table_filter(doctype, txt, searchfield, start, page_len, filters):
-    print("Asset",filters.get("asset"))
     AssetName = filters.get("asset")
     data = frappe.db.sql(f"""
     SELECT item_code,item_name,item_group from `tabAsset Item Child Table` where parent= '{AssetName}'
@@ -376,7 +375,6 @@ def item_child_table_filter(doctype, txt, searchfield, start, page_len, filters)
  	
 def before_save(doc,method):
     machine_reading_asset=[i.total for i in frappe.db.sql(f"""select max(reading_date),total from `tabMachine Reading` where asset ='{doc.asset}' """,as_dict=1)]
-    print(machine_reading_asset)
     if machine_reading_asset :
        doc.set('items_with_yeild',[])
        for d in doc.get('items'):

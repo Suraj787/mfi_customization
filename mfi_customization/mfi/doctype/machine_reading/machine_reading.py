@@ -10,12 +10,3 @@ class MachineReading(Document):
 	pass
 	
 	
-@frappe.whitelist()	
-def item_child_table_filter(doctype, txt, searchfield, start, page_len, filters):
-    asset_name = filters.get("asset")
-    data = frappe.db.sql(f"""
-    SELECT item_code,item_name,item_group from `tabAsset Item Child Table` where parent= '{asset_name}'
-""", as_dict=0)
-    return data
-    
-	

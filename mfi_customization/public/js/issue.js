@@ -9,12 +9,12 @@ frappe.ui.form.on('Issue', {
 			},
 			callback: function(r) {
 			
-			         
-					frm.set_value("customer",r.message[0].name);				
-				}
+			frm.set_value("customer",r.message);				
+				
+			}
 	
 			
-	});
+	      });
 		
 		
 	},

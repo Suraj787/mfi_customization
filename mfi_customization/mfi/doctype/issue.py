@@ -282,7 +282,7 @@ def validate_location(doc):
 @frappe.whitelist()
 def get_logged_user():
     user = frappe.db.get_value('User',{"name":frappe.session.user},"full_name")
-    customerId_of_user=frappe.db.get_all("Customer", filters={"customer_name":user},fields ={"name"})
+    customerId_of_user=frappe.db.get_value("Customer",{"customer_name":user},"name")
     return customerId_of_user
          
     
