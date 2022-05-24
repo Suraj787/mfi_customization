@@ -47,6 +47,87 @@ frappe.ui.form.on('Project', {
 			});
 		},__("Create"));
 	},
+	
+	invoice_cycle:function(frm){
+	
+		    frappe.call({
+		    method: 'mfi_customization.mfi.doctype.project.date_invoice_cycle',
+		    args: {
+		    "expected_end_date":frm.doc.expected_end_date,
+		    "invoicing_starts_from":frm.doc.invoicing_starts_from,
+		    "invoice_cycle_option":frm.doc.invoice_cycle
+
+		    },
+		 callback: function(r) {
+		          
+		           if(frm.doc.invoice_cycle == "Monthly"){
+		           cur_frm.clear_table("invoice_schedule");
+		           cur_frm.refresh_fields("invoice_schedule")
+		            for (let i =0; i<r.message[0].length;i++) {
+             
+		           var childTable = cur_frm.add_child("invoice_schedule")
+		           childTable.date = r.message[0][i]
+		           
+		           cur_frm.refresh_fields("invoice_schedule")
+		            
+                           
+                       }
+		                 
+		    }
+		    
+		    
+		        if(frm.doc.invoice_cycle == "Yearly"){
+		           cur_frm.clear_table("invoice_schedule");
+		           cur_frm.refresh_fields("invoice_schedule")
+		            for (let i =0; i<r.message[1].length;i++) {
+             
+		           var childTable = cur_frm.add_child("invoice_schedule")
+		           childTable.date = r.message[1][i]
+		           
+		           cur_frm.refresh_fields("invoice_schedule")
+		            
+                           
+                       }
+		                 
+		    }
+		    
+		       if(frm.doc.invoice_cycle == "Quarterly"){
+		           cur_frm.clear_table("invoice_schedule");
+		           cur_frm.refresh_fields("invoice_schedule")
+		            for (let i =0; i<r.message[2].length;i++) {
+            
+		           var childTable = cur_frm.add_child("invoice_schedule")
+		           childTable.date = r.message[2][i]
+		           
+		           cur_frm.refresh_fields("invoice_schedule")
+		            
+                           
+                       }
+		                 
+		    } 
+		    
+		      if(frm.doc.invoice_cycle == "Half Yearly"){
+		           cur_frm.clear_table("invoice_schedule");
+		           cur_frm.refresh_fields("invoice_schedule")
+		            for (let i =0; i<r.message[3].length;i++) {
+            
+		           var childTable = cur_frm.add_child("invoice_schedule")
+		           childTable.date = r.message[3][i]
+		           
+		           cur_frm.refresh_fields("invoice_schedule")
+		            
+                           
+                       }
+		                 
+		    } 
+		    
+		}
+		   
+     })            
+
+	},
+
+	
 	setup:function(frm){
 		frm.set_query("asset", "machine_readings", function() {
 			var asset_list=[]
