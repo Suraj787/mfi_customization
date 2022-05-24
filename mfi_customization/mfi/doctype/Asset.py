@@ -26,3 +26,5 @@ def on_cancel(doc,method):
 def on_update(doc, method):
     #updating location in Serial No doctype with Asset location change.
  	frappe.db.set_value('Asset Serial No',doc.serial_no,'location',doc.location)
+ 	
+    	

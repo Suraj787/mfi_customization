@@ -9,12 +9,12 @@ frappe.ui.form.on('Issue', {
 			},
 			callback: function(r) {
 			
-			         
-					frm.set_value("customer",r.message[0].name);				
-				}
+			frm.set_value("customer",r.message);				
+				
+			}
 	
 			
-	});
+	      });
 		
 		
 	},
@@ -178,7 +178,7 @@ frappe.ui.form.on('Issue', {
 		  
 		    frm.set_query("location", function() {
 			return {
-				query: 'mfi_customization.mfi.doctype.issue.get_location',
+				query: 'mfi_customization.mfi.doctype.issue.get_locationlist',
 				filters: {
 					"Customer_Name":frm.doc.customer
 			}

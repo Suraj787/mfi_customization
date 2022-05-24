@@ -3,6 +3,10 @@ frappe.ready(function() {
 
 
 frappe.web_form.after_load = () =>{
+
+
+     frappe.web_form.set_value("opening_date_time",frappe.datetime.now_datetime())
+    
 	    
 frappe.call({
 
@@ -12,13 +16,10 @@ method: 'mfi_customization.mfi.web_form.issues.issues.get_logged_user',
     },
     
     callback: function(r) {
-        
-       frappe.web_form.set_value("customer",r.message[0].name)
-
-        
+     
+       frappe.web_form.set_value("customer",r.message)
+ 
     }
-
-
 })            
 
 
@@ -42,25 +43,26 @@ frappe.web_form.on('customer', () => {
 frappe.web_form.on('name_of_the_customer', () => {
 
 location()
-Asset()
-SerianNo()
+assetfunction()
+serialnno()
 })
 
 frappe.web_form.on('location', () => {
-Asset()
-SerianNo()
+assetfunction()
+serialnno()
 })
 
 frappe.web_form.on('asset', () => {
 
-location()
-Get_Location_SerialNoBy_Asset()
+//location()
+get_location_serialnoby_asset()
+
 })
 
 frappe.web_form.on('serial_no', () => {
 
-location()
-Get_Location_AssetBySeriaNo()
+//location()
+get_location_assetByseriaNo()
 
 })
 
@@ -68,7 +70,7 @@ function location(){
 		frappe.call({
     method: 'mfi_customization.mfi.web_form.issues.issues.get_location',
     args: {
-        CustomerID:frappe.web_form.get_value("customer")
+        customerId:frappe.web_form.get_value("customer")
     },
       
     callback: function(r) {
@@ -97,23 +99,21 @@ function location(){
 
 }
 
-function Asset(){
+function assetfunction(){
 
 		frappe.call({
     method: 'mfi_customization.mfi.web_form.issues.issues.get_Asset',
     args: {
-        CustomerID:frappe.web_form.get_value("customer"),
-        Location:frappe.web_form.get_value("location")
+        customerId:frappe.web_form.get_value("customer"),
+        location:frappe.web_form.get_value("location")
     },
       
     callback: function(r) {
         var options =[]
-        console.log(r)
-        console.log(r.message[2])
         if (frappe.web_form.get_value("location")==""){
         
-                for (const [key,value] of Object.entries(r.message[3])) {
-         console.log("k",value.name)
+                for (const [key,value] of Object.entries(r.message[1])) {
+         
             
          options.push({
          'label':value.name,
@@ -128,9 +128,7 @@ function Asset(){
         }
         if (frappe.web_form.get_value("location")!=""){
         
-               for (const [key,value] of Object.entries(r.message[3])) {
-         console.log("k",value.name)
-            
+               for (const [key,value] of Object.entries(r.message[1])) {     
          options.push({
          'label':value.name,
          'value':value.name
@@ -144,9 +142,7 @@ function Asset(){
         
 
      else {
-        for (const [key,value] of Object.entries(r.message[2])) {
-         console.log("k",value.name)
-            
+        for (const [key,value] of Object.entries(r.message[0])) {   
          options.push({
          'label':value.name,
          'value':value.name
@@ -167,150 +163,111 @@ function Asset(){
 
 }
 
-function SerianNo(){
+function serialnno(){
 
-		frappe.call({
-    method: 'mfi_customization.mfi.web_form.issues.issues.get_serialNo',
-    args: {
-        CustomerID:frappe.web_form.get_value("customer"),
-        Location:frappe.web_form.get_value("location")
-    },
+frappe.call({
+     method: 'mfi_customization.mfi.web_form.issues.issues.get_serialNo',
+     args: {
+         customerId:frappe.web_form.get_value("customer"),
+         location:frappe.web_form.get_value("location")
+        },
   
-    callback: function(r) {
+  callback: function(r) {
+      
         var options =[]
-        if(frappe.web_form.get_value("location")==""){
-            
-         for (const [key,value] of Object.entries(r.message[0])) {
-            
-         options.push({
-         'label':value.serial_no,
-         'value':value.serial_no
-         
-         });
-   
-   
-        }
-        
-            
-        }
-        
-        
-        if(frappe.web_form.get_value("location")!=""){
+     if(frappe.web_form.get_value("location")==""){
+           
+          for (const [key,value] of Object.entries(r.message[0])) {
           
+              options.push({
+                'label':value.serial_no,
+                 'value':value.serial_no
+                 
+                  });
+             }
+   
+       }
+        
+     if(frappe.web_form.get_value("location")!=""){
          for (const [key,value] of Object.entries(r.message[0])) {
-            
-         options.push({
-         'label':value.serial_no,
-         'value':value.serial_no
-         
-         });
+            options.push({
+               'label':value.serial_no,
+               'value':value.serial_no
+             });
    
-   
-        }
+         }
+    }
         
-          
-        }
-        
-        else{
-        
-        
+    else  {
          for (const [key,value] of Object.entries(r.message[1])) {
-
-            
-         options.push({
-         'label':value.serial_no,
-         'value':value.serial_no
-         
-         });
-   
-   
+           options.push({
+              'label':value.serial_no,
+              'value':value.serial_no
+               });
         }
-        
-        
-        }
-        
+    }
+       
         var field = frappe.web_form.get_field("serial_no")
          field._data = options;
-         field.refresh();
+         field.refresh();   
+      }
+   });
+
+}
+
+
+function get_location_serialnoby_asset(){
+        frappe.call({
+            method: 'mfi_customization.mfi.web_form.issues.issues.get_location_serialnoby_asset',
+      args: {
+        asset:frappe.web_form.get_value("asset")
+
+        },
+       callback: function(r){
         
+         for (let t of Object.values(r.message)){
+   
+          if(frappe.web_form.get_value("asset")){
+           frappe.web_form.set_value("location",t.location)
+           frappe.web_form.set_value("serial_no",t.serial_no)
+           frappe.web_form.set_value("asset_name",t.asset_name)
+           
+             }
+         
+       }
         
     }
-});
-
+        
+ });
 }
 
-
-function Get_Location_SerialNoBy_Asset(){
+function get_location_assetByseriaNo(){
         frappe.call({
-            method: 'mfi_customization.mfi.web_form.issues.issues.Get_Location_SerialNoBy_Asset',
+            method: 'mfi_customization.mfi.web_form.issues.issues.get_location_assetByseriaNo',
       args: {
-        Asset:frappe.web_form.get_value("asset")
+        serialno:frappe.web_form.get_value("serial_no")
 
         },
        callback: function(r){
+       
+       for (let i of Object.values(r.message)){
+            if(frappe.web_form.get_value("serial_no")){
         
-        
-        let   Location1=r.message[0]
-        let   Asset1=r.message[1]
-        let   AssetName1=r.message[2]
-           
-        
-        
-        console.log(r)
-        if(frappe.web_form.get_value("asset")!=""){
-           frappe.web_form.set_value("location",Location1)
-           frappe.web_form.set_value("serial_no",Asset1)
-           frappe.web_form.set_value("asset_name",AssetName1)
-          console.log("asset trigger")
-        
+              frappe.web_form.set_value("location",i.location)
+              frappe.web_form.set_value("asset",i.name)
+            }
         }
-        
-
-        }
-        
-        
-        });
+    
+     }
+  });
 
 
 
+ }
+ 
 }
-
-function Get_Location_AssetBySeriaNo(){
-        frappe.call({
-            method: 'mfi_customization.mfi.web_form.issues.issues.Get_Location_AssetBySeriaNo',
-      args: {
-        SerialNo:frappe.web_form.get_value("serial_no")
-
-        },
-       callback: function(r){
-        
-         let  Location2=r.message[0]
-         let  Asset2=r.message[1]
-         let   AssetName2=r.message[2]
-           
-        
-        console.log(r)
-        if(frappe.web_form.get_value("serial_no")!=""){
-        
-           frappe.web_form.set_value("location",Location2)
-           frappe.web_form.set_value("asset",Asset2)
-        }
-        
-        
-        }
-        
-        
-        
-        });
-
-
-
-}
-
 
 });
-
-
 
 
 

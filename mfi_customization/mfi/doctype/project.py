@@ -4,6 +4,9 @@
 
 from __future__ import unicode_literals
 import frappe
+from datetime import datetime
+from dateutil import rrule
+from dateutil.relativedelta import relativedelta
 from frappe.model.mapper import get_mapped_doc
 
 @frappe.whitelist()
@@ -45,4 +48,43 @@ def validate(doc,method):
     if doc.sales_order:
         for d in frappe.get_all("Sales Order",{"name":doc.sales_order},['total_contract_amount']):
             doc.estimated_costing=d.total_contract_amount
+
+
+
+
+@frappe.whitelist()
+def date_invoice_cycle(expected_end_date,invoicing_starts_from,invoice_cycle_option):
+    monthlylist=[]
+    yearlylist=[]
+    quarterlylist =[]
+    half_yearlist =[]
+    endate=str(expected_end_date)
+    endate_strp =datetime. strptime(endate, "%Y-%m-%d")
+    endateformating = datetime(endate_strp.year,endate_strp.month,endate_strp.day)
+    
+    invoicing_start_date = str(invoicing_starts_from)
+    invoicing_strp=datetime. strptime(invoicing_start_date,"%Y-%m-%d")
+    invoce_startformating=datetime(invoicing_strp.year,invoicing_strp.month,invoicing_strp.day)
+    [monthlylist.append(monthly.date()) for monthly in rrule.rrule(rrule.MONTHLY,dtstart=invoce_startformating,until=endateformating)]
+    [yearlylist.append(yearly.date())for yearly in rrule.rrule(rrule.YEARLY,dtstart=invoce_startformating,until=endateformating)]
+    if invoice_cycle_option == "Quarterly":
+       add_quarter_Months = relativedelta(months=3)
+       while invoce_startformating <= endateformating:
+          quarterlylist.append(invoce_startformating.date())
+          invoce_startformating += add_quarter_Months
+    if invoice_cycle_option == "Half Yearly":
+       add_half_year_Month = relativedelta(months=6)
+       while invoce_startformating <= endateformating:
+          half_yearlist.append(invoce_startformating.date())
+          invoce_startformating += add_half_year_Month
+        
+    
+    return monthlylist,yearlylist,quarterlylist ,half_yearlist
+       
+
+    
+
+
+
+
 

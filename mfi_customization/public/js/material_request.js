@@ -1,3 +1,4 @@
+
 {% include 'erpnext/public/js/controllers/buying.js' %};
 
 frappe.ui.form.on('Material Request', {
@@ -48,6 +49,11 @@ frappe.ui.form.on('Material Request', {
                  }
             })
         });
+        
+               
+        
+        
+        
         // if (frm.doc.docstatus==1) {
              frm.add_custom_button(__('Purchase Order'), function () {
                 get_items_from_MR(frm);
@@ -368,6 +374,7 @@ var make_list_row= function(columns, project_tasks, result={}) {
         }
     },
     after_save:function(frm){
+      
         if (cur_frm.doc.report_name && cur_frm.doc.filters){
                 frappe.call({
                 method: 'mfi_customization.mfi.doctype.material_request.run',
@@ -484,3 +491,48 @@ frappe.ui.form.on('Material Request Item', {
         }
 	}
 })
+
+
+
+frappe.ui.form.on("Material Request", 'onload_post_render', function(frm,cdt,cdn) {
+       cur_frm.fields_dict['items'].grid.get_field('item_code').get_query =
+        function() {
+        return {
+
+        query: "mfi_customization.mfi.doctype.material_request.item_child_table_filter",
+        filters:{
+            
+            	"asset":frm.doc.asset
+             }
+          }
+       }
+
+    });
+
+
+
+frappe.ui.form.on("Material Request Item", 'item_code_on_form_rendered', function(frm,cdt,cdn) {
+       cur_frm.fields_dict['items'].grid.get_field('item_code').get_query =
+        function() {
+        return {
+
+        query: "mfi_customization.mfi.doctype.material_request.item_child_table_filter",
+        filters:{
+            
+            "asset":frm.doc.asset   
+              }
+           }
+        }
+            
+  });
+
+
+
+
+
+
+
+
+
+
+

@@ -3,6 +3,7 @@ frappe.ui.form.on('Task', {
 
 
     status:function(frm){
+        fetch_data_material_request_item(frm)
         if(frm.doc.status == 'Working'){
             let today = new Date()
             frappe.model.set_value("Issue", frm.doc.issue, 'first_responded_on',today);
@@ -20,7 +21,9 @@ frappe.ui.form.on('Task', {
                     }
                 });
             }
+            
         }
+         
     },
     
 asset:function(frm){
@@ -64,23 +67,18 @@ asset:function(frm){
     }
 },
 onload:function(frm){
-    
+    fetch_data_material_request_item(frm)
    frappe.call({
-     method: "mfi_customization.mfi.doctype.task.get_logged_user",
+     method: "mfi_customization.mfi.doctype.issue.get_logged_user",
      args: {
 			
 	},
      callback: function(r) {
-			
-	 console.log(r)
-	frm.set_value("customer",r.message[0].name);
-					
-	}
-	
-			
+	    frm.set_value("customer",r.message);				
+	       }		
 	});
-
-    
+ 
+           
     if(frm.doc.type_of_call){
         frappe.db.get_value('Type of Call',{'name':frm.doc.type_of_call},'ignore_reading', (r) => {
             if(r.ignore_reading == 1){
@@ -148,7 +146,7 @@ setup:function(frm){
     
     frm.set_query("location", function() {
 	return {
-	query: 'mfi_customization.mfi.doctype.task.Get_Location',
+	query: 'mfi_customization.mfi.doctype.task.get_locationlist',
 	filters: {
 	"Customer_Name":frm.doc.customer
 		}
@@ -386,3 +384,26 @@ frappe.ui.form.on("Asset Details", "serial_no", function(frm, cdt, cdn) {
     frm.set_df_property('asset','read_only',1);
     refresh_field("asset", d.name, d.parentfield);
 });
+
+
+
+function fetch_data_material_request_item(frm){
+
+    if(frm.doc.status=="Completed"){
+                            
+       frappe.call({
+       method: 'mfi_customization.mfi.doctype.task.fetch_data_from_material_request',
+       args: {
+        'task':frm.doc.name,
+        'status':frm.doc.status
+            }
+      
+        });
+
+     }
+
+  }
+
+
+
+

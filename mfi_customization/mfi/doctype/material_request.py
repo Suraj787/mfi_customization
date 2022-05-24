@@ -4,6 +4,7 @@ from frappe.utils import nowdate, getdate,today,add_months
 from six import string_types, iteritems
 from frappe.desk.query_report import run
 from frappe import _
+from datetime import datetime
 from frappe.desk.query_report import get_report_doc,get_prepared_report_result,generate_report_result
 
 def validate(doc,method):
@@ -353,4 +354,54 @@ def get_requisition_analysis_data(doc):
 		html_format["result"]=html_format_result
 		return {"html_format":html_format,"data":data}
 	return ""
+	
+	
+	
+	
+	
+	
+	
+	
+@frappe.whitelist()	
+def item_child_table_filter(doctype, txt, searchfield, start, page_len, filters):
+    AssetName = filters.get("asset")
+    data = frappe.db.sql(f"""
+    SELECT item_code,item_name,item_group from `tabAsset Item Child Table` where parent= '{AssetName}'
+""", as_dict=0)
+    return data
+    
+
+
+ 	
+def before_save(doc,method):
+    machine_reading_asset=[i.total for i in frappe.db.sql(f"""select max(reading_date),total from `tabMachine Reading` where asset ='{doc.asset}' """,as_dict=1)]
+    if machine_reading_asset :
+       doc.set('items_with_yeild',[])
+       for d in doc.get('items'):
+           machine_reding_with_itm =[i.total for i in  frappe.db.sql(f"""select max(m.reading_date),m.total from `tabMachine Reading` as m inner join `tabAsset Item Child Table` as a on a.parent=m.name where m.asset ='{doc.asset}' and a.item_code ='{d.item_code}' """,as_dict=1)if i.total is not None ]
+           item_yeild =[itm.yeild for itm in frappe.db.sql(f""" SELECT yeild from `tabItem` where item_code ='{d.item_code}' """,as_dict=1)]
+           if machine_reding_with_itm:
+              doc.append("items_with_yeild",{
+             "item_code":d.item_code,
+             "item_name":d.item_name,
+             "item_group":d.item_group,
+             "yeild":int(machine_reding_with_itm[0]) - int(machine_reading_asset[0]),
+             "total_yeild": float(item_yeild[0])
+        })
+          
+        
+    
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+
+	
+	
 	

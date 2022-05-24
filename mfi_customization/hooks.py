@@ -42,7 +42,8 @@ doctype_js = {
                 "Quotation":"public/js/quotation.js",
                 "Price List":"public/js/price_list.js",
                 "Purchase Order":"public/js/purchase_order.js",
-                "Landed Cost Voucher":"public/js/landed_cost_voucher.js"
+                "Landed Cost Voucher":"public/js/landed_cost_voucher.js",
+                "Asset":"public/js/asset.js"
 }	
 doctype_list_js = {"Material Request":"public/js/material_request_list.js",}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
@@ -114,7 +115,8 @@ doc_events = {
     },
     "Material Request":{
         "on_change":"mfi_customization.mfi.doctype.material_request.set_item_from_material_req",
-        "on_submit":"mfi_customization.mfi.doctype.material_request.on_submit"
+        "on_submit":"mfi_customization.mfi.doctype.material_request.on_submit",
+        "before_save":"mfi_customization.mfi.doctype.material_request.before_save"
     },
     "Comment":{
 		"validate":"mfi_customization.mfi.doctype.comment.comment"

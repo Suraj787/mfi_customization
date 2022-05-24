@@ -442,22 +442,38 @@ def get_serial_no(customer,location,asset):
 	return lst
 
 
-@frappe.whitelist()
-def get_logged_user():
-    user = frappe.db.get_value('User',{"name":frappe.session.user},"full_name")
-    A=frappe.db.get_all("Customer", filters={"customer_name":user},fields ={"name"})
-    return A
-
-
-
 @frappe.whitelist()		
-def Get_Location(doctype, txt, searchfield, start, page_len, filters):
+def get_locationlist(doctype, txt, searchfield, start, page_len, filters):
     location_list=[]
     project_list = [p.name for p in frappe.db.get_list("Project", filters={"customer":filters.get("Customer_Name")},fields={"name"})]
     for p in project_list:
         location_list =[[l.location] for l in frappe.db.get_list("Asset",{"project":p},"location") if [l.location] not in location_list ]      
     return location_list    
    
+
+
+
+
+
+@frappe.whitelist() 	
+def fetch_data_from_material_request(task,status):
+
+    material_request_list =[i.name for i in frappe.db.get_list('Material Request',{'task_':task}, 'name')]
+    machine_reading_doc = frappe.get_last_doc('Machine Reading', filters={"task":task})
+    machine_reading_doc.items =[]
+    for mr in material_request_list:
+        mr_doc = frappe.get_doc('Material Request',mr)
+        for i in mr_doc.items:
+            machine_child =machine_reading_doc.append('items',{})
+            machine_child.item_code = i.item_code
+            machine_child.item_name = i.item_name
+            machine_child.item_group = i.item_group
+            machine_reading_doc.save()
+            frappe.msgprint("Item Inserted in Machine reading")
+               
+     
+
+
 
 def get_location_validation(customer):
 	lst = []

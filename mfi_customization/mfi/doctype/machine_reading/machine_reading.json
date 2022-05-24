@@ -11,6 +11,7 @@
   "asset",
   "task",
   "project",
+  "items",
   "column_break_4",
   "billing_status",
   "machine_type",
@@ -94,10 +95,16 @@
    "fieldtype": "Data",
    "label": "Row ID",
    "read_only": 1
+  },
+  {
+   "fieldname": "items",
+   "fieldtype": "Table",
+   "label": "Items",
+   "options": "Asset Item Child Table"
   }
  ],
  "links": [],
- "modified": "2021-11-16 07:27:59.403129",
+ "modified": "2022-05-16 12:58:00.253635",
  "modified_by": "Administrator",
  "module": "mfi",
  "name": "Machine Reading",

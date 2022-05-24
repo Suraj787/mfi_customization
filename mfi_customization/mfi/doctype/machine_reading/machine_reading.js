@@ -10,5 +10,29 @@ frappe.ui.form.on('Machine Reading', {
 				}
 			};
 		});
-	}
+	},
+	
+	
+		
+	
 });
+
+
+
+frappe.ui.form.on("Machine Reading", 'onload_post_render', function(frm,cdt,cdn) {
+       cur_frm.fields_dict['items'].grid.get_field('item_code').get_query =
+        function() {
+        return {
+
+        query: "mfi_customization.mfi.doctype.material_request.item_child_table_filter",
+        filters:{
+            
+            "asset":frm.doc.asset
+       
+               }
+           }
+       }
+
+   });
+
+
