@@ -8,6 +8,7 @@ from datetime import datetime
 from dateutil import rrule
 from dateutil.relativedelta import relativedelta
 from frappe.model.mapper import get_mapped_doc
+import json
 
 @frappe.whitelist()
 def fetch_asset_maintenance_team(maintenance_team):
@@ -49,8 +50,26 @@ def validate(doc,method):
         for d in frappe.get_all("Sales Order",{"name":doc.sales_order},['total_contract_amount']):
             doc.estimated_costing=d.total_contract_amount
 
-
-
+@frappe.whitelist()
+def make_asset_task(doc):
+    doc = json.loads(doc)
+    existed_task_list = [t.name for t in frappe.db.get_all("Task", {'project': doc.get('name'), "type_of_call" :"Installation"} ,'name')]
+    if existed_task_list:
+        frappe.msgprint("Task <b>'{0}'</b> already exist.".format(",".join(map(str,existed_task_list))))
+    else:
+        asset_list = [a.name for a in frappe.db.get_all("Asset", {'project': doc.get('name')} ,'name')]
+        if asset_list :
+            out = []
+            for asset in asset_list:
+                task_doc = frappe.new_doc("Task")
+                task_doc.subject = "Installation-"+asset
+                task_doc.type_of_call = "Installation"
+                task_doc.project = doc.get('name')
+                task_doc.completed_by = "s.karuturi@groupmfi.com"
+                task_doc.customer= doc.get('customer')
+                task_doc.save() 
+                out.append(task_doc)
+            return [p.name for p in out]
 
 @frappe.whitelist()
 def date_invoice_cycle(expected_end_date,invoicing_starts_from,invoice_cycle_option):
@@ -81,10 +100,3 @@ def date_invoice_cycle(expected_end_date,invoicing_starts_from,invoice_cycle_opt
     
     return monthlylist,yearlylist,quarterlylist ,half_yearlist
        
-
-    
-
-
-
-
-

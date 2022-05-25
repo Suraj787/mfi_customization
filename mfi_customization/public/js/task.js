@@ -1,7 +1,12 @@
 frappe.ui.form.on('Task', {
-
-
-
+    type_of_call:function(frm){
+        if(frm.doc.type_of_call == "Installation"){
+            frm.set_df_property('failure_date_and_time','reqd',0);
+        }
+        else{
+            frm.set_df_property('failure_date_and_time','reqd',1);
+        }
+    },       
     status:function(frm){
         fetch_data_material_request_item(frm)
         if(frm.doc.status == 'Working'){

@@ -20,10 +20,30 @@ cur_frm.dashboard.add_transactions([
 
 frappe.ui.form.on('Project', {
 	refresh:function(frm){
-		frm.add_custom_button(__('Asset Delivery Note'), function() {
-			frappe.model.open_mapped_doc({
-				method: "mfi_customization.mfi.doctype.project.make_asset_delivery_note",
-				frm: frm
+		// frm.add_custom_button(__('Asset Delivery Note'), function() {
+		// 	frappe.model.open_mapped_doc({
+		// 		method: "mfi_customization.mfi.doctype.project.make_asset_delivery_note",
+		// 		frm: frm
+		// 	});
+		// },__("Create"));
+		frm.add_custom_button(__('Installation'), function() {
+			frappe.call({
+				method: "mfi_customization.mfi.doctype.project.make_asset_task",
+				args: {
+					doc: frm.doc
+				},
+				freeze: true,
+				callback: function(r) {
+					if(r.message) {
+					    frm.remove_custom_button('Installation');
+						frappe.msgprint({
+							message: __('Task Created: {0}', [r.message.map(function(d) {
+								return repl('<a href="/app/task/%(name)s">%(name)s</a>', {name:d})
+							}).join(', ')]),
+							indicator: 'green'
+						})
+					}
+				}
 			});
 		},__("Create"));
 	},

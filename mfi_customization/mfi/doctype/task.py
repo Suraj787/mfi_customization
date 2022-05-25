@@ -74,25 +74,26 @@ def on_change(doc,method):
 		update_machine_reading(doc, existed_mr)
 	else:
 		create_machine_reading(doc)
-	issue=frappe.get_doc("Issue",doc.issue)
-	issue.response_date_time=doc.attended_date_time
-	if doc.issue and doc.status != 'Open':
-		issue.status=doc.status
-		if doc.status == 'Completed':
-			validate_if_material_request_is_not_submitted(doc)
-			validate_current_reading(doc)
-			attachment_validation(doc)
-			
-			issue.status="Task Completed"
-			issue.set("task_attachments",[])
-			for d in doc.get("attachments"):
-				issue.append("task_attachments",{
-					"attach":d.attach
-				})
-			
-		elif doc.status=="Working" and doc.attended_date_time:
-			issue.first_responded_on=doc.attended_date_time
-	issue.save()
+	if doc.get("issue"):
+		issue=frappe.get_doc("Issue",doc.issue)
+		issue.response_date_time=doc.attended_date_time
+		if doc.issue and doc.status != 'Open':
+			issue.status=doc.status
+			if doc.status == 'Completed':
+				validate_if_material_request_is_not_submitted(doc)
+				validate_current_reading(doc)
+				attachment_validation(doc)
+				
+				issue.status="Task Completed"
+				issue.set("task_attachments",[])
+				for d in doc.get("attachments"):
+					issue.append("task_attachments",{
+						"attach":d.attach
+					})
+				
+			elif doc.status=="Working" and doc.attended_date_time:
+				issue.first_responded_on=doc.attended_date_time
+		issue.save()
 def after_delete(doc,method):
 	for t in frappe.get_all('Asset Repair',filters={'task':doc.name}):
 		frappe.delete_doc('Asset Repair',t.name)
@@ -317,6 +318,8 @@ def create_machine_reading(doc):
 			mr.project=doc.project
 			mr.task=doc.name
 			mr.row_id = d.name
+			if doc.type_of_call =="Installation":
+				mr.reading_type = "Installation"
 			mr.save()
 			# d.machine_reading=mr.name
 def update_machine_reading(doc, existed_mr):
