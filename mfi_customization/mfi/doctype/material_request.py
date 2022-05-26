@@ -378,7 +378,7 @@ def before_save(doc,method):
     if machine_reading_asset :
        doc.set('items_with_yeild',[])
        for d in doc.get('items'):
-           machine_reding_with_itm =[i.total for i in  frappe.db.sql(f"""select max(m.reading_date),m.total from `tabMachine Reading` as m inner join `tabAsset Item Child Table` as a on a.parent=m.name where m.asset ='{doc.asset}' and a.item_code ='{d.item_code}' """,as_dict=1)if i.total is not None ]
+           machine_reding_with_itm =[i.total for i in  frappe.db.sql(f"""select max(m.reading_date),m.total from `tabMachine Reading` as m inner join `tabAsset Item Child Table` as a on a.parent=m.name where m.asset ='{doc.asset}' and a.item_code ='{d.item_code}' and m.task='{doc.task}' """,as_dict=1)if i.total is not None ]
            item_yeild =[itm.yeild for itm in frappe.db.sql(f""" SELECT yeild from `tabItem` where item_code ='{d.item_code}' """,as_dict=1)]
            if machine_reding_with_itm:
               doc.append("items_with_yeild",{
