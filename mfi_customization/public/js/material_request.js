@@ -511,7 +511,8 @@ frappe.ui.form.on("Material Request", 'onload_post_render', function(frm,cdt,cdn
 
 
 
-frappe.ui.form.on("Material Request Item", 'item_code_on_form_rendered', function(frm,cdt,cdn) {
+frappe.ui.form.on("Material Request Item",{
+      items_add:function(frm){
        cur_frm.fields_dict['items'].grid.get_field('item_code').get_query =
         function() {
         return {
@@ -523,7 +524,7 @@ frappe.ui.form.on("Material Request Item", 'item_code_on_form_rendered', functio
               }
            }
         }
-            
+      }
   });
 
 
