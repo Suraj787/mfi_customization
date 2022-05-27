@@ -472,7 +472,7 @@ def fetch_data_from_material_request(task,status):
             machine_child.item_name = i.item_name
             machine_child.item_group = i.item_group
             machine_reading_doc.save()
-            frappe.msgprint("Item Inserted in Machine reading")
+            
                
      
 
