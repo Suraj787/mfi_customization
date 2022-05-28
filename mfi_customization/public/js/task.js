@@ -31,6 +31,10 @@ frappe.ui.form.on('Task', {
          
     },
     
+    before_save:function(frm){
+       insert_items_with_yeild(frm)
+    },
+    
 asset:function(frm){
         if(frm.doc.asset){
         frappe.db.get_value('Asset',{'name':frm.doc.asset,'docstatus':1},['asset_name','location','serial_no','project'])
@@ -73,6 +77,7 @@ asset:function(frm){
 },
 onload:function(frm){
     fetch_data_material_request_item(frm)
+   /* 
    frappe.call({
      method: "mfi_customization.mfi.doctype.issue.get_logged_user",
      args: {
@@ -82,7 +87,7 @@ onload:function(frm){
 	    frm.set_value("customer",r.message);				
 	       }		
 	});
- 
+    */
            
     if(frm.doc.type_of_call){
         frappe.db.get_value('Type of Call',{'name':frm.doc.type_of_call},'ignore_reading', (r) => {
@@ -401,6 +406,24 @@ function fetch_data_material_request_item(frm){
        args: {
         'task':frm.doc.name,
         'status':frm.doc.status
+            }
+      
+        });
+
+     }
+
+  }
+
+
+function insert_items_with_yeild(frm){
+
+    if(frm.doc.status=="Completed"){
+                            
+       frappe.call({
+       method: 'mfi_customization.mfi.doctype.task.items_with_yeild',
+       args: {
+        'task':frm.doc.name,
+        'asset':frm.doc.asset
             }
       
         });

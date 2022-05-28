@@ -1,7 +1,7 @@
 frappe.ui.form.on('Issue', {
 	onload:function(frm){
 		cur_frm.dashboard.hide()
-		
+		     /*
 			frappe.call({
 			method: "mfi_customization.mfi.doctype.issue.get_logged_user",
 			args: {
@@ -15,7 +15,7 @@ frappe.ui.form.on('Issue', {
 	
 			
 	      });
-		
+		*/
 		
 	},
 	
