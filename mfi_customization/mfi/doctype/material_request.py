@@ -372,24 +372,7 @@ def item_child_table_filter(doctype, txt, searchfield, start, page_len, filters)
     
 
 
- 	
-def before_save(doc,method):
-    machine_reading_asset=[i.total for i in frappe.db.sql(f"""select max(reading_date),total from `tabMachine Reading` where asset ='{doc.asset}' """,as_dict=1)]
-    if machine_reading_asset :
-       doc.set('items_with_yeild',[])
-       for d in doc.get('items'):
-           machine_reding_with_itm =[i.total for i in  frappe.db.sql(f"""select max(m.reading_date),m.total from `tabMachine Reading` as m inner join `tabAsset Item Child Table` as a on a.parent=m.name where m.asset ='{doc.asset}' and a.item_code ='{d.item_code}' and m.task='{doc.task}' """,as_dict=1)if i.total is not None ]
-           item_yeild =[itm.yeild for itm in frappe.db.sql(f""" SELECT yeild from `tabItem` where item_code ='{d.item_code}' """,as_dict=1)]
-           if machine_reding_with_itm:
-              doc.append("items_with_yeild",{
-             "item_code":d.item_code,
-             "item_name":d.item_name,
-             "item_group":d.item_group,
-             "yeild":int(machine_reding_with_itm[0]) - int(machine_reading_asset[0]),
-             "total_yeild": float(item_yeild[0])
-        })
-          
-        
+    
     
         
         
