@@ -373,9 +373,24 @@ def item_child_table_filter(doctype, txt, searchfield, start, page_len, filters)
 
 
     
-    
-        
-        
+
+def onload(doc,method):
+    project_name= frappe.db.get_value('Asset',{'name':doc.asset},'project')
+    doc.set('comprehensive_contract',[])
+    doc.set('labour_contract',[])
+    comprehensive_itm =frappe.db.sql(f"""
+    SELECT comprehensive_contract_item from `tabComprehensive Contract` where parent= "{project_name}" """, as_dict=1)
+    labour_itm =frappe.db.sql(f"""
+    SELECT labour_contract_item from `tabLabour Contract` where parent= "{project_name}" """, as_dict=1)
+    for cntrt_itm in comprehensive_itm:
+        doc.append("comprehensive_contract",{
+        "comprehensive_contract_item":cntrt_itm.comprehensive_contract_item
+        })
+    for lbr_itm in labour_itm:
+        doc.append("labour_contract",{
+        "labour_contract_item":lbr_itm.labour_contract_item
+        })
+            
         
         
         
