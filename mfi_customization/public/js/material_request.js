@@ -13,6 +13,8 @@ frappe.ui.form.on('Material Request', {
 		});
     },
     refresh:function(frm){
+       fetch_data_from_material_request(frm)
+
         if (frm.doc.report_name){
             if (frm.doc.__islocal) {
                 frappe.call({
@@ -42,7 +44,6 @@ frappe.ui.form.on('Material Request', {
         }
     },
 	onload: function ( frm ) {
-	 
         frappe.db.get_doc("MFI Settings","MFI Settings").then(( setting ) => {
             (setting.company_purchase_warehouse).forEach((  row ) => {
                 if (row.company==cur_frm.doc.company){
@@ -374,8 +375,15 @@ var make_list_row= function(columns, project_tasks, result={}) {
 
         }
     },
+
+    before_save:function(frm){
+        frm.refresh()
+        //frm.refresh_field("items_with_yeild")
+       // items_with_yeild(frm)
+    
+    },
+    
     after_save:function(frm){
-      
         if (cur_frm.doc.report_name && cur_frm.doc.filters){
                 frappe.call({
                 method: 'mfi_customization.mfi.doctype.material_request.run',
@@ -530,11 +538,18 @@ frappe.ui.form.on("Material Request Item",{
 
 
 
+function fetch_data_from_material_request(frm){
 
+    
+                            
+       frappe.call({
+       method: 'mfi_customization.mfi.doctype.material_request.fetch_data_from_material_request',
 
+       args: {
+        "task":frm.doc.task
+        
+            }
+      
+        });
 
-
-
-
-
-
+  }
