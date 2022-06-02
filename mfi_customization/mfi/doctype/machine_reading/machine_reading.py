@@ -14,13 +14,14 @@ class MachineReading(Document):
 
 
 def validate(doc,method):
+	print("^^^^^^^^^ validate")
 	machine_reading_asset=[i.total for i in frappe.db.sql(f"""select max(reading_date),total from `tabMachine Reading` where asset ='{doc.asset}' """,as_dict=1)if i.total is not None]
 	print("machine_reading_asset",machine_reading_asset)
 	mr_name = frappe.db.get_value("Material Request",{"task":doc.task},"name")
-	if mr_name:
+	if mr_name and machine_reading_asset:
 		mr_doc  = frappe.get_doc('Material Request', mr_name)
-		mr_doc.items_with_yeild=[]
-		if machine_reading_asset:
+		if len(mr_doc.items_with_yeild) == 0:
+			mr_doc.items_with_yeild=[]
 			for i in mr_doc.items:
 				print("items",i.item_code)
 				machine_reding_with_itm =[i.total for i in  frappe.db.sql(f"""select max(m.reading_date),m.total from `tabMachine Reading` as m inner join `tabAsset Item Child Table` as a on a.parent=m.name where m.asset ='{doc.asset}' and a.item_code ='{i.item_code}' and m.task='{doc.task}' """,as_dict=1)if i.total is not None ]
@@ -34,7 +35,7 @@ def validate(doc,method):
 					mr_child.yeild=int(machine_reding_with_itm[0]) - int(machine_reading_asset[0])
 					mr_child.total_yeild =float(item_yeild[0])
 					mr_doc.save()
-
+		
 
 			
-                   
+				   
