@@ -8,7 +8,7 @@ frappe.ui.form.on('Task', {
         }
     },       
     status:function(frm){
-        fetch_data_material_request_item(frm)
+        //fetch_data_material_request_item(frm)
         if(frm.doc.status == 'Working'){
             let today = new Date()
             frappe.model.set_value("Issue", frm.doc.issue, 'first_responded_on',today);
@@ -32,7 +32,11 @@ frappe.ui.form.on('Task', {
     },
     
     before_save:function(frm){
-       insert_items_with_yeild(frm)
+       
+    },
+    
+    after_save:function(frm){
+    //frm.reload();
     },
     
 asset:function(frm){
@@ -118,17 +122,37 @@ refresh:function(frm){
     if (!frm.doc.__islocal ){
 		frm.add_custom_button(__('Material Request'), function() {
 			frappe.set_route('List', 'Material Request', {task: frm.doc.name});
+			
 		},__("View"));
     }
     frm.trigger('customer');
-
+   
+      
+      
+         
+         
     frm.add_custom_button('Material Request', () => {
+    var check_machine_reading=frappe.db.get_value("Machine Reading",{'task':frm.doc.name},'name',(r) => {
+    if (r.name!=null){
         frappe.model.open_mapped_doc({
             method: "mfi_customization.mfi.doctype.task.make_material_req",
             frm: me.frm
         })
-
+        
+        }
+    else{
+    
+         frappe.msgprint("can't create Material Request without Creating Machine Reading")
+    }    
+         })
         }, __('Make'))
+        
+       
+       
+       
+   
+   
+   
     frm.set_query("completed_by", function() {
             return {
                 query: 'mfi_customization.mfi.doctype.task.get_tech',
@@ -397,40 +421,40 @@ frappe.ui.form.on("Asset Details", "serial_no", function(frm, cdt, cdn) {
 
 
 
-function fetch_data_material_request_item(frm){
+// function fetch_data_material_request_item(frm){
 
-    if(frm.doc.status=="Completed"){
+//     if(frm.doc.status=="Completed"){
                             
-       frappe.call({
-       method: 'mfi_customization.mfi.doctype.task.fetch_data_from_material_request',
-       args: {
-        'task':frm.doc.name,
-        'status':frm.doc.status
-            }
+//        frappe.call({
+//        method: 'mfi_customization.mfi.doctype.task.fetch_data_from_material_request',
+//        args: {
+//         'task':frm.doc.name,
+//         'status':frm.doc.status
+//             }
       
-        });
+//         });
 
-     }
+//      }
 
-  }
+//   }
 
 
-function insert_items_with_yeild(frm){
+// function insert_items_with_yeild(frm){
 
-    if(frm.doc.status=="Completed"){
+//     if(frm.doc.status=="Completed"){
                             
-       frappe.call({
-       method: 'mfi_customization.mfi.doctype.task.items_with_yeild',
-       args: {
-        'task':frm.doc.name,
-        'asset':frm.doc.asset
-            }
+//        frappe.call({
+//        method: 'mfi_customization.mfi.doctype.task.items_with_yeild',
+//        args: {
+//         'task':frm.doc.name,
+//         'asset':frm.doc.asset
+//             }
       
-        });
+//         });
 
-     }
+//      }
 
-  }
+//   }
 
 
 
