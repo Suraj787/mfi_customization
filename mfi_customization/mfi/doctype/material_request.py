@@ -17,6 +17,11 @@ def validate(doc,method):
 					doc.approver=emp2.user_id
 					doc.approver_name=frappe.db.get_value("User",emp2.user_id,"full_name")
 
+def before_save(doc,method):
+	print("&&&& before_save")
+	fetch_data_from_material_request(doc)        
+	set_yeild_details(doc)
+
 
 def on_submit(doc,method):
 	validate_mr(doc)
@@ -366,37 +371,37 @@ def get_requisition_analysis_data(doc):
 	
 @frappe.whitelist()	
 def item_child_table_filter(doctype, txt, searchfield, start, page_len, filters):
-    AssetName = filters.get("asset")
-    data = frappe.db.sql(f"""
-    SELECT item_code,item_name,item_group from `tabAsset Item Child Table` where parent= '{AssetName}'
+	AssetName = filters.get("asset")
+	data = frappe.db.sql(f"""
+	SELECT item_code,item_name,item_group from `tabAsset Item Child Table` where parent= '{AssetName}'
 """, as_dict=0)
-    return data
-    
+	return data
+	
 
 
-    
+	
 
 def onload(doc,method):
-    project_name= frappe.db.get_value('Asset',{'name':doc.asset},'project')
-    doc.set('comprehensive_contract',[])
-    doc.set('labour_contract',[])
-    comprehensive_itm =frappe.db.sql(f"""
-    SELECT comprehensive_contract_item from `tabComprehensive Contract` where parent= "{project_name}" """, as_dict=1)
-    labour_itm =frappe.db.sql(f"""
-    SELECT labour_contract_item from `tabLabour Contract` where parent= "{project_name}" """, as_dict=1)
-    for cntrt_itm in comprehensive_itm:
-        doc.append("comprehensive_contract",{
-        "comprehensive_contract_item":cntrt_itm.comprehensive_contract_item
-        })
-    for lbr_itm in labour_itm:
-        doc.append("labour_contract",{
-        "labour_contract_item":lbr_itm.labour_contract_item
-        })
-            
-        
-        
-        
-        
+	project_name= frappe.db.get_value('Asset',{'name':doc.asset},'project')
+	doc.set('comprehensive_contract',[])
+	doc.set('labour_contract',[])
+	comprehensive_itm =frappe.db.sql(f"""
+	SELECT comprehensive_contract_item from `tabComprehensive Contract` where parent= "{project_name}" """, as_dict=1)
+	labour_itm =frappe.db.sql(f"""
+	SELECT labour_contract_item from `tabLabour Contract` where parent= "{project_name}" """, as_dict=1)
+	for cntrt_itm in comprehensive_itm:
+		doc.append("comprehensive_contract",{
+		"comprehensive_contract_item":cntrt_itm.comprehensive_contract_item
+		})
+	for lbr_itm in labour_itm:
+		doc.append("labour_contract",{
+		"labour_contract_item":lbr_itm.labour_contract_item
+		})
+			
+		
+		
+		
+		
 	
 # def before_save(doc,method):
 #     machine_reading_doc = frappe.get_last_doc('Machine Reading', filters={"task":doc.task})
@@ -406,46 +411,47 @@ def onload(doc,method):
 #         machine_child.item_name = d.item_name
 #         machine_child.item_group =d.item_group
 #         machine_reading_doc.save()
-            
-        
-        
+			
+		
+		
 
 
 
-@frappe.whitelist() 	
-def fetch_data_from_material_request(task):
+# @frappe.whitelist() 	
+def fetch_data_from_material_request(doc):
+	print("########## fetch_data_from_material_request")
+	material_request_list =[i.name for i in frappe.db.get_list('Material Request',{'task_':doc.task}, 'name')]
+	if material_request_list:
+	   machine_reading_doc = frappe.get_last_doc('Machine Reading', filters={"task":doc.task})
+	   if len(machine_reading_doc.items) == 0 :
+		   machine_reading_doc.items =[]
+		   for mr in material_request_list:
+			   mr_doc = frappe.get_doc('Material Request',mr)
+			   for i in mr_doc.items:
+				   machine_child =machine_reading_doc.append('items',{})
+				   machine_child.item_code = i.item_code
+				   machine_child.item_name = i.item_name
+				   machine_child.item_group = i.item_group
+				   machine_reading_doc.save()
 
-    material_request_list =[i.name for i in frappe.db.get_list('Material Request',{'task_':task}, 'name')]
-    if material_request_list:
-       machine_reading_doc = frappe.get_last_doc('Machine Reading', filters={"task":task})
-       machine_reading_doc.items =[]
-       for mr in material_request_list:
-           mr_doc = frappe.get_doc('Material Request',mr)
-           for i in mr_doc.items:
-               machine_child =machine_reading_doc.append('items',{})
-               machine_child.item_code = i.item_code
-               machine_child.item_name = i.item_name
-               machine_child.item_group = i.item_group
-               machine_reading_doc.save()
-        
-        
-        
-# def after_save(doc,method):
-# 	print("start threding")
-# 	machine_reading_asset=[i.total for i in frappe.db.sql(f"""select max(reading_date),total from `tabMachine Reading` where asset ='{doc.asset}' """,as_dict=1)if i.total is not None]
-# 	print("machine_reading_asset",machine_reading_asset)
-# 	if machine_reading_asset:
-# 		for i in doc.get('items'):
-# 			machine_reding_with_itm =[i.total for i in  frappe.db.sql(f"""select max(m.reading_date),m.total from `tabMachine Reading` as m inner join `tabAsset Item Child Table` as a on a.parent=m.name where m.asset ='{doc.asset}' and a.item_code ='{i.item_code}' and m.task='{doc.task}' """,as_dict=1)if i.total is not None ]
-# 			item_yeild =[itm.yeild for itm in frappe.db.sql(f""" SELECT yeild from `tabItem` where item_code ='{i.item_code}' """,as_dict=1)]
-# 			print("machine_reding_with_itm",machine_reding_with_itm)
-# 			if machine_reding_with_itm:
-# 				doc.append("items_with_yeild",{
-# 					"item_code": i.item_code,
-# 					"item_name": i.item_name,
-# 					"item_group": i.item_group,
-# 					"yeild":int(machine_reding_with_itm[0]) - int(machine_reading_asset[0]),
-# 					"total_yeild" :float(item_yeild[0])
-# 					})
-                   
+			
+  
+def set_yeild_details(doc):
+	print("set_yeild_details ")
+	machine_reading_asset=[i.total for i in frappe.db.sql(f"""select max(reading_date),total from `tabMachine Reading` where asset ='{doc.asset}' """,as_dict=1)if i.total is not None]
+	print("machine_reading_asset",machine_reading_asset)
+	if machine_reading_asset:
+		for i in doc.get('items'):
+			machine_reding_with_itm =[i.total for i in  frappe.db.sql(f"""select max(m.reading_date),m.total from `tabMachine Reading` as m inner join `tabAsset Item Child Table` as a on a.parent=m.name where m.asset ='{doc.asset}' and a.item_code ='{i.item_code}' and m.task='{doc.task}' """,as_dict=1)if i.total is not None ]
+			item_yeild =[itm.yeild for itm in frappe.db.sql(f""" SELECT yeild from `tabItem` where item_code ='{i.item_code}' """,as_dict=1)]
+			print("machine_reding_with_itm",machine_reding_with_itm)
+			if machine_reding_with_itm:
+				doc.append("items_with_yeild",{
+					"item_code": i.item_code,
+					"item_name": i.item_name,
+					"item_group": i.item_group,
+					"yeild":int(machine_reding_with_itm[0]) - int(machine_reading_asset[0]),
+					"total_yeild" :float(item_yeild[0])
+					})
+				 
 

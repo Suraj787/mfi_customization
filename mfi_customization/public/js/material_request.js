@@ -13,7 +13,7 @@ frappe.ui.form.on('Material Request', {
 		});
     },
     refresh:function(frm){
-       fetch_data_from_material_request(frm)
+       // fetch_data_from_material_request(frm)
 
         if (frm.doc.report_name){
             if (frm.doc.__islocal) {
@@ -376,12 +376,12 @@ var make_list_row= function(columns, project_tasks, result={}) {
         }
     },
 
-    before_save:function(frm){
-        frm.refresh()
+    // before_save:function(frm){
+        // frm.refresh()
         //frm.refresh_field("items_with_yeild")
        // items_with_yeild(frm)
     
-    },
+    // },
     
     after_save:function(frm){
         if (cur_frm.doc.report_name && cur_frm.doc.filters){
@@ -538,18 +538,13 @@ frappe.ui.form.on("Material Request Item",{
 
 
 
-function fetch_data_from_material_request(frm){
-
-    
-                            
-       frappe.call({
-       method: 'mfi_customization.mfi.doctype.material_request.fetch_data_from_material_request',
-
-       args: {
-        "task":frm.doc.task
-        
-            }
-      
-        });
-
-  }
+// function fetch_data_from_material_request(frm){
+//     if (frm.doc.task){                     
+//        frappe.call({
+//             // method: 'mfi_customization.mfi.doctype.material_request.fetch_data_from_material_request',
+//             args: {
+//                 "task":frm.doc.task
+//             }
+//         });
+//     }
+// }
