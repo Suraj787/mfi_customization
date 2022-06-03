@@ -4,7 +4,8 @@
 
 from __future__ import unicode_literals
 import frappe
-from datetime import datetime
+from datetime import datetime ,timedelta
+import calendar
 from dateutil import rrule
 from dateutil.relativedelta import relativedelta
 from frappe.model.mapper import get_mapped_doc
@@ -80,12 +81,13 @@ def date_invoice_cycle(expected_end_date,invoicing_starts_from,invoice_cycle_opt
     endate=str(expected_end_date)
     endate_strp =datetime. strptime(endate, "%Y-%m-%d")
     endateformating = datetime(endate_strp.year,endate_strp.month,endate_strp.day)
-    
     invoicing_start_date = str(invoicing_starts_from)
     invoicing_strp=datetime. strptime(invoicing_start_date,"%Y-%m-%d")
     invoce_startformating=datetime(invoicing_strp.year,invoicing_strp.month,invoicing_strp.day)
     [monthlylist.append(monthly.date()) for monthly in rrule.rrule(rrule.MONTHLY,dtstart=invoce_startformating,until=endateformating)]
     [yearlylist.append(yearly.date())for yearly in rrule.rrule(rrule.YEARLY,dtstart=invoce_startformating,until=endateformating)]
+    if invoce_startformating> endateformating:
+       frappe.throw("Invoicing Starts from date can't before Expected End Date")
     if invoice_cycle_option == "Quarterly":
        add_quarter_Months = relativedelta(months=3)
        while invoce_startformating <= endateformating:
@@ -96,7 +98,17 @@ def date_invoice_cycle(expected_end_date,invoicing_starts_from,invoice_cycle_opt
        while invoce_startformating <= endateformating:
           half_yearlist.append(invoce_startformating.date())
           invoce_startformating += add_half_year_Month
-        
+    
     
     return monthlylist,yearlylist,quarterlylist ,half_yearlist
-       
+
+@frappe.whitelist()
+def contract_period(expected_start_date,contract_period):
+    start_date=str(expected_start_date)
+    start_strp=datetime. strptime(start_date,"%Y-%m-%d")
+    stratformate=datetime(start_strp.year,start_strp.month,start_strp.day)
+    current = stratformate + relativedelta(months=(int(contract_period)))
+    return current.date()
+
+    
+    
