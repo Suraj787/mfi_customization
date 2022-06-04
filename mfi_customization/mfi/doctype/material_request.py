@@ -411,8 +411,8 @@ def set_yeild_details(doc):
     print("^^^^^ asset_reading",asset_reading )
     doc.items_with_yeild = []
     for i in doc.get('items'):
-       
-        machine_reding_with_itm =[i.total for i in  frappe.db.sql(f"""select max(m.reading_date),m.total from `tabMachine Reading` as m inner join `tabAsset Item Child Table` as a on a.parent=m.name where m.asset ='{doc.asset}' and a.item_code ='{i.item_code}' """,as_dict=1)if i.total is not None ]
+        print("////i", i)
+        machine_reding_with_itm =[i.total for i in  frappe.db.sql(f"""select m.total from `tabMachine Reading` as m inner join `tabAsset Item Child Table` as a on a.parent=m.name where m.asset ='{doc.asset}' and a.item_code ='{i.item_code}' ORDER BY m.name DESC LIMIT 1 """,as_dict=1)if i.total is not None ]
         item_yeild =[itm.yeild for itm in frappe.db.sql(f""" SELECT yeild from `tabItem` where item_code ='{i.item_code}' """,as_dict=1)]
         print("^^^^^^^^^^^ item_yeild",item_yeild)
         print("machine_reding_with_itm",machine_reding_with_itm)
