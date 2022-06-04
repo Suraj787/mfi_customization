@@ -458,21 +458,23 @@ def get_locationlist(doctype, txt, searchfield, start, page_len, filters):
 
 
 
-# @frappe.whitelist() 	
-# def fetch_data_from_material_request(task,status):
-
-#     material_request_list =[i.name for i in frappe.db.get_list('Material Request',{'task_':task}, 'name')]
-#     if material_request_list:
-#        machine_reading_doc = frappe.get_last_doc('Machine Reading', filters={"task":task})
-#        machine_reading_doc.items =[]
-#        for mr in material_request_list:
-#            mr_doc = frappe.get_doc('Material Request',mr)
-#            for i in mr_doc.items:
-#                machine_child =machine_reading_doc.append('items',{})
-#                machine_child.item_code = i.item_code
-#                machine_child.item_name = i.item_name
-#                machine_child.item_group = i.item_group
-#                machine_reading_doc.save()
+@frappe.whitelist() 	
+def set_items_on_machine_reading_from_mr(asset,task):
+    print("######### asset",asset,"task",task)
+    material_request_list =[i.name for i in frappe.db.get_list('Material Request',{'task_':task, 'asset':asset}, 'name')]
+    print("!!!!!!!!!!!!material_request_list ",material_request_list)
+    if material_request_list:
+       machine_reading_doc = frappe.get_last_doc('Machine Reading', filters={"task":task, "asset":asset})
+       print("^^^^^^^^^^^^ machine_reading_doc",machine_reading_doc)
+       machine_reading_doc.items =[]
+       for mr in material_request_list:
+           mr_doc = frappe.get_doc('Material Request',mr)
+           for i in mr_doc.items:
+               machine_child =machine_reading_doc.append('items',{})
+               machine_child.item_code = i.item_code
+               machine_child.item_name = i.item_name
+               machine_child.item_group = i.item_group
+               machine_reading_doc.save()
             
                
      
@@ -503,33 +505,6 @@ def get_asset(customer,location):
 			if ass.name not in lst:
 				lst.append(ass.name)
 	return lst	
-
-
-
-# @frappe.whitelist()
-# def items_with_yeild(task,asset):
-#     material_request_list =[i.name for i in frappe.db.get_list('Material Request',{'task_':task}, 'name')]
-#     machine_reading_asset=[i.total for i in frappe.db.sql(f"""select max(reading_date),total from `tabMachine Reading` where asset ='{asset}' """,as_dict=1)if i.total is not None]
-#     if material_request_list:
-#        material_request_doc = frappe.get_last_doc('Material Request', filters={"task":task,"asset":asset})
-#        material_request_doc.items_with_yeild=[]
-#        if machine_reading_asset:
-#           for mr in material_request_list:
-#               mr_doc = frappe.get_doc('Material Request',mr)
-#               for i in mr_doc.items:
-#                   machine_reding_with_itm =[i.total for i in  frappe.db.sql(f"""select max(m.reading_date),m.total from `tabMachine Reading` as m inner join `tabAsset Item Child Table` as a on a.parent=m.name where m.asset ='{asset}' and a.item_code ='{i.item_code}' and m.task='{task}' """,as_dict=1)if i.total is not None ]
-#                   item_yeild =[itm.yeild for itm in frappe.db.sql(f""" SELECT yeild from `tabItem` where item_code ='{i.item_code}' """,as_dict=1)]
-#                   if machine_reding_with_itm:
-#                      mr_yild_child_table = material_request_doc.append("items_with_yeild",{})
-#                      mr_yild_child_table.item_code = i.item_code
-#                      mr_yild_child_table.item_name = i.item_name
-#                      mr_yild_child_table.item_group = i.item_group
-#                      mr_yild_child_table.yeild = int(machine_reding_with_itm[0]) - int(machine_reading_asset[0])
-#                      mr_yild_child_table.total_yeild = float(item_yeild[0])
-#                      material_request_doc.save()
-                   
-
-
 
 
 def validate_current_reading(doc):

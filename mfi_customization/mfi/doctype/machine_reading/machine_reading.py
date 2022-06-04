@@ -14,7 +14,7 @@ class MachineReading(Document):
 
 
 def validate(doc,method):
-	print("^^^^^^^^^ validate")
+	print("^^^^^^^^^ validate machine reading")
 	machine_reading_asset=[i.total for i in frappe.db.sql(f"""select max(reading_date),total from `tabMachine Reading` where asset ='{doc.asset}' """,as_dict=1)if i.total is not None]
 	print("machine_reading_asset",machine_reading_asset)
 	mr_name = frappe.db.get_value("Material Request",{"task":doc.task},"name")

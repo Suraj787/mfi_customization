@@ -26,6 +26,14 @@ frappe.ui.form.on('Task', {
                     }
                 });
             }
+
+           frappe.call({
+                method: 'mfi_customization.mfi.doctype.task.set_items_on_machine_reading_from_mr',
+                args: {
+                    'asset':frm.doc.asset,
+                    'task':frm.doc.name
+                }
+            });
             
         }
          
@@ -80,7 +88,7 @@ asset:function(frm){
     }
 },
 onload:function(frm){
-    fetch_data_material_request_item(frm)
+    // fetch_data_material_request_item(frm)
    /* 
    frappe.call({
      method: "mfi_customization.mfi.doctype.issue.get_logged_user",
