@@ -418,6 +418,7 @@ def set_yeild_details(doc):
         print("machine_reding_with_itm",machine_reding_with_itm)
         if asset_reading:
             if  machine_reding_with_itm and machine_reding_with_itm[0]:
+                frappe.msgprint(" asset_reading {0} and asset with item {1} for item '{2}'".format(asset_reading, machine_reding_with_itm[0],i.item_code ) )
                 doc.append("items_with_yeild",{
                     "item_code": i.item_code,
                     "item_name": i.item_name,
@@ -430,6 +431,8 @@ def set_yeild_details(doc):
                 where asset ='{0}' and reading_type = 'Installation' ORDER BY name DESC LIMIT 1""".format(doc.asset),as_dict=1)
                 print("!!!!!!!! mchn_reading_installation",mchn_reading_installation)
                 if mchn_reading_installation and mchn_reading_installation[0]['total']:
+                    frappe.msgprint(" asset_reading {0} and mchn_reading_installation {1} for item '{2}'".format(asset_reading, mchn_reading_installation[0]['total'],i.item_code) )
+
                     doc.append("items_with_yeild",{
                         "item_code": i.item_code,
                         "item_name": i.item_name,
