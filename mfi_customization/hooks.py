@@ -103,6 +103,7 @@ doc_events = {
         "after_insert":"mfi_customization.mfi.doctype.task.after_insert",
         "on_trash":"mfi_customization.mfi.doctype.task.after_delete",
         "on_change":"mfi_customization.mfi.doctype.task.on_change"
+        #"before_save":"mfi_customization.mfi.doctype.task.before_save"
     },
     "Asset":{
         "after_insert":"mfi_customization.mfi.doctype.Asset.after_insert",
@@ -114,8 +115,8 @@ doc_events = {
         "on_change":"mfi_customization.mfi.doctype.issue.on_change"
     },
     "Material Request":{
-        "on_change":"mfi_customization.mfi.doctype.material_request.set_item_from_material_req",
-        "on_submit":"mfi_customization.mfi.doctype.material_request.on_submit",
+        #"on_change":"mfi_customization.mfi.doctype.material_request.set_item_from_material_req",
+        #"on_submit":"mfi_customization.mfi.doctype.material_request.on_submit",
        # "after_save":"mfi_customization.mfi.doctype.material_request.after_save",
         "onload":"mfi_customization.mfi.doctype.material_request.onload",
         "before_save":"mfi_customization.mfi.doctype.material_request.before_save"
@@ -141,7 +142,7 @@ doc_events = {
         "validate":"mfi_customization.mfi.doctype.quotation.validate"
     },
     "Project":{
-        "validate":"mfi_customization.mfi.doctype.project.validate"
+        #"validate":"mfi_customization.mfi.doctype.project.validate"
     },
     "Purchase Order":{
         "after_insert":"mfi_customization.mfi.doctype.purchase_order.on_submit"
@@ -192,7 +193,10 @@ fixtures = [
             ]
         ]
     ]}
+    
 ]
+#fixtures=["Custom Field"]
+
 # before_tests = "mfi_customization.install.before_tests"
 
 # Overriding Methods
