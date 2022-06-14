@@ -114,10 +114,10 @@ doc_events = {
         "on_change":"mfi_customization.mfi.doctype.issue.on_change"
     },
     "Material Request":{
-        "on_change":"mfi_customization.mfi.doctype.material_request.set_item_from_material_req",
+        # "on_change":"mfi_customization.mfi.doctype.material_request.set_item_from_material_req",
         "on_submit":"mfi_customization.mfi.doctype.material_request.on_submit",
        # "after_save":"mfi_customization.mfi.doctype.material_request.after_save",
-        "onload":"mfi_customization.mfi.doctype.material_request.onload",
+        # "onload":"mfi_customization.mfi.doctype.material_request.onload",
         "before_save":"mfi_customization.mfi.doctype.material_request.before_save"
         
         

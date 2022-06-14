@@ -10,10 +10,14 @@
   "item_name",
   "item_group",
   "yeild",
-  "total_yeild"
+  "total_yeild",
+  "1st_reading",
+  "2nd_reading",
+  "3rd_reading"
  ],
  "fields": [
   {
+   "columns": 2,
    "fieldname": "item_code",
    "fieldtype": "Link",
    "in_list_view": 1,
@@ -21,6 +25,7 @@
    "options": "Item"
   },
   {
+   "columns": 2,
    "fetch_from": "item_code.item_name",
    "fieldname": "item_name",
    "fieldtype": "Data",
@@ -28,6 +33,7 @@
    "label": "Item Name"
   },
   {
+   "columns": 1,
    "fetch_from": "item_code.item_group",
    "fieldname": "item_group",
    "fieldtype": "Data",
@@ -35,23 +41,46 @@
    "label": "Item Group"
   },
   {
+   "columns": 1,
    "fieldname": "yeild",
    "fieldtype": "Int",
    "in_list_view": 1,
    "label": "Current Yeild "
   },
   {
+   "columns": 1,
    "fetch_from": "item_code.yeild",
    "fieldname": "total_yeild",
    "fieldtype": "Float",
    "in_list_view": 1,
    "label": "Total Yeild"
+  },
+  {
+   "columns": 1,
+   "fieldname": "1st_reading",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "1st Reading"
+  },
+  {
+   "columns": 1,
+   "fieldname": "2nd_reading",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "2nd Reading"
+  },
+  {
+   "columns": 1,
+   "fieldname": "3rd_reading",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "3rd Reading"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-05-23 08:19:13.518010",
+ "modified": "2022-06-13 08:46:12.523900",
  "modified_by": "Administrator",
  "module": "mfi",
  "name": "Material Request Item child table",
