@@ -406,6 +406,9 @@ def set_yeild_details(doc):
     for i in doc.get('items'):
         machine_reding_with_itm =[i.total for i in  frappe.db.sql(f"""select m.total from `tabMachine Reading` as m inner join `tabAsset Item Child Table` as a on a.parent=m.name where m.asset ='{doc.asset}' and a.item_code ='{i.item_code}' ORDER BY m.name DESC LIMIT 1 """,as_dict=1)if i.total is not None ]
         item_yeild =[itm.yeild for itm in frappe.db.sql(f""" SELECT yeild from `tabItem` where item_code ='{i.item_code}' """,as_dict=1)]
+        coverage = [cvrg.coverage for cvrg in frappe.db.sql(f""" SELECT coverage from `tabItem` where item_code='{i.item_code}'""",as_dict=1) ]
+        percent = (int(item_yeild[0])/int(machine_reding_with_itm[0]))*100
+        last_coverage = (float(coverage[0])/100) * (percent/100)           
         if asset_reading:
             if  machine_reding_with_itm and machine_reding_with_itm[0]:
                 doc.append("items_with_yeild",{
@@ -413,13 +416,15 @@ def set_yeild_details(doc):
                     "item_name": i.item_name,
                     "item_group": i.item_group,
                     "yeild":int(asset_reading) - int(machine_reding_with_itm[0]) ,
-                    "total_yeild" :float(item_yeild[0])
+                    "total_yeild" :float(item_yeild[0]),
+                    "last_coverage":"%.6f"% last_coverage
                     })
             else:
                 mchn_reading_installation = frappe.db.sql("""select name, total from `tabMachine Reading` 
                 where asset ='{0}' and reading_type = 'Installation' ORDER BY name DESC LIMIT 1""".format(doc.asset),as_dict=1)
                 if mchn_reading_installation and mchn_reading_installation[0]['total']:
                     frappe.msgprint(" asset_reading {0} and mchn_reading_installation {1} for item '{2}'".format(asset_reading, mchn_reading_installation[0]['total'],i.item_code) )
+                    
 
                     doc.append("items_with_yeild",{
                         "item_code": i.item_code,
@@ -427,8 +432,18 @@ def set_yeild_details(doc):
                         "item_group": i.item_group,
                         "yeild":int(asset_reading) - int(mchn_reading_installation[0]['total']) ,
                         "total_yeild" :float(item_yeild[0])
+                        
                         })
                 else:
                     frappe.msgprint("Machine reading not found for any item or for type installation.")
                  
+
+
+#def before_submit(doc,method):
+#    for i in doc.get('items_with_yeild'):
+#        coverage = [cvrg.coverage for cvrg in frappe.db.sql(f""" SELECT coverage from `tabItem` where item_code='{i.item_code}'""",as_dict=1) ]
+#        if i.last_coverage > coverage[0]:
+#           frappe.throw("coverage is low ")
+    
+
 
