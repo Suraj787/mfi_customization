@@ -18,6 +18,7 @@ from frappe.desk.query_report import get_report_doc,get_prepared_report_result,g
 #                     doc.approver_name=frappe.db.get_value("User",emp2.user_id,"full_name")
 
 def before_save(doc,method):
+    print("////before_save")
     set_yeild_details(doc)
 
 # def on_submit(doc,method):
@@ -404,20 +405,26 @@ def set_yeild_details(doc):
                 break
     doc.items_with_yeild = []
     for i in doc.get('items'):
-        machine_reding_with_itm =[i.total for i in  frappe.db.sql(f"""select m.total from `tabMachine Reading` as m inner join `tabAsset Item Child Table` as a on a.parent=m.name where m.asset ='{doc.asset}' and a.item_code ='{i.item_code}' ORDER BY m.name DESC LIMIT 1 """,as_dict=1)if i.total is not None ]
+        machine_reding_with_itm =[i.total for i in  frappe.db.sql(f"""select m.total, m.reading_date from `tabMachine Reading` as m inner join `tabAsset Item Child Table` as a on a.parent=m.name where m.asset ='{doc.asset}' and a.item_code ='{i.item_code}' ORDER BY m.name DESC LIMIT 3 """,as_dict=1)if i.total is not None ]
+        print("333333 machine_reding_with_itm", machine_reding_with_itm)
         item_yeild =[itm.yeild for itm in frappe.db.sql(f""" SELECT yeild from `tabItem` where item_code ='{i.item_code}' """,as_dict=1)]
         if asset_reading:
-            if  machine_reding_with_itm and machine_reding_with_itm[0]:
+            print("///asset_reading",asset_reading)
+            if  machine_reding_with_itm :
                 doc.append("items_with_yeild",{
                     "item_code": i.item_code,
                     "item_name": i.item_name,
                     "item_group": i.item_group,
                     "yeild":int(asset_reading) - int(machine_reding_with_itm[0]) ,
-                    "total_yeild" :float(item_yeild[0])
+                    "total_yeild" :float(item_yeild[0]),
+                    "1st_reading":int(asset_reading) - int(machine_reding_with_itm[0]) if machine_reding_with_itm[1] else 0,
+                    "2nd_reading": int(asset_reading) - int(machine_reding_with_itm[1]) if machine_reding_with_itm[1] else 0,
+                    "3rd_reading": int(asset_reading) - int(machine_reding_with_itm[2]) if machine_reding_with_itm[2] else 0
+
                     })
             else:
                 mchn_reading_installation = frappe.db.sql("""select name, total from `tabMachine Reading` 
-                where asset ='{0}' and reading_type = 'Installation' ORDER BY name DESC LIMIT 1""".format(doc.asset),as_dict=1)
+                where asset ='{0}' and reading_type = 'Installation' ORDER BY name DESC LIMIT 3""".format(doc.asset),as_dict=1)
                 if mchn_reading_installation and mchn_reading_installation[0]['total']:
                     frappe.msgprint(" asset_reading {0} and mchn_reading_installation {1} for item '{2}'".format(asset_reading, mchn_reading_installation[0]['total'],i.item_code) )
 
@@ -426,7 +433,10 @@ def set_yeild_details(doc):
                         "item_name": i.item_name,
                         "item_group": i.item_group,
                         "yeild":int(asset_reading) - int(mchn_reading_installation[0]['total']) ,
-                        "total_yeild" :float(item_yeild[0])
+                        "total_yeild" :float(item_yeild[0]),
+                        "1st_reading":int(asset_reading) - int(mchn_reading_installation[0]['total']),
+                        "2nd_reading":int(asset_reading) - int(mchn_reading_installation[1]['total']),
+                        "3rd_reading":int(asset_reading) - int(mchn_reading_installation[2]['total'])
                         })
                 else:
                     frappe.msgprint("Machine reading not found for any item or for type installation.")
