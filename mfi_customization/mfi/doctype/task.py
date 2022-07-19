@@ -4,6 +4,7 @@
 
 from __future__ import unicode_literals
 import frappe
+import json
 from frappe.utils.data import getdate,today
 from frappe.model.mapper import get_mapped_doc
 from frappe.permissions import add_user_permission
@@ -477,7 +478,17 @@ def set_items_on_machine_reading_from_mr(asset,task):
                machine_reading_doc.save()
             
                
-     
+@frappe.whitelist()
+def transfer_data_to_issue(doc):
+    doc=json.loads(doc)
+    if doc.get('status')=='Completed':
+       issue_doc = frappe.get_doc('Issue',doc.get('issue'))
+       issue_doc.symptoms=doc.get('symptoms')
+       issue_doc.action=doc.get('action')
+       issue_doc.cause=doc.get('cause')
+       issue_doc.save()  
+      
+         
 
 
 
