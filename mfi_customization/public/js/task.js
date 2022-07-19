@@ -8,6 +8,7 @@ frappe.ui.form.on('Task', {
         }
     },       
     status:function(frm){
+         transfer_data_to_issue(frm)
         //fetch_data_material_request_item(frm)
         if(frm.doc.status == 'Working'){
             let today = new Date()
@@ -127,6 +128,7 @@ onload:function(frm){
 
 },
 refresh:function(frm){
+    transfer_data_to_issue(frm)
     if (!frm.doc.__islocal ){
 		frm.add_custom_button(__('Material Request'), function() {
 			frappe.set_route('List', 'Material Request', {task: frm.doc.name});
@@ -426,6 +428,28 @@ frappe.ui.form.on("Asset Details", "serial_no", function(frm, cdt, cdn) {
     frm.set_df_property('asset','read_only',1);
     refresh_field("asset", d.name, d.parentfield);
 });
+
+
+
+
+ function transfer_data_to_issue(frm){
+
+     if(frm.doc.status=="Completed"){
+      
+        frappe.call({
+        method: 'mfi_customization.mfi.doctype.task.transfer_data_to_issue',
+        args: {
+        'doc':frm.doc
+             }
+                     
+         });
+
+     }
+
+  }
+
+
+
 
 
 
