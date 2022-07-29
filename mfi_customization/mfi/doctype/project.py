@@ -37,7 +37,7 @@ def make_issues_on_PM_call_interval():
                   issue_doc.serial_no = frappe.get_value('Asset',{'name':a.asset},'serial_no')
                   issue_doc.area = frappe.get_value('Asset',{'name':a.asset},'area')
                   issue_doc.sub_location_area = frappe.get_value('Asset',{'name':a.asset},'sub_location_area')
-                  issue_doc.machine_location = machine_locationfrappe.get_value('Asset',{'name':a.asset},'machine_location')
+                  issue_doc.machine_location = frappe.get_value('Asset',{'name':a.asset},'machine_location')
                   issue_doc.save()
                   print("Issue created for project", project_doc.name)
 
