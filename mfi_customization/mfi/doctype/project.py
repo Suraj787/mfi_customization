@@ -4,12 +4,52 @@
 
 from __future__ import unicode_literals
 import frappe
-from datetime import datetime ,timedelta
+from datetime import datetime ,timedelta, date
 import calendar
 from dateutil import rrule
 from dateutil.relativedelta import relativedelta
 from frappe.model.mapper import get_mapped_doc
 import json
+import datetime
+from datetime import datetime, timedelta
+
+# def validate(doc,method):
+   # make_issues_on_PM_call_interval(doc)
+
+def make_issues_on_PM_call_interval(doc):
+   expected_end_date = datetime.strptime(doc.expected_end_date, '%Y-%m-%d')
+   expected_start_date = datetime.strptime(doc.expected_start_date, '%Y-%m-%d')
+   if expected_end_date and doc.pm_call_interval > 0 and datetime.today() <= expected_end_date:
+      expected_end_date = datetime.strptime(doc.expected_end_date, '%Y-%m-%d')
+      expected_start_date = datetime.strptime(doc.expected_start_date, '%Y-%m-%d')
+      till_end_date = (expected_end_date- expected_start_date).days
+      date_list = [expected_start_date + timedelta(days=x) for x in range(0,till_end_date,doc.pm_call_interval)]
+      if date.today() in [dt.date() for dt in date_list]:
+         for a in doc.machine_readings:
+            if a.asset and not check_duplicate_issue(doc, a.asset):
+               issue_doc = frappe.new_doc('Issue')
+               issue_doc.subject = "PM Call Interval"
+               issue_doc.customer = doc.customer
+               issue_doc.asset = a.asset
+               issue_doc.location = frappe.get_value('Asset',{'name':a.asset},'location')
+               issue_doc.type_of_call = "PM"
+               issue_doc.issue_type = "Preventive"
+               issue_doc.failure_date_and_time = datetime.today()
+               issue_doc.raise_by_contact = frappe.get_value('Customer',{'name':doc.customer},'customer_name')
+               issue_doc.project = doc.name
+               issue_doc.status = "Open"
+               issue_doc.serial_no = frappe.get_value('Asset',{'name':a.asset},'serial_no')
+               issue_doc.save()
+
+def check_duplicate_issue(doc, asset):
+    return  frappe.db.get_all("Issue", filters={
+            'subject' : "PM Call Interval",
+            'customer' : doc.customer,
+            'asset' : asset,
+            'project':doc.name,
+            'name': ['!=', doc.name]
+        }, limit=1)
+
 
 # @frappe.whitelist()
 # def fetch_asset_maintenance_team(maintenance_team):

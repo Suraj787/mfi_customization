@@ -142,7 +142,7 @@ doc_events = {
         "validate":"mfi_customization.mfi.doctype.quotation.validate"
     },
     "Project":{
-        #"validate":"mfi_customization.mfi.doctype.project.validate"
+        # "validate":"mfi_customization.mfi.doctype.project.validate"
     },
     "Purchase Order":{
         "after_insert":"mfi_customization.mfi.doctype.purchase_order.on_submit"
@@ -163,7 +163,7 @@ doc_events = {
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
+scheduler_events = {
 # 	"all": [
 # 		"mfi_customization.tasks.all"
 # 	],
@@ -179,7 +179,13 @@ doc_events = {
 # 	"monthly": [
 # 		"mfi_customization.tasks.monthly"
 # 	]
-# }
+
+    "cron": {
+        "0 9 * * *": [
+            "mfi_customization.mfi.doctype.project.make_issues_on_PM_call_interval"
+        ]
+    }
+}
 
 # Testing
 # -------
