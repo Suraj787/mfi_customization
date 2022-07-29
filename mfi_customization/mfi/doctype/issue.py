@@ -219,7 +219,7 @@ def set_task_status_cancelled(doc):
 
 def validate_link_fileds(doc):
 	validate_location(doc)
-	validate_asset(doc)
+	# validate_asset(doc)
 	validate_serial_no(doc)
 
 
