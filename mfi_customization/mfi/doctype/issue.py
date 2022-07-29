@@ -9,7 +9,7 @@ from frappe.utils.data import today,getdate
 
 def validate(doc,method):
 	email_validation(doc)
-	validate_link_fileds(doc)
+	# validate_link_fileds(doc)
 # 	validate_issue(doc)
 	# machine_reading=""
 	for d in doc.get("current_reading"):
@@ -219,7 +219,7 @@ def set_task_status_cancelled(doc):
 
 def validate_link_fileds(doc):
 	validate_location(doc)
-	# validate_asset(doc)
+	validate_asset(doc)
 	validate_serial_no(doc)
 
 
