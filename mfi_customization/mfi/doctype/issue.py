@@ -88,9 +88,9 @@ def get_asset_in_issue(doctype, txt, searchfield, start, page_len, filters):
 
 @frappe.whitelist()
 def get_serial_no_list(doctype, txt, searchfield, start, page_len, filters):
- 	if txt:
- 		filters.update({"name": ("like", "{0}%".format(txt))})
- 	return frappe.get_all("Asset Serial No",filters=filters,fields = ["name"], as_list=1)
+	if txt:
+		filters.update({"name": ("like", "{0}%".format(txt))})
+	return frappe.get_all("Asset Serial No",filters=filters,fields = ["name"], as_list=1)
 
 @frappe.whitelist()
 def get_customer(serial_no,asset):
@@ -278,24 +278,31 @@ def validate_location(doc):
 	if doc.status=="Closed" and not doc.location:
 		frappe.throw("Can't Closed Issue Without <b>Location</b>")
 		
-        
+		
 @frappe.whitelist()
 def get_logged_user():
-    user = frappe.db.get_value('User',{"name":frappe.session.user},"full_name")
-    customerId_of_user=frappe.db.get_value("Customer",{"customer_name":user},"name")
-    return customerId_of_user
-         
-    
+	user = frappe.db.get_value('User',{"name":frappe.session.user},"full_name")
+	customerId_of_user=frappe.db.get_value("Customer",{"customer_name":user},"name")
+	return customerId_of_user
+		 
+	
 @frappe.whitelist()		
 def get_locationlist(doctype, txt, searchfield, start, page_len, filters):
-    location_list=[]
-    project_list = [p.name for p in frappe.db.get_list("Project", filters={"customer":filters.get("Customer_Name")},fields={"name"})]
-    for p in project_list:
-        location_list =[[l.location] for l in frappe.db.get_list("Asset",{"project":p},"location") if [l.location] not in location_list ]
-    return location_list    
-    
-    
-
-    
+	location_list=[]
+	project_list = [p.name for p in frappe.db.get_list("Project", filters={"customer":filters.get("Customer_Name")},fields={"name"})]
+	for p in project_list:
+		location_list =[[l.location] for l in frappe.db.get_list("Asset",{"project":p},"location") if [l.location] not in location_list ]
+	return location_list    
+	
+@frappe.whitelist()		
+def check_type_of_call(project, type_of_call):
+	call_type_list = [c.call_type for c in frappe.db.get_list("Hold Call Types",{'parent':project}, "call_type")]
+	if len(call_type_list) > 0 and type_of_call in call_type_list:
+		return True
+	else:
+		return False
+		
+	
+	
 		
 

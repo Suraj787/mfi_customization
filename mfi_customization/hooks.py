@@ -198,7 +198,11 @@ fixtures = [
                 "DocType"
             ]
         ]
-    ]}
+    ]},
+    {"dt": "Workflow", "filters": [[
+      "document_type", "in", ("Issue")
+      ]]
+    }
     
 ]
 #fixtures=["Custom Field"]
