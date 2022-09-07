@@ -41,19 +41,21 @@ frappe.ui.form.on('Issue', {
 					frm.set_df_property('current_reading','hidden',0);
 				}
 			});
-
-			frappe.call({
-				method: "mfi_customization.mfi.doctype.issue.check_type_of_call",
-				args: {
-					"project":frm.doc.project,
-					"type_of_call":frm.doc.type_of_call
-				},
-			    callback: function(r) {
-			        if(r.message){
-				        frm.set_value('status', "Hold")
-			        }
-			    }
-			});
+            if (frm.doc.project){
+            	frappe.call({
+					method: "mfi_customization.mfi.doctype.issue.check_type_of_call",
+					args: {
+						"project":frm.doc.project,
+						"type_of_call":frm.doc.type_of_call
+					},
+				    callback: function(r) {
+				        if(r.message){
+					        frm.set_value('status', "Hold")
+				        }
+				    }
+				});
+            }
+			
 		}
    },
 	serial_no:function(frm){
