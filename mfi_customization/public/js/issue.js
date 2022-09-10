@@ -64,8 +64,8 @@ frappe.ui.form.on('Issue', {
 		// frm.set_value('asset_name','');
 		// frm.set_value('location','');
 		// frm.set_value('customer','');
-		
-		frappe.call({
+		if (frm.doc.serial_no && frm.doc.asset){
+			frappe.call({
 			method: "mfi_customization.mfi.doctype.issue.get_customer",
 			args: {
 				"serial_no":frm.doc.serial_no,
@@ -75,9 +75,9 @@ frappe.ui.form.on('Issue', {
 			
 					frm.set_value('customer',r.message);				
 				}
-	
-			
-	});
+			});
+		}
+		
 		frappe.db.get_value('Asset Serial No',{'name':frm.doc.serial_no},['asset','location'])
 		.then(({ message }) => {
 			
@@ -477,3 +477,4 @@ frappe.ui.form.on("Asset Readings", "date", function(frm, cdt, cdn) {
 //     d.asset = frm.doc.asset
 //     refresh_field("asset", d.name, d.parentfield);
 // });
+		
