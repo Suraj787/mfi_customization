@@ -11,14 +11,24 @@ frappe.web_form.after_load = () =>{
 frappe.call({
 
 method: 'mfi_customization.mfi.web_form.issues.issues.get_logged_user',
-    args: {
-
-    },
-    
     callback: function(r) {
-     
-       frappe.web_form.set_value("customer",r.message)
- 
+        console.log("r.message", r.message)
+        if ((r.message).length == 1){
+            frappe.web_form.set_value("customer",r.message)
+        }
+        else if ((r.message).length > 1){
+            var options =[]
+            $.each(r.message || [], function(i, d) {
+                options.push({
+                 'label':d,
+                 'value':d
+                 
+                });
+            });
+            var field = frappe.web_form.get_field("customer")
+            field._data = options;
+            field.refresh();
+        }
     }
 })            
 
@@ -33,6 +43,7 @@ frappe.web_form.on('customer', () => {
     },
     async: true,
     callback: function(r) {
+
       frappe.web_form.set_value("name_of_the_customer",r.message)
         
     }

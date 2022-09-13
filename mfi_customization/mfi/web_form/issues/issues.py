@@ -7,12 +7,15 @@ def get_context(context):
 	pass
 	
 	
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def get_logged_user():
     #user = frappe.db.get_value('User',{"name":frappe.session.user},"full_name")
-    Project_name=frappe.db.get_value("User Permission",{"user":frappe.session.user,"allow":"Project"},"for_value")
-    customerId=frappe.db.get_value("Project",{"name":Project_name},"customer")
-    return customerId
+    # Project_name=frappe.db.get_value("User Permission",{"user":frappe.session.user,"allow":"Project"},"for_value")
+    customer_list =[u.get('for_value') for u in frappe.db.get_list("User Permission",{"user":frappe.session.user,"allow":"Customer"},"for_value")]
+    print("customer_list",customer_list)
+    # customerId=frappe.db.get_value("Project",{"name":Project_name},"customer")
+   
+    return customer_list  
 
     frappe.response["message"] = {
         "success_key":1,
