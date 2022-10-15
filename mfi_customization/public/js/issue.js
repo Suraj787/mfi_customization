@@ -16,6 +16,19 @@ frappe.ui.form.on('Issue', {
 			
 	      });
 		*/
+		 if(frappe.user.has_role("Customer")==1 && frappe.user!="Administrator"){
+                     $(".form-assignments").hide();
+		     $(".form-attachments").hide();
+		     $(".form-shared").hide();
+		     $(".form-tags").hide();
+		     $(".form-sidebar-stats").hide();
+		     $(".list-unstyled.sidebar-menu.text-muted").hide();
+		     $(".prev-doc").hide();
+		     $(".next-doc").hide();
+                    $(".menu-btn-group").hide();
+    
+                 }
+   
 		
 	},
 	
@@ -344,6 +357,14 @@ frappe.ui.form.on('Issue', {
 		frm.set_df_property('asset','reqd',1);
 		frm.set_df_property('serial_no','reqd',1);
 		frm.set_df_property('location','reqd',1);
+	}
+	
+	if(frappe.user.has_role("Customer")==1 && frappe.user!="Administrator"){
+	    frm.remove_custom_button('Task','Create')
+	    frm.remove_custom_button('Close')
+	    frm.remove_custom_button('Cancel')
+	    frm.remove_custom_button('Task','View')
+
 	}
 	
 	},
