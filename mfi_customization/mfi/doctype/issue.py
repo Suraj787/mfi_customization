@@ -9,6 +9,7 @@ from frappe.utils.data import today,getdate
 
 def validate(doc,method):
 	email_validation(doc)
+	set_company(doc)
 	# validate_link_fileds(doc)
 # 	validate_issue(doc)
 	# machine_reading=""
@@ -47,6 +48,12 @@ def on_change(doc,method):
 def email_validation(doc):
 	if doc.email_conact and "@" not in 	doc.email_conact:
 		frappe.throw("Email Not Valid")
+
+def set_company(doc):
+	if doc.asset:
+	 company = frappe.db.get_value("Asset", {'name': doc.asset}, 'company')
+	 if company:
+	 	doc.company = company
 
 @frappe.whitelist()
 def make_task(source_name, target_doc=None):
