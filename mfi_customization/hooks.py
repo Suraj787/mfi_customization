@@ -45,7 +45,11 @@ doctype_js = {
                 "Landed Cost Voucher":"public/js/landed_cost_voucher.js",
                 "Asset":"public/js/asset.js"
 }	
-doctype_list_js = {"Material Request":"public/js/material_request_list.js",}
+doctype_list_js = {"Material Request":"public/js/material_request_list.js",
+                   "Issue":"public/js/issue_list.js"
+
+
+                 }
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
 
