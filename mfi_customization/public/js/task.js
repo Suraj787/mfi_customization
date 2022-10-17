@@ -165,7 +165,8 @@ refresh:function(frm){
    
     frm.set_query("completed_by", function() {
             return {
-                query: 'mfi_customization.mfi.doctype.task.get_tech',
+                // query: 'mfi_customization.mfi.doctype.task.get_tech',
+                query: 'mfi_customization.mfi.doctype.task.get_assign_user',
                 filters: {
                     "user":frappe.session.user
                 }
@@ -246,6 +247,7 @@ setup:function(frm){
                 };
 
             }
+             
 		});
     frm.set_query("asset", "current_reading", function() {
         // if(frm.doc.asset){
