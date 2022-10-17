@@ -10,6 +10,7 @@ from frappe.utils.data import today,getdate
 def validate(doc,method):
 	email_validation(doc)
 	set_company(doc)
+	set_territory(doc)
 	# validate_link_fileds(doc)
 # 	validate_issue(doc)
 	# machine_reading=""
@@ -54,6 +55,12 @@ def set_company(doc):
 	 company = frappe.db.get_value("Asset", {'name': doc.asset}, 'company')
 	 if company:
 	 	doc.company = company
+
+def set_territory(doc):
+	if doc.customer:
+	    territory = frappe.db.get_value("Customer", {'name': doc.customer}, 'territory')
+	if territory:
+	 	doc.territory = territory
 
 @frappe.whitelist()
 def make_task(source_name, target_doc=None):

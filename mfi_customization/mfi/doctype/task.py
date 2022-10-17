@@ -8,8 +8,10 @@ import json
 from frappe.utils.data import getdate,today
 from frappe.model.mapper import get_mapped_doc
 from frappe.permissions import add_user_permission
+from mfi_customization.mfi.doctype.issue import set_company
 
 def validate(doc,method):
+    set_company(doc)
     # machine_reading=""
     for d in doc.get("current_reading"):
         # machine_reading=d.machine_reading
