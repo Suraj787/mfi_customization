@@ -17,10 +17,11 @@
  "doctype": "Web Form",
  "idx": 0,
  "introduction_text": "",
+ "is_multi_step_form": 0,
  "is_standard": 1,
  "login_required": 0,
  "max_attachment_size": 0,
- "modified": "2022-09-12 16:54:52.776805",
+ "modified": "2022-10-14 14:26:22.108571",
  "modified_by": "Administrator",
  "module": "mfi",
  "name": "issues",
@@ -90,19 +91,6 @@
   },
   {
    "allow_read_on_all_link_options": 1,
-   "fieldname": "location",
-   "fieldtype": "Link",
-   "hidden": 0,
-   "label": "Location",
-   "max_length": 0,
-   "max_value": 0,
-   "options": "Location",
-   "read_only": 0,
-   "reqd": 1,
-   "show_in_filter": 0
-  },
-  {
-   "allow_read_on_all_link_options": 1,
    "fieldname": "asset",
    "fieldtype": "Link",
    "hidden": 0,
@@ -110,6 +98,19 @@
    "max_length": 0,
    "max_value": 0,
    "options": "Asset",
+   "read_only": 0,
+   "reqd": 1,
+   "show_in_filter": 0
+  },
+  {
+   "allow_read_on_all_link_options": 1,
+   "fieldname": "location",
+   "fieldtype": "Link",
+   "hidden": 0,
+   "label": "Location",
+   "max_length": 0,
+   "max_value": 0,
+   "options": "Location",
    "read_only": 0,
    "reqd": 1,
    "show_in_filter": 0
@@ -136,19 +137,6 @@
    "max_length": 0,
    "max_value": 0,
    "read_only": 1,
-   "reqd": 0,
-   "show_in_filter": 0
-  },
-  {
-   "allow_read_on_all_link_options": 1,
-   "fieldname": "error_code",
-   "fieldtype": "Link",
-   "hidden": 0,
-   "label": "Error Code",
-   "max_length": 0,
-   "max_value": 0,
-   "options": "Error Codes",
-   "read_only": 0,
    "reqd": 0,
    "show_in_filter": 0
   },
@@ -189,19 +177,6 @@
    "options": "Issue Priority",
    "read_only": 0,
    "reqd": 0,
-   "show_in_filter": 0
-  },
-  {
-   "allow_read_on_all_link_options": 1,
-   "fieldname": "type_of_call",
-   "fieldtype": "Link",
-   "hidden": 0,
-   "label": "Type of Call",
-   "max_length": 0,
-   "max_value": 0,
-   "options": "Type of Call",
-   "read_only": 0,
-   "reqd": 1,
    "show_in_filter": 0
   },
   {
