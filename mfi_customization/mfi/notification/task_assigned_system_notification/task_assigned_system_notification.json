@@ -1,0 +1,31 @@
+{
+ "attach_print": 0,
+ "channel": "System Notification",
+ "condition": "",
+ "creation": "2022-10-19 00:11:30.608925",
+ "days_in_advance": 0,
+ "docstatus": 0,
+ "doctype": "Notification",
+ "document_type": "Issue",
+ "enabled": 1,
+ "event": "New",
+ "idx": 0,
+ "is_standard": 1,
+ "message": "Hello,<br>\nNew Task  has been assigned to you , details given below,<br>\nTask:{{doc.name}}<br>\nSubject:{{doc.subject}}<br>\nLocation:{{doc.location}}<br>\nAsset:{{doc.asset}}<br>\nSerial No:{{doc.serial_no}}<br>\nFailure Date:{{doc.failure_date_and_time}}<br>\nDescription:{{doc.description}}<br>\nclick below to check<br>\n{{ frappe.utils.get_url_to_form(doc.doctype, doc.name) }}",
+ "modified": "2022-10-19 00:11:30.608925",
+ "modified_by": "Administrator",
+ "module": "mfi",
+ "name": "Task assigned system notification",
+ "owner": "Administrator",
+ "recipients": [
+  {
+   "cc": "tonersupport@groupmfi.com",
+   "receiver_by_document_field": "assign_to"
+  }
+ ],
+ "send_system_notification": 0,
+ "send_to_all_assignees": 0,
+ "sender": "Notifications",
+ "sender_email": "notifications@groupmfi.com",
+ "subject": "Task is assigned to you"
+}
