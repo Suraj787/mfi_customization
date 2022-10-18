@@ -9,9 +9,12 @@ from frappe.utils.data import getdate,today
 from frappe.model.mapper import get_mapped_doc
 from frappe.permissions import add_user_permission
 from mfi_customization.mfi.doctype.issue import set_company
+from datetime import datetime
+from frappe.utils import time_diff_in_hours
 
 def validate(doc,method):
     set_company(doc)
+    set_actual_time(doc)
     # machine_reading=""
     for d in doc.get("current_reading"):
         # machine_reading=d.machine_reading
@@ -43,7 +46,11 @@ def validate(doc,method):
     else:
         create_user_permission(doc)
 
-    validate_link_fileds(doc)   
+    validate_link_fileds(doc)  
+
+def set_actual_time(doc):
+    if doc.completion_date_time and doc.attended_date_time:
+        doc.actual_time = time_diff_in_hours(doc.completion_date_time ,doc.attended_date_time)
 
 def after_insert(doc,method):
     if doc.get('issue'):
@@ -199,9 +206,7 @@ def get_tech(doctype, txt, searchfield, start, page_len, filters):
 @frappe.whitelist()
 def get_assign_user(doctype, txt, searchfield, start, page_len, filters):
     territory = frappe.db.get_value("User Permission", {'user':filters.get('user'), 'allow':'Territory'}, 'for_value')
-    print(f"dddterritory {territory}")
     user_list =[u.user for u in  frappe.db.get_all("User Permission",{'allow':'Territory', 'for_value':territory}, 'user')]
-    print(f"user_list {user_list}")
     return [(d,) for d in user_list]
 
 @frappe.whitelist()
@@ -470,12 +475,9 @@ def get_locationlist(doctype, txt, searchfield, start, page_len, filters):
 
 @frappe.whitelist()     
 def set_items_on_machine_reading_from_mr(asset,task):
-    print("######### asset",asset,"task",task)
     material_request_list =[i.name for i in frappe.db.get_list('Material Request',{'task_':task, 'asset':asset}, 'name')]
-    print("!!!!!!!!!!!!material_request_list ",material_request_list)
     if material_request_list:
        machine_reading_doc = frappe.get_last_doc('Machine Reading', filters={"task":task, "asset":asset})
-       print("^^^^^^^^^^^^ machine_reading_doc",machine_reading_doc)
        machine_reading_doc.items =[]
        for mr in material_request_list:
            mr_doc = frappe.get_doc('Material Request',mr)
@@ -520,12 +522,9 @@ def get_asset(customer,location):
         fltr2.update({'location':location})
     
     for i  in frappe.get_all('Project',fltr1,['name']):
-        print("@@@ fltr1",fltr1)
         fltr2.update({'project':i.get('name'),'docstatus':1})
-        print("!!! fltr2",fltr2, frappe.get_all('Asset',fltr2,['name']))
         for ass in frappe.get_all('Asset',fltr2,['name']):
             if ass.name not in lst:
-                print("## fltr2",fltr2)
                 lst.append(ass.name)
     return lst  
 
