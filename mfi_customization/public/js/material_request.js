@@ -1,6 +1,21 @@
 
 {% include 'erpnext/public/js/controllers/buying.js' %};
 
+frappe.ui.form.on('Material Request', {
+    setup:function(frm){
+        if(frm.doc.company){
+            frm.set_query("assigned_to", function() {
+                return {
+                    query: "mfi_customization.mfi.doctype.material_request.get_atm_users",
+                    filters:{
+                        "company":frm.doc.company
+                    }
+                }
+            });
+        }
+    }
+});
+
 // frappe.ui.form.on('Material Request', {
 //     schedule_date:function(frm){
 //         frm.set_query("item_code", "items", function() {

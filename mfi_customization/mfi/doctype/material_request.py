@@ -378,9 +378,14 @@ def item_child_table_filter(doctype, txt, searchfield, start, page_len, filters)
  """, as_dict=0)
     return data
     
-
-
-    
+@frappe.whitelist() 
+def get_atm_users(doctype, txt, searchfield, start, page_len, filters):
+    from frappe.utils.user import get_users_with_role
+    setting_doc = frappe.get_doc("Support Setting", "Support Setting")
+    for s in setting_doc.support_setting_details:
+        if s.company == filters.get('company'):
+            user_list = get_users_with_role(s.atm_role)
+            return [[d] for d in user_list]
 
 def onload(doc,method):
     project_name= frappe.db.get_value('Asset',{'name':doc.asset},'project')
