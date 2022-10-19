@@ -89,6 +89,21 @@ asset:function(frm){
     }
 },
 onload:function(frm){
+    if(frappe.user.has_role("Technicians")==1 && frappe.user!="Administrator"){
+        frm.set_df_property('symptoms',"reqd",1); 
+        frm.set_df_property('action',"reqd",1); 
+        frm.set_df_property('cause',"reqd",1); 
+        frm.set_df_property('signature',"reqd",1); 
+    }
+    if(frappe.user.has_role("Call Coordinator")==1 && frappe.user!="Administrator"){
+        frm.set_df_property('symptoms',"read_only",1);
+        frm.set_df_property('action',"read_only",1); 
+        frm.set_df_property('cause',"read_only",1); 
+        frm.set_df_property('signature',"read_only",1); 
+        console.log("hid")
+        frm.set_df_property('current_reading',"hidden",1);
+        
+    }
     // fetch_data_material_request_item(frm)
    /* 
    frappe.call({
@@ -128,6 +143,8 @@ onload:function(frm){
 
 },
 refresh:function(frm){
+
+
     transfer_data_to_issue(frm)
     if (!frm.doc.__islocal ){
 		frm.add_custom_button(__('Material Request'), function() {

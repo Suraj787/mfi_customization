@@ -1,5 +1,9 @@
 frappe.ui.form.on('Issue', {
 	onload:function(frm){
+		if(frappe.user.has_role("Call Coordinator")==1 && frappe.user!="Administrator"){
+			console.log("sd")
+	        frm.set_df_property('current_reading',"hidden",1);
+	    }
 		cur_frm.dashboard.hide()
 		     /*
 			frappe.call({
