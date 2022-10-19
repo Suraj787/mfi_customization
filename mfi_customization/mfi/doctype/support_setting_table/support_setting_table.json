@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "creation": "2021-04-28 16:28:26.817033",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -6,7 +7,8 @@
  "field_order": [
   "company",
   "back_office_team_role",
-  "technician_role"
+  "technician_role",
+  "atm_role"
  ],
  "fields": [
   {
@@ -31,10 +33,18 @@
    "label": "Technician Role",
    "options": "Role",
    "reqd": 1
+  },
+  {
+   "fieldname": "atm_role",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "ATM Role",
+   "options": "Role"
   }
  ],
  "istable": 1,
- "modified": "2021-06-05 12:24:40.073076",
+ "links": [],
+ "modified": "2022-10-19 13:22:17.750509",
  "modified_by": "Administrator",
  "module": "mfi",
  "name": "Support Setting Table",
