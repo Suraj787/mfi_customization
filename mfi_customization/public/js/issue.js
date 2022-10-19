@@ -154,8 +154,7 @@ frappe.ui.form.on('Issue', {
                     }
                 });
             }
-			let today = new Date()
-			frm.set_value('closing_date_time',today);
+			frm.set_value('closing_date_time',frappe.datetime.now_datetime());
 			
 		}
 		if (!["Cancelled","Closed"].includes(frm.doc.status)){
