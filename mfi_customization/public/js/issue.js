@@ -1,8 +1,19 @@
 frappe.ui.form.on('Issue', {
 	onload:function(frm){
-		if(frappe.user.has_role("Call Coordinator")==1 && frappe.user!="Administrator"){
-			console.log("sd")
+	    if(frappe.user.has_role("Technicians")==1 && frappe.user!="Administrator"){
+	        frm.set_df_property('symptoms',"reqd",1); 
+	        frm.set_df_property('action',"reqd",1); 
+	        frm.set_df_property('cause',"reqd",1); 
+	        frm.set_df_property('signature',"reqd",1); 
+	        frm.set_df_property('priority',"read_only",1);
+	    }
+	    if(frappe.user.has_role("Call Coordinator")==1 && frappe.user!="Administrator"){
+	        frm.set_df_property('symptoms',"read_only",1);
+	        frm.set_df_property('action',"read_only",1); 
+	        frm.set_df_property('cause',"read_only",1); 
+	        frm.set_df_property('signature',"read_only",1); 
 	        frm.set_df_property('current_reading',"hidden",1);
+	        frm.set_df_property('priority',"read_only",1);
 	    }
 		cur_frm.dashboard.hide()
 		     /*
@@ -20,18 +31,23 @@ frappe.ui.form.on('Issue', {
 			
 	      });
 		*/
-		 if(frappe.user.has_role("Customer")==1 && frappe.user!="Administrator"){
-                     $(".form-assignments").hide();
-		     $(".form-attachments").hide();
-		     $(".form-shared").hide();
-		     $(".form-tags").hide();
-		     $(".form-sidebar-stats").hide();
-		     $(".list-unstyled.sidebar-menu.text-muted").hide();
-		     $(".prev-doc").hide();
-		     $(".next-doc").hide();
-                    $(".menu-btn-group").hide();
+		if(frappe.user.has_role("Customer")==1 && frappe.user!="Administrator"){
+            $(".form-assignments").hide();
+		    $(".form-attachments").hide();
+		    $(".form-shared").hide();
+		    $(".form-tags").hide();
+		    $(".form-sidebar-stats").hide();
+		    $(".list-unstyled.sidebar-menu.text-muted").hide();
+		    $(".prev-doc").hide();
+	        $(".next-doc").hide();
+            $(".menu-btn-group").hide();
+            
+            frm.set_df_property('customer',"read_only",1);
+            frm.set_df_property('current_reading',"hidden",1);
+            // frm.set_value('status', "Open")
+
     
-                 }
+        }
    
 		
 	},
@@ -170,6 +186,10 @@ frappe.ui.form.on('Issue', {
 		if (["Cancelled","Closed"].includes(frm.doc.status)){
 			frm.remove_custom_button("Cancelled");
 		}
+		if(frappe.user.has_role("Customer")==1 && frappe.user!="Administrator"){
+            frm.set_value('status', "Open")
+            frm.save()
+        }
 	},
 	details_available:function(frm){
 			if (!frm.doc.details_available){
@@ -196,6 +216,7 @@ frappe.ui.form.on('Issue', {
 		
 	},
 	setup:function(frm){
+
 		frm.set_query("issue_type", function() {
 			return {
 				query: 'mfi_customization.mfi.doctype.issue.get_issue_types',
@@ -304,6 +325,7 @@ frappe.ui.form.on('Issue', {
 		});
 	},
 	refresh: function (frm) {
+
 		cur_frm.dashboard.hide()
         frappe.db.get_value("Task", {"issue": frm.doc.name}, 'name',(r) =>{
 			if(r.name){

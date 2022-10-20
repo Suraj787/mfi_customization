@@ -94,15 +94,15 @@ onload:function(frm){
         frm.set_df_property('action',"reqd",1); 
         frm.set_df_property('cause',"reqd",1); 
         frm.set_df_property('signature',"reqd",1); 
+        frm.set_df_property('priority',"read_only",1);
     }
     if(frappe.user.has_role("Call Coordinator")==1 && frappe.user!="Administrator"){
         frm.set_df_property('symptoms',"read_only",1);
         frm.set_df_property('action',"read_only",1); 
         frm.set_df_property('cause',"read_only",1); 
-        frm.set_df_property('signature',"read_only",1); 
-        console.log("hid")
-        frm.set_df_property('current_reading',"hidden",1);
-        
+        frm.set_df_property('signature',"read_only",1);
+        frm.set_df_property('current_reading','hidden',1); 
+        frm.set_df_property('priority',"read_only",1);
     }
     // fetch_data_material_request_item(frm)
    /* 
