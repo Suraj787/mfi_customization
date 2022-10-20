@@ -103,6 +103,8 @@ onload:function(frm){
         frm.set_df_property('signature',"read_only",1);
         frm.set_df_property('current_reading','hidden',1); 
         frm.set_df_property('priority',"read_only",1);
+        frm.set_df_property('repair_items','hidden',1); 
+        
     }
     // fetch_data_material_request_item(frm)
    /* 
@@ -117,7 +119,7 @@ onload:function(frm){
 	});
     */
            
-    if(frm.doc.type_of_call){
+    if(frm.doc.type_of_call && frappe.user.has_role("Call Coordinator") !=1 && frappe.user=="Administrator" ){
         frappe.db.get_value('Type of Call',{'name':frm.doc.type_of_call},'ignore_reading', (r) => {
             if(r.ignore_reading == 1){
                 frm.set_df_property('current_reading','hidden',1);

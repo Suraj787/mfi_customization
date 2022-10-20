@@ -6,6 +6,8 @@ frappe.ui.form.on('Issue', {
 	        frm.set_df_property('cause',"reqd",1); 
 	        frm.set_df_property('signature',"reqd",1); 
 	        frm.set_df_property('priority',"read_only",1);
+	        frm.remove_custom_button('Close');
+
 	    }
 	    if(frappe.user.has_role("Call Coordinator")==1 && frappe.user!="Administrator"){
 	        frm.set_df_property('symptoms',"read_only",1);
@@ -65,7 +67,7 @@ frappe.ui.form.on('Issue', {
 	}
    },
    type_of_call: function (frm) {
-		if(frm.doc.type_of_call){
+		if(frm.doc.type_of_call && frappe.user.has_role("Call Coordinator") !=1 && frappe.user=="Administrator" && frappe.user.has_role("Customer")!=1){
 			frappe.db.get_value('Type of Call',{'name':frm.doc.type_of_call},'ignore_reading', (r) => {
 				if(r.ignore_reading == 1){
 					frm.set_df_property('current_reading','hidden',1);
@@ -163,7 +165,7 @@ frappe.ui.form.on('Issue', {
 			frm.set_value('first_responded_on',today);
 		}
 		if(frm.doc.status == 'Closed'){
-			if(frm.doc.type_of_call){
+			if(frm.doc.type_of_call && frappe.user.has_role("Call Coordinator") !=1 && frappe.user=="Administrator" && frappe.user.has_role("Customer")!=1){
                 frappe.db.get_value('Type of Call',{'name':frm.doc.type_of_call},'ignore_reading', (r) => {
                     if(r.ignore_reading == 1){
                         frm.set_df_property('current_reading','hidden',1);
