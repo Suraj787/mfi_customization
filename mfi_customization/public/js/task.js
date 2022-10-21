@@ -16,7 +16,7 @@ frappe.ui.form.on('Task', {
         }
         if (frm.doc.status == "Completed"){
             // frm.set_df_property('status','read_only',1);
-            if(frm.doc.type_of_call){
+            if(frm.doc.type_of_call && frappe.user.has_role("Call Coordinator") !=1 && frappe.user=="Administrator"){
                 frappe.db.get_value('Type of Call',{'name':frm.doc.type_of_call},'ignore_reading', (r) => {
                     if(r.ignore_reading == 1){
                         frm.set_df_property('current_reading','hidden',1);
@@ -313,10 +313,10 @@ customer:function(frm){
                 }
             };}
         });
-        frappe.db.get_value('Project',{'customer':frm.doc.customer},['name'],(val) =>
-        {
-            frm.set_value('project',val.name);
-        });
+        // frappe.db.get_value('Project',{'customer':frm.doc.customer},['name'],(val) =>
+        // {
+        //     frm.set_value('project',val.name);
+        // });
         
     }
 }

@@ -387,8 +387,8 @@ def get_atm_users(doctype, txt, searchfield, start, page_len, filters):
         if s.company == filters.get('company'):
             user_list = get_users_with_role(s.atm_role)
             return [[d] for d in user_list]
-        else:
-            return []
+    else:
+        return []
 
 def onload(doc,method):
     project_name= frappe.db.get_value('Asset',{'name':doc.asset},'project')
