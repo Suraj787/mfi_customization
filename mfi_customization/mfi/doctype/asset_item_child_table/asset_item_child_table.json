@@ -8,7 +8,9 @@
  "field_order": [
   "item_code",
   "item_name",
-  "item_group"
+  "item_group",
+  "yield",
+  "percentage_yield"
  ],
  "fields": [
   {
@@ -31,12 +33,22 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Item Group"
+  },
+  {
+   "fieldname": "yield",
+   "fieldtype": "Data",
+   "label": "Yield"
+  },
+  {
+   "fieldname": "percentage_yield",
+   "fieldtype": "Data",
+   "label": "Percentage Yield"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-05-16 08:59:07.209924",
+ "modified": "2022-10-22 08:28:16.213559",
  "modified_by": "Administrator",
  "module": "mfi",
  "name": "Asset Item Child Table",
