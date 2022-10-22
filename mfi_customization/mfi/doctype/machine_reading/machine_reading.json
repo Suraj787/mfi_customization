@@ -11,7 +11,6 @@
   "asset",
   "task",
   "project",
-  "items",
   "column_break_4",
   "billing_status",
   "machine_type",
@@ -19,7 +18,9 @@
   "colour_reading",
   "black_and_white_reading",
   "total",
-  "row_id"
+  "row_id",
+  "section_break_14",
+  "items"
  ],
  "fields": [
   {
@@ -101,10 +102,14 @@
    "fieldtype": "Table",
    "label": "Items",
    "options": "Asset Item Child Table"
+  },
+  {
+   "fieldname": "section_break_14",
+   "fieldtype": "Section Break"
   }
  ],
  "links": [],
- "modified": "2022-05-16 12:58:00.253635",
+ "modified": "2022-10-22 09:06:22.248951",
  "modified_by": "Administrator",
  "module": "mfi",
  "name": "Machine Reading",
