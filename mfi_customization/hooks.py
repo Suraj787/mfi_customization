@@ -120,7 +120,7 @@ doc_events = {
     },
     "Material Request":{
         #"on_change":"mfi_customization.mfi.doctype.material_request.set_item_from_material_req",
-        #"before_submit":"mfi_customization.mfi.doctype.material_request.before_submit",
+        "on_submit":"mfi_customization.mfi.doctype.material_request.on_submit",
        # "after_save":"mfi_customization.mfi.doctype.material_request.after_save",
         # "onload":"mfi_customization.mfi.doctype.material_request.onload",
         "before_save":"mfi_customization.mfi.doctype.material_request.before_save"

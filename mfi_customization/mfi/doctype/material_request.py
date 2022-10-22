@@ -1,6 +1,6 @@
 import frappe,json
 from frappe.desk.reportview import get_match_cond, get_filters_cond
-from frappe.utils import nowdate, getdate,today,add_months
+from frappe.utils import nowdate, getdate,today,add_months, flt
 from six import string_types, iteritems
 from frappe.desk.query_report import run
 from frappe import _
@@ -404,17 +404,21 @@ def onload(doc,method):
   
 def set_yeild_details(doc):
     machine_reading_list= frappe.db.sql(f"""select name, total from `tabMachine Reading` where asset ='{doc.asset}' ORDER BY name DESC """,as_dict=1)
+    asset_reading=0
     for reading in machine_reading_list:
         machn_doc = frappe.get_doc("Machine Reading", reading)
-        if len(machn_doc.items) == 0:
-            asset_reading = machn_doc.total
-            if asset_reading:
-                break
+        # if len(machn_doc.items) == 0:
+        asset_reading = machn_doc.total
+            # print(f"asset_reading {asset_reading}")
+        if asset_reading:
+            break
     doc.items_with_yeild = []
     for i in doc.get('items'):
         machine_reding_with_itm =[i.total for i in  frappe.db.sql(f"""select m.total, m.reading_date from `tabMachine Reading` as m inner join `tabAsset Item Child Table` as a on a.parent=m.name where m.asset ='{doc.asset}' and a.item_code ='{i.item_code}' ORDER BY m.name DESC LIMIT 3 """,as_dict=1)if i.total is not None ]
         item_yeild =[itm.yeild for itm in frappe.db.sql(f""" SELECT yeild from `tabItem` where item_code ='{i.item_code}' """,as_dict=1)]  
         coverage = [cvrg.coverage for cvrg in frappe.db.sql(f""" SELECT coverage from `tabItem` where item_code='{i.item_code}'""",as_dict=1) ]        
+        print(f"asset_reading {asset_reading}")
+  
         if asset_reading: 
             if  machine_reding_with_itm:
                 percent = (int(item_yeild[0])/int(machine_reding_with_itm[0]))*100
@@ -460,3 +464,54 @@ def set_yeild_details(doc):
     
 
 
+def on_submit(doc,method):
+    set_yeild_details_on_machine_reading(doc)
+    if doc.task_:
+        frappe.db.set_value("Task", doc.task_, 'status', 'Material Issued')
+        issue = frappe.db.get_value("Task",{'name': doc.task_}, 'issue')
+        if issue:
+            frappe.db.set_value("Issue", issue, 'status', 'Material Issued')
+
+def set_yeild_details_on_machine_reading(doc):
+    if doc.asset and doc.task:
+        machine_reading_list = frappe.db.get_list("Machine Reading",{'asset':doc.asset}, 'name')
+        for machine_reading in machine_reading_list:
+            machine_reading_doc = frappe.get_doc('Machine Reading', machine_reading['name'])
+            machine_reading_doc.items=[]
+            for i in doc.items_with_yeild:
+                reading_child = machine_reading_doc.append("items", {})
+                reading_child.item_code= i.item_code
+                reading_child.item_name= i.item_name
+                reading_child.item_group= i.item_group
+                reading_child.yeild= frappe.db.get_value("Item", {'name':i.item_code}, 'yeild')
+                current_reading =[m.total for m in frappe.db.sql(f"""select m.reading_date, m.total as total from `tabMachine Reading` as m
+                 inner join `tabAsset Item Child Table` as a on a.parent=m.name 
+                 where m.asset ='{doc.asset}' ORDER BY reading_date DESC LIMIT 1""",as_dict=1)]
+
+                first_reading =[m.total for m in frappe.db.sql(f"""select m.reading_date, m.total as total 
+                    from `tabMachine Reading` as m inner join `tabAsset Item Child Table` as a 
+                    on a.parent=m.name where m.asset ='{doc.asset}' and a.item_code ='{i.item_code}' ORDER BY reading_date ASC LIMIT 1""",as_dict=1)]
+                if current_reading and first_reading:
+                    reading_child.total_reading = flt(current_reading[0]) - flt(first_reading[0])
+                    if reading_child.total_reading > 0:
+                        reading_child.percentage_yield = round((reading_child.yeild * 100)/(reading_child.total_reading),2)
+                machine_reading_doc.save()
+                
+
+def set_item_details(doc,method):
+  machine_reading_asset=[i.total for i in frappe.db.sql(f"""select max(reading_date),total from `tabMachine Reading` where asset ='{doc.asset}' """,as_dict=1)if i.total is not None]
+  if doc.task and machine_reading_asset:
+      if len(doc.items_with_yeild) == 0:
+          doc.items_with_yeild=[]
+          for i in doc.items:
+              machine_reding_with_itm =[i.total for i in  frappe.db.sql(f"""select max(m.reading_date),m.total from `tabMachine Reading` as m inner join `tabAsset Item Child Table` as a on a.parent=m.name where m.asset ='{doc.asset}' and a.item_code ='{i.item_code}' and m.task='{doc.task}' """,as_dict=1)if i.total is not None ]
+              item_yeild =[itm.yeild for itm in frappe.db.sql(f""" SELECT yeild from `tabItem` where item_code ='{i.item_code}' """,as_dict=1)]
+              if machine_reding_with_itm:
+                  mr_child = doc.append("items_with_yeild",{})
+                  mr_child.item_code= i.item_code
+                  mr_child.item_name= i.item_name
+                  mr_child.item_group= i.item_group
+                  mr_child.yeild=int(machine_reding_with_itm[0]) - int(machine_reading_asset[0])
+                  mr_child.total_yeild =float(item_yeild[0])
+                  doc.save()
+        
