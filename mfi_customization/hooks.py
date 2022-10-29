@@ -43,7 +43,8 @@ doctype_js = {
                 "Price List":"public/js/price_list.js",
                 "Purchase Order":"public/js/purchase_order.js",
                 "Landed Cost Voucher":"public/js/landed_cost_voucher.js",
-                "Asset":"public/js/asset.js"
+                "Asset":"public/js/asset.js",
+                "Machine Reading":"public/js/machine_reading.js"
 }	
 doctype_list_js = {"Material Request":"public/js/material_request_list.js",
                    "Issue":"public/js/issue_list.js"
