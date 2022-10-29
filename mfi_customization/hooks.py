@@ -157,6 +157,9 @@ doc_events = {
     },
     "Sales Order":{
         "on_submit":"mfi_customization.mfi.doctype.sales_order.on_submit"
+    },
+    "Machine Reading":{
+        "after_save":"mfi_customization.utils.machine_reading.repetitive_call"
     }
     # "Material Request":{
     #     "validate":"mfi_customization.mfi.doctype.material_request.validate",
@@ -186,7 +189,8 @@ scheduler_events = {
 
     "cron": {
         "0 9 * * *": [
-            "mfi_customization.mfi.doctype.project.make_issues_on_PM_call_interval"
+            "mfi_customization.mfi.doctype.project.make_issues_on_PM_call_interval",
+            "mfi_customization.mfi.doctype.Asset.make_task_on_PM_call_interval"
         ]
     }
 }
