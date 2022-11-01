@@ -3,12 +3,21 @@ import frappe
 
 @frappe.whitelist()
 def repetitive_call(asset,task):
+    
+  toc = frappe.db.sql("select type_of_call from `tabTask` where name =%s", task)
+  toc=str(toc)
+  toc=toc.replace("(","")
+  toc=toc.replace(")","")
+  toc=toc.replace(",","")
+  toc=toc.replace("'","")
+  
   mr_count = frappe.db.sql("select sum(total) from `tabMachine Reading` where asset = %s", asset)
   mr=str(mr_count)
   mr=mr.replace("(","")
   mr=mr.replace(")","")
   mr=mr.replace(",","")
   mr=mr.replace(".0","")
+  
 #   items = []  
   items = frappe.db.sql("select item_code from `tabAsset Item Child Table` where parent = %s", asset)
 #   for item in scrapitems:
@@ -21,15 +30,9 @@ def repetitive_call(asset,task):
   b=b.replace(",","")
   
 
- 
-#   frappe.msgprint(ass)
+
   if mr >= b:
-    frappe.db.sql("UPDATE `tabTask` SET `repetitive_call` = 1 WHERE name=%s",task)
-    # frappe.msgprint("Grater than or equal")
-  else:
-    frappe.msgprint("less than or equal")
-		
+    if toc == "CM":
+      frappe.db.sql("UPDATE `tabTask` SET repetitive_call = 1 WHERE name=%s",task)
 
 
-
-				   
