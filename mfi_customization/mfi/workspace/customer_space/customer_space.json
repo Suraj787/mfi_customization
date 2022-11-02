@@ -1,6 +1,11 @@
 {
  "category": "Modules",
- "charts": [],
+ "charts": [
+  {
+   "chart_name": "Issue Status Distribution",
+   "label": "Issue Status Distribution"
+  }
+ ],
  "creation": "2022-10-13 14:46:24.870026",
  "developer_mode_only": 0,
  "disable_user_customization": 0,
@@ -13,7 +18,7 @@
  "is_standard": 1,
  "label": "Customer Space",
  "links": [],
- "modified": "2022-10-13 19:22:50.100576",
+ "modified": "2022-11-02 09:04:16.062683",
  "modified_by": "Administrator",
  "module": "mfi",
  "name": "Customer Space",
@@ -32,6 +37,12 @@
    "label": "Issue",
    "link_to": "Issue",
    "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "Customer Dashboard",
+   "link_to": "Customer Dashboard",
+   "type": "Dashboard"
   }
  ]
 }
