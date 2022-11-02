@@ -3,7 +3,6 @@
 /* eslint-disable */
 
 frappe.query_reports["Asset History"] = {
-
     "filters": [{
             "fieldname": "task",
             "label": __("Task"),
