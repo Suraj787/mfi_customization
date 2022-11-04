@@ -149,6 +149,11 @@ def contract_period(expected_start_date,contract_period):
     stratformate=datetime(start_strp.year,start_strp.month,start_strp.day)
     current = stratformate + relativedelta(months=(int(contract_period)))
     return current.date()
+ 
+@frappe.whitelist()
+def customer_contect(customer):
+   cus_contect = frappe.db.sql(f""" SELECT d.parent,c.email_id FROM `tabDynamic Link` d LEFT Join `tabContact` c on c.name = d.parent  WHERE d.link_name='{customer}' """, as_dict=True)
+   return cus_contect
 
     
     

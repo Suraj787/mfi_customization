@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 import frappe
 from frappe.model.mapper import get_mapped_doc
 from frappe.utils.data import today,getdate
+from frappe.core.doctype.communication.email import make
 
 def validate(doc,method):
 	email_validation(doc)
@@ -316,7 +317,34 @@ def check_type_of_call(project, type_of_call):
 	else:
 		return False
 		
-	
+
+def after_insert(customer):
+    
+    pro_email = frappe.db.sql("select c.idx from `tabProject` p Left Join `tabCustomer Email List` c on c.parent = p.name where p.customer = %s", customer)
+    idx=str(pro_email)
+    idx=idx.replace("(","")
+    idx=idx.replace(")","")
+    idx=idx.replace(",","")
+    idx=idx.replace("'","")
+    # frappe.msgprint(idx)
+
+    
+    if idx != "None":
+        
+        cust = frappe.db.sql("select c.email_id from `tabProject` p Left Join `tabCustomer Email List` c on c.parent = p.name where p.customer = %s and c.idx > 0", customer)
+        cus=str(cust)
+        cus=cus.replace("(","")
+        cus=cus.replace(")","")
+        cus=cus.replace(",","")
+        cus=cus.replace("'","")
+
+
+        make(subject = "Email Subject",content="Demo Testing Email", recipients=cus,
+            send_email=True, sender="alicreator72@gmail.com")
+    
+        frappe.msgprint("Email send successfully")
+    else:
+        frappe.msgprint("email id not found for the customer in project")
 	
 		
 
