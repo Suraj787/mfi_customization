@@ -117,7 +117,8 @@ doc_events = {
     },
     "Issue":{
         "validate":"mfi_customization.mfi.doctype.issue.validate",
-        "on_change":"mfi_customization.mfi.doctype.issue.on_change"
+        "on_change":"mfi_customization.mfi.doctype.issue.on_change",
+        "after_insert":"mfi_customization.mfi.doctype.issue.after_insert"
     },
     "Material Request":{
         #"on_change":"mfi_customization.mfi.doctype.material_request.set_item_from_material_req",
