@@ -12,6 +12,7 @@ def validate(doc,method):
 	email_validation(doc)
 	set_company(doc)
 	set_territory(doc)
+	email_status(doc)
 	# validate_link_fileds(doc)
 # 	validate_issue(doc)
 	# machine_reading=""
@@ -59,10 +60,74 @@ def set_company(doc):
 
 def set_territory(doc):
 	if doc.customer:
-	    territory = frappe.db.get_value("Customer", {'name': doc.customer}, 'territory')
+		territory = frappe.db.get_value("Customer", {'name': doc.customer}, 'territory')
 	if territory:
 	 	doc.territory = territory
 
+def email_status(doc):
+	if doc.status == "Assigned":
+	 
+		pro_email = frappe.db.sql("select c.idx from `tabProject` p Left Join `tabCustomer Email List` c on c.parent = p.name where p.customer = %s", doc.customer)
+		idx=str(pro_email)
+		idx=idx.replace("(","")
+		idx=idx.replace(")","")
+		idx=idx.replace(",","")
+		idx=idx.replace("'","")
+		
+		if idx != "None":
+			
+			cust = frappe.db.sql("select c.email_id from `tabProject` p Left Join `tabCustomer Email List` c on c.parent = p.name where p.customer = %s and c.idx > 0", doc.customer)
+			cus=str(cust)
+			cus=cus.replace("(","")
+			cus=cus.replace(")","")
+			cus=cus.replace(",","")
+			cus=cus.replace("'","")
+			
+			subject = """New Ticket {0} is created""".format(doc.name)
+			body = """Your issue has been recorded, details given below,<br>Ticket No:{0}<br>we will try to sort it in time. for updates please visit on portal<br> http://supportke.groupmfi.com""".format(doc.name)
+
+			make(subject = subject,content=body, recipients=cus,
+				send_email=True, sender="erp@groupmfi.com")
+		
+			frappe.msgprint("Email send successfully")
+		else:
+			frappe.msgprint("email id not found for the customer in project")
+		
+	if doc.status == "Task Completed":
+		com_subject = """Issue {0} Has Been Completed""".format(doc.name)
+		make(subject = com_subject,content="Customer Name",
+		 recipients="helpdesk.kenya@groupmfi.com",
+		 send_email=True, sender="erp@groupmfi.com")
+	
+	if doc.status == "Closed":
+		pro = frappe.db.sql("select c.idx from `tabProject` p Left Join `tabCustomer Email List` c on c.parent = p.name where p.customer = %s", doc.customer)
+		idx1=str(pro)
+		idx1=idx1.replace("(","")
+		idx1=idx1.replace(")","")
+		idx1=idx1.replace(",","")
+		idx1=idx1.replace("'","")
+		
+		if idx1 != "None":
+			
+			cust1 = frappe.db.sql("select c.email_id from `tabProject` p Left Join `tabCustomer Email List` c on c.parent = p.name where p.customer = %s and c.idx > 0", doc.customer)
+			cus1=str(cust1)
+			cus1=cus1.replace("(","")
+			cus1=cus1.replace(")","")
+			cus1=cus1.replace(",","")
+			cus1=cus1.replace("'","")
+			
+			subject = """Ticket {0} is Closed""".format(doc.name)
+			body = """Your issue has been Closed, details given below,<br>Ticket No:{0}<br>we will try to sort it in time. for updates please visit on portal<br> http://supportke.groupmfi.com""".format(doc.name)
+
+			make(subject = subject,content=body, recipients=cus1,
+				send_email=True, sender="erp@groupmfi.com")
+		
+			frappe.msgprint("Email send successfully")
+		else:
+			frappe.msgprint("email id not found for the customer in project")
+		
+		
+		
 @frappe.whitelist()
 def make_task(source_name, target_doc=None):
 	return get_mapped_doc("Issue", source_name, {
@@ -318,33 +383,11 @@ def check_type_of_call(project, type_of_call):
 		return False
 		
 
-def after_insert(customer):
-    
-    pro_email = frappe.db.sql("select c.idx from `tabProject` p Left Join `tabCustomer Email List` c on c.parent = p.name where p.customer = %s", customer)
-    idx=str(pro_email)
-    idx=idx.replace("(","")
-    idx=idx.replace(")","")
-    idx=idx.replace(",","")
-    idx=idx.replace("'","")
-    # frappe.msgprint(idx)
-
-    
-    if idx != "None":
-        
-        cust = frappe.db.sql("select c.email_id from `tabProject` p Left Join `tabCustomer Email List` c on c.parent = p.name where p.customer = %s and c.idx > 0", customer)
-        cus=str(cust)
-        cus=cus.replace("(","")
-        cus=cus.replace(")","")
-        cus=cus.replace(",","")
-        cus=cus.replace("'","")
-
-
-        make(subject = "Email Subject",content="Demo Testing Email", recipients=cus,
-            send_email=True, sender="alicreator72@gmail.com")
-    
-        frappe.msgprint("Email send successfully")
-    else:
-        frappe.msgprint("email id not found for the customer in project")
+def after_insert(doc,method):
+	after_subject = """Issue {0} Has Been Created""".format(doc.name)
+	make(subject = after_subject,content="Customer Name",
+		 recipients="helpdesk.kenya@groupmfi.com",
+		 send_email=True, sender="erp@groupmfi.com")
 	
 		
 
