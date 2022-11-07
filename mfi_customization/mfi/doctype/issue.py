@@ -63,41 +63,44 @@ def set_territory(doc):
 		territory = frappe.db.get_value("Customer", {'name': doc.customer}, 'territory')
 	if territory:
 	 	doc.territory = territory
-
+   
+	
 def email_status(doc):
-	if doc.status == "Assigned":
+	# if doc.status == "Assigned":
 	 
-		pro_email = frappe.db.sql("select c.idx from `tabProject` p Left Join `tabCustomer Email List` c on c.parent = p.name where p.customer = %s", doc.customer)
-		idx=str(pro_email)
-		idx=idx.replace("(","")
-		idx=idx.replace(")","")
-		idx=idx.replace(",","")
-		idx=idx.replace("'","")
+	# 	pro_email = frappe.db.sql("select c.idx from `tabProject` p Left Join `tabCustomer Email List` c on c.parent = p.name where p.customer = %s", doc.customer)
+	# 	idx=str(pro_email)
+	# 	idx=idx.replace("(","")
+	# 	idx=idx.replace(")","")
+	# 	idx=idx.replace(",","")
+	# 	idx=idx.replace("'","")
 		
-		if idx != "None":
+	# 	if idx != "None":
 			
-			cust = frappe.db.sql("select c.email_id from `tabProject` p Left Join `tabCustomer Email List` c on c.parent = p.name where p.customer = %s and c.idx > 0", doc.customer)
-			cus=str(cust)
-			cus=cus.replace("(","")
-			cus=cus.replace(")","")
-			cus=cus.replace(",","")
-			cus=cus.replace("'","")
+	# 		cust = frappe.db.sql("select c.email_id from `tabProject` p Left Join `tabCustomer Email List` c on c.parent = p.name where p.customer = %s and c.idx > 0", doc.customer)
+	# 		cus=str(cust)
+	# 		cus=cus.replace("(","")
+	# 		cus=cus.replace(")","")
+	# 		cus=cus.replace(",","")
+	# 		cus=cus.replace("'","")
 			
-			subject = """New Ticket {0} is created""".format(doc.name)
-			body = """Your issue has been recorded, details given below,<br>Ticket No:{0}<br>we will try to sort it in time. for updates please visit on portal<br> http://supportke.groupmfi.com""".format(doc.name)
+	# 		subject = """New Ticket {0} is Assigned""".format(doc.name)
+	# 		body = """Your issue has been recorded, details given below,<br>Ticket No:{0}<br>we will try to sort it in time. for updates please visit on portal<br> http://supportke.groupmfi.com""".format(doc.name)
 
-			make(subject = subject,content=body, recipients=cus,
-				send_email=True, sender="erp@groupmfi.com")
+	# 		make(subject = subject,content=body, recipients=cus,
+	# 			send_email=True, sender="erp@groupmfi.com")
 		
-			frappe.msgprint("Email send successfully")
-		else:
-			frappe.msgprint("email id not found for the customer in project")
+	# 		frappe.msgprint("Email send successfully Assigned Issue")
+	# 	else:
+	# 		frappe.msgprint("email id not found for the customer in project")
 		
 	if doc.status == "Task Completed":
 		com_subject = """Issue {0} Has Been Completed""".format(doc.name)
 		make(subject = com_subject,content="Customer Name",
 		 recipients="helpdesk.kenya@groupmfi.com",
 		 send_email=True, sender="erp@groupmfi.com")
+		frappe.msgprint("Email send successfully Task Completed")
+  		
 	
 	if doc.status == "Closed":
 		pro = frappe.db.sql("select c.idx from `tabProject` p Left Join `tabCustomer Email List` c on c.parent = p.name where p.customer = %s", doc.customer)
@@ -122,7 +125,7 @@ def email_status(doc):
 			make(subject = subject,content=body, recipients=cus1,
 				send_email=True, sender="erp@groupmfi.com")
 		
-			frappe.msgprint("Email send successfully")
+			frappe.msgprint("Email send successfully Close Issue")
 		else:
 			frappe.msgprint("email id not found for the customer in project")
 		
