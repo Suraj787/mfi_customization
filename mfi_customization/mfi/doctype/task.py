@@ -55,12 +55,15 @@ def set_actual_time(doc):
         doc.actual_time = time_diff_in_hours(doc.completion_date_time ,doc.attended_date_time)
 
 def email_status_save(doc):
-    if doc.status == "Completed":
+    if doc.status == "Completed" and doc.completed_sent==0:
+	
         com_subject = """Issue {0} Has Been Completed""".format(doc.issue)
         make(subject = com_subject,content="Demo Tetsing",
 		 recipients="helpdesk.kenya@groupmfi.com",
 		 send_email=True, sender="erp@groupmfi.com")
         frappe.msgprint("Email send successfully Task Completed")
+	doc.completed_sent=1
+	
     
 def after_insert(doc,method):
     if doc.get('issue'):
