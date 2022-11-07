@@ -16,6 +16,7 @@ from frappe.core.doctype.communication.email import make
 def validate(doc,method):
     set_company(doc)
     set_actual_time(doc)
+    email_status_save(doc)
     # machine_reading=""
     for d in doc.get("current_reading"):
         # machine_reading=d.machine_reading
@@ -53,6 +54,14 @@ def set_actual_time(doc):
     if doc.completion_date_time and doc.attended_date_time:
         doc.actual_time = time_diff_in_hours(doc.completion_date_time ,doc.attended_date_time)
 
+def email_status_save(doc):
+    if doc.status == "Completed":
+        com_subject = """Issue {0} Has Been Completed""".format(doc.issue)
+        make(subject = com_subject,content="Demo Tetsing",
+		 recipients="helpdesk.kenya@groupmfi.com",
+		 send_email=True, sender="erp@groupmfi.com")
+        frappe.msgprint("Email send successfully Task Completed")
+    
 def after_insert(doc,method):
     if doc.get('issue'):
         frappe.db.set_value('Issue',doc.get('issue'),'status','Assigned')
@@ -533,19 +542,18 @@ def get_asset(customer,location):
 def validate_current_reading(doc):
     if frappe.db.get_value('Type of Call',{'name':doc.type_of_call},'ignore_reading')==0 and len(doc.get("current_reading"))==0:
         frappe.throw("Cann't Complete Task Without Current Reading")
-        
 
-# @frappe.whitelist()
-# def repetitive_call(doc):
-#     mr_count = frappe.db.sql("select sum(total) from `tabMachine Reading` where asset = %s", doc.asset)
-#     mr=str(mr_count)
-#     mr=mr.replace("(","")
-#     mr=mr.replace(")","")
-#     mr=mr.replace(",","")
-#     mr=mr.replace(".0","")
+@frappe.whitelist()
+def repetitive_call(doc):
+    mr_count = frappe.db.sql("select sum(total) from `tabMachine Reading` where asset = %s", doc.asset)
+    mr=str(mr_count)
+    mr=mr.replace("(","")
+    mr=mr.replace(")","")
+    mr=mr.replace(",","")
+    mr=mr.replace(".0","")
     
-#     frappe.msgprint(mr)
-
+    frappe.msgprint(mr)
+        
 def email_status(doc):
 	
 		pro_email = frappe.db.sql("select c.idx from `tabProject` p Left Join `tabCustomer Email List` c on c.parent = p.name where p.customer = %s", doc.customer)
