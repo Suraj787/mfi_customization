@@ -7,23 +7,23 @@
  "docstatus": 0,
  "doctype": "Notification",
  "document_type": "Issue",
- "enabled": 1,
+ "enabled": 0,
  "event": "New",
  "idx": 0,
  "is_standard": 1,
  "message": "Your issue has been recorded, details given below,<br>\nTicket No:{{doc.name}}<br>\nSubject:{{doc.subject}}<br>\nissue Type:{{doc.issue_type}}<br>\nLocation:{{doc.location}}<br>\nAsset:{{doc.asset}}<br>\nSerial No:{{doc.serial_no}}<br>\nError Code:{{doc.error_code}}<br>\nFailure Date:{{doc.failure_date_and_time}}<br>\nDescription:{{doc.description}}<br>\nwe will try to sort it in time. for updates please visit on portal<br>",
- "modified": "2021-06-11 08:31:12.026778",
+ "modified": "2022-11-07 23:08:04.504905",
  "modified_by": "Administrator",
  "module": "mfi",
  "name": "Customer Toner Request",
  "owner": "Administrator",
  "recipients": [
   {
-   "cc": "",
-   "email_by_document_field": "raised_by",
-   "email_by_role": "Customer"
+   "cc": ""
   }
  ],
+ "send_system_notification": 0,
+ "send_to_all_assignees": 0,
  "sender": "Notifications",
  "sender_email": "notifications@groupmfi.com",
  "subject": "Your Issue has been raised"

@@ -11,12 +11,10 @@ from frappe.permissions import add_user_permission
 from mfi_customization.mfi.doctype.issue import set_company
 from datetime import datetime
 from frappe.utils import time_diff_in_hours
-from frappe.core.doctype.communication.email import make
 
 def validate(doc,method):
     set_company(doc)
     set_actual_time(doc)
-    email_status_save(doc)
     # machine_reading=""
     for d in doc.get("current_reading"):
         # machine_reading=d.machine_reading
@@ -54,17 +52,10 @@ def set_actual_time(doc):
     if doc.completion_date_time and doc.attended_date_time:
         doc.actual_time = time_diff_in_hours(doc.completion_date_time ,doc.attended_date_time)
 
-def email_status_save(doc):
-    if doc.status == "Completed":
-        com_subject = """Issue {0} Has Been Completed""".format(doc.issue)
-        make(subject = com_subject,content="Demo Tetsing",
-		 recipients="helpdesk.kenya@groupmfi.com",
-		 send_email=True, sender="erp@groupmfi.com")
-        frappe.msgprint("Email send successfully Task Completed")
-    
 def after_insert(doc,method):
     if doc.get('issue'):
         frappe.db.set_value('Issue',doc.get('issue'),'status','Assigned')
+
     if doc.failure_date_and_time and doc.issue:
         doc.failure_date_and_time=frappe.db.get_value("Issue",doc.issue,"failure_date_and_time")
     if doc.issue:
@@ -72,7 +63,7 @@ def after_insert(doc,method):
 
     
     create_user_permission(doc)
-    email_status(doc)
+
     # docperm = frappe.new_doc("DocShare")
     # docperm.update({
     #       "user": doc.completed_by,
@@ -507,6 +498,7 @@ def transfer_data_to_issue(doc):
        issue_doc.symptoms=doc.get('symptoms')
        issue_doc.action=doc.get('action')
        issue_doc.cause=doc.get('cause')
+       issue_doc.completed_sent=1
        issue_doc.save()  
       
          
@@ -542,44 +534,3 @@ def get_asset(customer,location):
 def validate_current_reading(doc):
     if frappe.db.get_value('Type of Call',{'name':doc.type_of_call},'ignore_reading')==0 and len(doc.get("current_reading"))==0:
         frappe.throw("Cann't Complete Task Without Current Reading")
-
-@frappe.whitelist()
-def repetitive_call(doc):
-    mr_count = frappe.db.sql("select sum(total) from `tabMachine Reading` where asset = %s", doc.asset)
-    mr=str(mr_count)
-    mr=mr.replace("(","")
-    mr=mr.replace(")","")
-    mr=mr.replace(",","")
-    mr=mr.replace(".0","")
-    
-    frappe.msgprint(mr)
-        
-def email_status(doc):
-	
-		pro_email = frappe.db.sql("select c.idx from `tabProject` p Left Join `tabCustomer Email List` c on c.parent = p.name where p.customer = %s", doc.customer)
-		idx=str(pro_email)
-		idx=idx.replace("(","")
-		idx=idx.replace(")","")
-		idx=idx.replace(",","")
-		idx=idx.replace("'","")
-		
-		if idx != "None":
-			
-			cust = frappe.db.sql("select c.email_id from `tabProject` p Left Join `tabCustomer Email List` c on c.parent = p.name where p.customer = %s and c.idx > 0", doc.customer)
-			cus=str(cust)
-			cus=cus.replace("(","")
-			cus=cus.replace(")","")
-			cus=cus.replace(",","")
-			cus=cus.replace("'","")
-			
-			subject = """New Ticket {0} is Assigned""".format(doc.issue)
-			body = """Your issue has been recorded, details given below,<br>Ticket No:{0}<br>we will try to sort it in time. for updates please visit on portal<br> http://supportke.groupmfi.com""".format(doc.issue)
-
-			make(subject = subject,content=body, recipients=cus,
-				send_email=True, sender="erp@groupmfi.com")
-		
-			frappe.msgprint("Email send successfully Assigned Issue")
-		else:
-			frappe.msgprint("email id not found for the customer in project")
-		
-	
