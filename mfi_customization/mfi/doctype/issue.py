@@ -94,12 +94,12 @@ def email_status(doc):
 	# 	else:
 	# 		frappe.msgprint("email id not found for the customer in project")
 		
-	if doc.status == "Task Completed":
-		com_subject = """Issue {0} Has Been Completed""".format(doc.name)
-		make(subject = com_subject,content="Customer Name",
-		 recipients="helpdesk.kenya@groupmfi.com",
-		 send_email=True, sender="erp@groupmfi.com")
-		frappe.msgprint("Email send successfully Task Completed")
+	# if doc.status == "Task Completed":
+	# 	com_subject = """Issue {0} Has Been Completed""".format(doc.name)
+	# 	make(subject = com_subject,content="Customer Name",
+	# 	 recipients="helpdesk.kenya@groupmfi.com",
+	# 	 send_email=True, sender="erp@groupmfi.com")
+	# 	frappe.msgprint("Email send successfully Task Completed")
   		
 	
 	if doc.status == "Closed":
