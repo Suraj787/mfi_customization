@@ -75,6 +75,7 @@ def after_insert(doc,method):
 
 	
 	create_user_permission(doc)
+	email_status(doc)
 
 	# docperm = frappe.new_doc("DocShare")
 	# docperm.update({
