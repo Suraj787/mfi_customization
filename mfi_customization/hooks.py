@@ -45,7 +45,7 @@ doctype_js = {
                 "Landed Cost Voucher":"public/js/landed_cost_voucher.js",
                 "Asset":"public/js/asset.js",
                 "Machine Reading":"public/js/machine_reading.js"
-}	
+}
 doctype_list_js = {"Material Request":"public/js/material_request_list.js",
                    "Issue":"public/js/issue_list.js"
 
@@ -126,8 +126,8 @@ doc_events = {
        # "after_save":"mfi_customization.mfi.doctype.material_request.after_save",
         # "onload":"mfi_customization.mfi.doctype.material_request.onload",
         "before_save":"mfi_customization.mfi.doctype.material_request.before_save"
-        
-        
+
+
     },
     # "Machine Reading":{
     #  "validate":"mfi_customization.mfi.doctype.machine_reading.machine_reading.validate"
@@ -213,7 +213,7 @@ fixtures = [
       "document_type", "in", ("Issue")
       ]]
     }
-    
+
 ]
 #fixtures=["Custom Field"]
 

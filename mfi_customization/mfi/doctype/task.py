@@ -48,7 +48,8 @@ def validate(doc,method):
 	else:
 		create_user_permission(doc)
 
-	validate_link_fileds(doc)  
+	validate_link_fileds(doc)
+	link_issue_attachments(doc)
 
 def set_actual_time(doc):
 	if doc.completion_date_time and doc.attended_date_time:
@@ -62,8 +63,8 @@ def email_status_save(doc):
 		 send_email=True, sender="erp@groupmfi.com")
 		frappe.msgprint("Email send successfully Task Completed")
 		doc.completed_sent=1
-	
-	
+
+
 def after_insert(doc,method):
 	if doc.get('issue'):
 		frappe.db.set_value('Issue',doc.get('issue'),'status','Assigned')
@@ -73,7 +74,7 @@ def after_insert(doc,method):
 	if doc.issue:
 		doc.description=frappe.db.get_value("Issue",doc.issue,"description")
 
-	
+
 	create_user_permission(doc)
 	email_status(doc)
 
@@ -86,7 +87,7 @@ def after_insert(doc,method):
 	#       "write": 1
 	#   })
 	# docperm.save(ignore_permissions=True)
-	
+
 def on_change(doc,method):
 	if doc.get("issue"):
 		set_reading_from_task_to_issue(doc)
@@ -107,14 +108,14 @@ def on_change(doc,method):
 				validate_if_material_request_is_not_submitted(doc)
 				validate_current_reading(doc)
 				attachment_validation(doc)
-				
+
 				issue.status="Task Completed"
 				issue.set("task_attachments",[])
 				for d in doc.get("attachments"):
 					issue.append("task_attachments",{
 						"attach":d.attach
 					})
-				
+
 			elif doc.status=="Working" and doc.attended_date_time:
 				issue.first_responded_on=doc.attended_date_time
 		issue.save()
@@ -124,13 +125,13 @@ def after_delete(doc,method):
 
 def set_field_values(doc):
 	if doc.get("issue"):
-		issue = frappe.get_doc("Issue",{"name":doc.get("issue")})       
+		issue = frappe.get_doc("Issue",{"name":doc.get("issue")})
 		if doc.get("completed_by"):
 			issue.assign_to = doc.get("completed_by")
 		if doc.get("assign_date"):
 			issue.assign_date = doc.get("assign_date")
 		issue.save()
-	
+
 @frappe.whitelist()
 def make_material_req(source_name, target_doc=None):
 	def set_missing_values(source, target):
@@ -159,7 +160,7 @@ def make_asset_movement(source_name, target_doc=None, ignore_permissions=False):
 	doclist = get_mapped_doc("Task", source_name, {
 		"Task": {
 			"doctype": "Asset Movement",
-			
+
 		}
 	}, target_doc ,set_missing_values, ignore_permissions=ignore_permissions)
 
@@ -167,10 +168,10 @@ def make_asset_movement(source_name, target_doc=None, ignore_permissions=False):
 
 @frappe.whitelist()
 def set_readings(project,asset,target_doc=None):
-	
+
 	reading_list=[]
 	for d in frappe.get_all('Asset Readings',filters={'parent':project,'asset':asset,'parenttype':'Project'},fields=['date','type','asset','reading','reading_2']):
-		
+
 		reading_list.append({
 			'date':d.date,
 			'type':d.type,
@@ -178,7 +179,7 @@ def set_readings(project,asset,target_doc=None):
 			'black_white':d.get("reading"),
 			'colour':d.get("reading_2")
 		})
-	
+
 	return reading_list
 
 
@@ -206,15 +207,15 @@ def get_tech(doctype, txt, searchfield, start, page_len, filters):
 	if txt:
 			fltr.update({"full_name": ("like", "{0}%".format(txt))})
 	for i in frappe.get_roles(filters.get("user")):
-		
+
 		for ss in frappe.db.get_all('Support Setting Table',{'back_office_team_role':i},['technician_role','back_office_team_role']):
 			for usr in frappe.get_all('User',fltr,['name','full_name']):
 				if ss.get('technician_role') in frappe.get_roles(usr.get("name")) and not usr.get("name") == 'Administrator':
-					
+
 					if usr.name not in tch_lst:
 						tch_lst.append(usr.name)
 						dct.update({usr.full_name:usr.name})
-	
+
 	return [(y,d) for d,y in dct.items()]
 
 @frappe.whitelist()
@@ -226,7 +227,7 @@ def get_assign_user(doctype, txt, searchfield, start, page_len, filters):
 @frappe.whitelist()
 def check_material_request_status(task):
 	flag = False
-	
+
 	for i in frappe.get_all('Material Request',{'task_':task},['status']):
 		if i.get('status') not in ['Stopped','Cancelled','Issued']:
 			flag = True
@@ -243,7 +244,7 @@ def get_location(doctype, txt, searchfield, start, page_len, filters):
 		for a in frappe.get_all('Asset',fltr,['location']):
 			if a.location not in lst:
 				lst.append(a.location)
-	return [(d,) for d in lst]  
+	return [(d,) for d in lst]
 
 @frappe.whitelist()
 def get_asset_in_task(doctype, txt, searchfield, start, page_len, filters):
@@ -257,10 +258,10 @@ def get_asset_in_task(doctype, txt, searchfield, start, page_len, filters):
 
 	if filters.get("location"):
 			cond1+="and location='{0}'".format(filters.get("location"))
-		
-	data = frappe.db.sql("""select asset from `tabAsset Serial No` 
-			where asset IN (select name from 
-			`tabAsset` where docstatus = 1  {0} 
+
+	data = frappe.db.sql("""select asset from `tabAsset Serial No`
+			where asset IN (select name from
+			`tabAsset` where docstatus = 1  {0}
 			and project = (select name
 			from `tabProject`  {1} {2}))
 		""".format(cond1,cond2,cond3))
@@ -270,7 +271,7 @@ def get_asset_in_task(doctype, txt, searchfield, start, page_len, filters):
 def get_serial_no_list(doctype, txt, searchfield, start, page_len, filters):
 	if txt:
 		filters.update({"name": ("like", "{0}%".format(txt))})
-		
+
 	return frappe.get_all("Asset Serial No",filters=filters,fields = ["name"], as_list=1)
 
 
@@ -290,7 +291,7 @@ def get_serial_on_cust_loc(doctype, txt, searchfield, start, page_len, filters):
 		for j in frappe.get_all('Asset',fltr2,['serial_no']):
 			if j.serial_no not in lst:
 					lst.append(j.serial_no)
-	return [(d,) for d in lst]  
+	return [(d,) for d in lst]
 
 
 @frappe.whitelist()
@@ -308,7 +309,7 @@ def get_asset_serial_on_cust(doctype, txt, searchfield, start, page_len, filters
 			for ass in frappe.get_all('Asset',asst,['serial_no']):
 				if ass.serial_no not in lst:
 					lst.append(ass.serial_no)
-		return [(d,) for d in lst]  
+		return [(d,) for d in lst]
 
 @frappe.whitelist()
 def get_customer(serial_no,asset):
@@ -331,7 +332,7 @@ def get_asset_on_cust(doctype, txt, searchfield, start, page_len, filters):
 			for ass in frappe.get_all('Asset',asst,['name']):
 				if ass.name not in lst:
 					lst.append(ass.name)
-		return [(d,) for d in lst]  
+		return [(d,) for d in lst]
 
 
 def create_machine_reading(doc):
@@ -405,7 +406,7 @@ def validate_if_material_request_is_not_submitted(doc):
 def attachment_validation(doc):
 	if not doc.attachments or  len(doc.attachments)==0:
 		frappe.throw("Cann't Completed Task Without Attachment")
-	
+
 def create_user_permission(doc):
 	if len(frappe.get_all("User Permission",{"allow":"Task","for_value":doc.name,"user":doc.completed_by}))==0:
 		for d in frappe.get_all("User Permission",{"allow":"Task","for_value":doc.name}):
@@ -429,6 +430,25 @@ def validate_link_fileds(doc):
 		# validate_location(doc)
 		validate_asset(doc,issue)
 		validate_serial_no(doc,issue)
+
+def link_issue_attachments(task):
+	if task.issue:
+		issue=frappe.get_doc("Issue",task.issue)
+		attachments = frappe.get_all("File", {"attached_to_doctype":"Issue", "attached_to_name":issue.name})
+		if attachments:
+			for attachment in attachments:
+				file = frappe.get_doc("File", attachment.name)
+				duplicate_file = frappe.get_doc(
+					{
+						"doctype": "File",
+						"file_name": file.file_name,
+						"attached_to_doctype": "Task",
+						"attached_to_name": task.name,
+						"content": file.get_content(),
+					}
+				)
+				duplicate_file.save()
+
 
 def validate_customer(doc,issue):
 	if doc.customer and issue.customer and doc.customer != issue.customer:
@@ -474,20 +494,20 @@ def get_serial_no(customer,location,asset):
 	return lst
 
 
-@frappe.whitelist()     
+@frappe.whitelist()
 def get_locationlist(doctype, txt, searchfield, start, page_len, filters):
 	location_list=[]
 	project_list = [p.name for p in frappe.db.get_list("Project", filters={"customer":filters.get("Customer_Name")},fields={"name"})]
 	for p in project_list:
-		location_list =[[l.location] for l in frappe.db.get_list("Asset",{"project":p},"location") if [l.location] not in location_list ]      
-	return location_list    
-   
+		location_list =[[l.location] for l in frappe.db.get_list("Asset",{"project":p},"location") if [l.location] not in location_list ]
+	return location_list
 
 
 
 
 
-@frappe.whitelist()     
+
+@frappe.whitelist()
 def set_items_on_machine_reading_from_mr(asset,task):
 	material_request_list =[i.name for i in frappe.db.get_list('Material Request',{'task_':task, 'asset':asset}, 'name')]
 	if material_request_list:
@@ -501,8 +521,8 @@ def set_items_on_machine_reading_from_mr(asset,task):
 			   machine_child.item_name = i.item_name
 			   machine_child.item_group = i.item_group
 			   machine_reading_doc.save()
-			
-			   
+
+
 @frappe.whitelist()
 def transfer_data_to_issue(doc):
 	doc=json.loads(doc)
@@ -512,9 +532,9 @@ def transfer_data_to_issue(doc):
 	   issue_doc.action=doc.get('action')
 	   issue_doc.cause=doc.get('cause')
 	   issue_doc.completed_sent=1
-	   issue_doc.save()  
-	  
-		 
+	   issue_doc.save()
+
+
 
 
 
@@ -524,7 +544,7 @@ def get_location_validation(customer):
 		for a in frappe.get_all('Asset',{'project':i.get('name')},['location']):
 			if a.location not in lst:
 				lst.append(a.location)
-	return lst  
+	return lst
 
 
 def get_asset(customer,location):
@@ -535,13 +555,13 @@ def get_asset(customer,location):
 		fltr1.update({'customer':customer})
 	if location:
 		fltr2.update({'location':location})
-	
+
 	for i  in frappe.get_all('Project',fltr1,['name']):
 		fltr2.update({'project':i.get('name'),'docstatus':1})
 		for ass in frappe.get_all('Asset',fltr2,['name']):
 			if ass.name not in lst:
 				lst.append(ass.name)
-	return lst  
+	return lst
 
 
 def validate_current_reading(doc):
@@ -556,35 +576,35 @@ def repetitive_call(doc):
 	mr=mr.replace(")","")
 	mr=mr.replace(",","")
 	mr=mr.replace(".0","")
-	
+
 	frappe.msgprint(mr)
-		
+
 def email_status(doc):
-	
+
 		pro_email = frappe.db.sql("select c.idx from `tabProject` p Left Join `tabCustomer Email List` c on c.parent = p.name where p.customer = %s", doc.customer)
 		idx=str(pro_email)
 		idx=idx.replace("(","")
 		idx=idx.replace(")","")
 		idx=idx.replace(",","")
 		idx=idx.replace("'","")
-		
+
 		if idx != "None":
-			
+
 			cust = frappe.db.sql("select c.email_id from `tabProject` p Left Join `tabCustomer Email List` c on c.parent = p.name where p.customer = %s and c.idx > 0", doc.customer)
 			cus=str(cust)
 			cus=cus.replace("(","")
 			cus=cus.replace(")","")
 			cus=cus.replace(",","")
 			cus=cus.replace("'","")
-			
+
 			subject = """New Ticket {0} is Assigned""".format(doc.issue)
 			body = """Your issue has been recorded, details given below,<br>Ticket No:{0}<br>we will try to sort it in time. for updates please visit on portal<br> http://supportke.groupmfi.com""".format(doc.issue)
 
 			make(subject = subject,content=body, recipients=cus,
 				send_email=True, sender="erp@groupmfi.com")
-		
+
 			frappe.msgprint("Email send successfully Assigned Issue")
 		else:
 			frappe.msgprint("email id not found for the customer in project")
-		
-	
+
+
