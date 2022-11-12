@@ -49,6 +49,8 @@ def validate(doc,method):
 		create_user_permission(doc)
 
 	validate_link_fileds(doc)
+
+def before_insert(doc,method):
 	link_issue_attachments(doc)
 
 def set_actual_time(doc):
@@ -59,8 +61,8 @@ def email_status_save(doc):
 	if doc.status == "Completed" and doc.completed_sent==0:
 		com_subject = """Issue {0} Has Been Completed""".format(doc.issue)
 		make(subject = com_subject,content="Demo Tetsing",
-		 recipients="helpdesk.kenya@groupmfi.com",
-		 send_email=True, sender="erp@groupmfi.com")
+		recipients="helpdesk.kenya@groupmfi.com",
+		send_email=True, sender="erp@groupmfi.com")
 		frappe.msgprint("Email send successfully Task Completed")
 		doc.completed_sent=1
 
@@ -149,11 +151,11 @@ def make_material_req(source_name, target_doc=None):
 @frappe.whitelist()
 def make_asset_movement(source_name, target_doc=None, ignore_permissions=False):
 	def set_missing_values(source, target):
-	   customer = frappe.db.get_value("Task", source_name,'customer')
-	   company = frappe.db.get_value("Project",{"customer":customer},'company')
-	   target.purpose = "Transfer"
-	   target.company = company
-	   target.task=source_name
+		customer = frappe.db.get_value("Task", source_name,'customer')
+		company = frappe.db.get_value("Project",{"customer":customer},'company')
+		target.purpose = "Transfer"
+		target.company = company
+		target.task=source_name
 
 
 
@@ -327,7 +329,7 @@ def get_asset_on_cust(doctype, txt, searchfield, start, page_len, filters):
 		if txt:
 			asst.update({'name':("like", "{0}%".format(txt))})
 		# asst.update()
-		for i  in frappe.get_all('Project',fltr,['name']):
+		for i in frappe.get_all('Project',fltr,['name']):
 			asst.update({'project':i.get('name'),'docstatus':1})
 			for ass in frappe.get_all('Asset',asst,['name']):
 				if ass.name not in lst:
@@ -490,7 +492,7 @@ def get_serial_no(customer,location,asset):
 		fltr2.update({'project':i.get('name'),'docstatus':1})
 		for j in frappe.get_all('Asset',fltr2,['serial_no']):
 			if j.serial_no not in lst:
-					lst.append(j.serial_no)
+				lst.append(j.serial_no)
 	return lst
 
 
@@ -502,41 +504,32 @@ def get_locationlist(doctype, txt, searchfield, start, page_len, filters):
 		location_list =[[l.location] for l in frappe.db.get_list("Asset",{"project":p},"location") if [l.location] not in location_list ]
 	return location_list
 
-
-
-
-
-
 @frappe.whitelist()
 def set_items_on_machine_reading_from_mr(asset,task):
 	material_request_list =[i.name for i in frappe.db.get_list('Material Request',{'task_':task, 'asset':asset}, 'name')]
 	if material_request_list:
-	   machine_reading_doc = frappe.get_last_doc('Machine Reading', filters={"task":task, "asset":asset})
-	   machine_reading_doc.items =[]
-	   for mr in material_request_list:
-		   mr_doc = frappe.get_doc('Material Request',mr)
-		   for i in mr_doc.items:
-			   machine_child =machine_reading_doc.append('items',{})
-			   machine_child.item_code = i.item_code
-			   machine_child.item_name = i.item_name
-			   machine_child.item_group = i.item_group
-			   machine_reading_doc.save()
+		machine_reading_doc = frappe.get_last_doc('Machine Reading', filters={"task":task, "asset":asset})
+		machine_reading_doc.items =[]
+		for mr in material_request_list:
+			mr_doc = frappe.get_doc('Material Request',mr)
+			for i in mr_doc.items:
+				machine_child =machine_reading_doc.append('items',{})
+				machine_child.item_code = i.item_code
+				machine_child.item_name = i.item_name
+				machine_child.item_group = i.item_group
+				machine_reading_doc.save()
 
 
 @frappe.whitelist()
 def transfer_data_to_issue(doc):
 	doc=json.loads(doc)
 	if doc.get('status')=='Completed':
-	   issue_doc = frappe.get_doc('Issue',doc.get('issue'))
-	   issue_doc.symptoms=doc.get('symptoms')
-	   issue_doc.action=doc.get('action')
-	   issue_doc.cause=doc.get('cause')
-	   issue_doc.completed_sent=1
-	   issue_doc.save()
-
-
-
-
+		issue_doc = frappe.get_doc('Issue',doc.get('issue'))
+		issue_doc.symptoms=doc.get('symptoms')
+		issue_doc.action=doc.get('action')
+		issue_doc.cause=doc.get('cause')
+		issue_doc.completed_sent=1
+		issue_doc.save()
 
 def get_location_validation(customer):
 	lst = []
@@ -568,6 +561,7 @@ def validate_current_reading(doc):
 	if frappe.db.get_value('Type of Call',{'name':doc.type_of_call},'ignore_reading')==0 and len(doc.get("current_reading"))==0:
 		frappe.throw("Cann't Complete Task Without Current Reading")
 
+
 @frappe.whitelist()
 def repetitive_call(doc):
 	mr_count = frappe.db.sql("select sum(total) from `tabMachine Reading` where asset = %s", doc.asset)
@@ -580,31 +574,30 @@ def repetitive_call(doc):
 	frappe.msgprint(mr)
 
 def email_status(doc):
+	pro_email = frappe.db.sql("select c.idx from `tabProject` p Left Join `tabCustomer Email List` c on c.parent = p.name where p.customer = %s", doc.customer)
+	idx=str(pro_email)
+	idx=idx.replace("(","")
+	idx=idx.replace(")","")
+	idx=idx.replace(",","")
+	idx=idx.replace("'","")
 
-		pro_email = frappe.db.sql("select c.idx from `tabProject` p Left Join `tabCustomer Email List` c on c.parent = p.name where p.customer = %s", doc.customer)
-		idx=str(pro_email)
-		idx=idx.replace("(","")
-		idx=idx.replace(")","")
-		idx=idx.replace(",","")
-		idx=idx.replace("'","")
+	if idx != "None":
 
-		if idx != "None":
+		cust = frappe.db.sql("select c.email_id from `tabProject` p Left Join `tabCustomer Email List` c on c.parent = p.name where p.customer = %s and c.idx > 0", doc.customer)
+		cus=str(cust)
+		cus=cus.replace("(","")
+		cus=cus.replace(")","")
+		cus=cus.replace(",","")
+		cus=cus.replace("'","")
 
-			cust = frappe.db.sql("select c.email_id from `tabProject` p Left Join `tabCustomer Email List` c on c.parent = p.name where p.customer = %s and c.idx > 0", doc.customer)
-			cus=str(cust)
-			cus=cus.replace("(","")
-			cus=cus.replace(")","")
-			cus=cus.replace(",","")
-			cus=cus.replace("'","")
+		subject = """New Ticket {0} is Assigned""".format(doc.issue)
+		body = """Your issue has been recorded, details given below,<br>Ticket No:{0}<br>we will try to sort it in time. for updates please visit on portal<br> http://supportke.groupmfi.com""".format(doc.issue)
 
-			subject = """New Ticket {0} is Assigned""".format(doc.issue)
-			body = """Your issue has been recorded, details given below,<br>Ticket No:{0}<br>we will try to sort it in time. for updates please visit on portal<br> http://supportke.groupmfi.com""".format(doc.issue)
+		make(subject = subject,content=body, recipients=cus,
+			send_email=True, sender="erp@groupmfi.com")
 
-			make(subject = subject,content=body, recipients=cus,
-				send_email=True, sender="erp@groupmfi.com")
-
-			frappe.msgprint("Email send successfully Assigned Issue")
-		else:
-			frappe.msgprint("email id not found for the customer in project")
+		frappe.msgprint("Email send successfully Assigned Issue")
+	else:
+		frappe.msgprint("email id not found for the customer in project")
 
 

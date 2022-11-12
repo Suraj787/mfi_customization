@@ -104,6 +104,7 @@ doctype_list_js = {"Material Request":"public/js/material_request_list.js",
 
 doc_events = {
     "Task":{
+        "before_insert": "mfi_customization.mfi.doctype.task.before_insert",
         "validate":"mfi_customization.mfi.doctype.task.validate",
         "after_insert":"mfi_customization.mfi.doctype.task.after_insert",
         "on_trash":"mfi_customization.mfi.doctype.task.after_delete",
