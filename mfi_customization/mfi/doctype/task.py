@@ -13,6 +13,7 @@ from datetime import datetime
 from frappe.utils import time_diff_in_hours
 from frappe.core.doctype.communication.email import make
 
+
 def validate(doc,method):
 	set_company(doc)
 	set_actual_time(doc)
@@ -41,6 +42,7 @@ def validate(doc,method):
 
 	set_field_values(doc)
 	assign_task_validation(doc)
+	send_task_assignment_email(doc)
 
 	if doc.get('__islocal'):
 		for d in frappe.get_all("Task",{"issue":doc.issue}):
@@ -58,6 +60,9 @@ def set_actual_time(doc):
 		doc.actual_time = time_diff_in_hours(doc.completion_date_time ,doc.attended_date_time)
 
 def email_status_save(doc):
+	"""
+	Send email to helpdesk when task status is set to 'Completed'
+	"""
 	if doc.status == "Completed" and doc.completed_sent==0:
 		com_subject = """Issue {0} Has Been Completed""".format(doc.issue)
 		make(subject = com_subject,content="Demo Tetsing",
@@ -89,6 +94,25 @@ def after_insert(doc,method):
 	#       "write": 1
 	#   })
 	# docperm.save(ignore_permissions=True)
+
+def send_task_assignment_email(task):
+	if task.completed_by:
+		# send email to client
+		subject = f"""New Ticket {task.issue} is Assigned"""
+		body = f"""Task ticket no. {task.name} has been assigned to our Engineer {task.completed_by} named {task.technician_name}, kindly
+					expect him/her as soon as possible"""
+		emails = get_customer_emails(task.project)
+		make(subject = subject,content=body, recipients=emails,
+			send_email=True, sender="erp@groupmfi.com")
+
+		# send email to helpdesk
+		subject = f"""Ticket {task.name} assigned to Engineer {task.completed_by}"""
+		body = f"""Ticket no. {task.name} has been assigned to our Engineer {task.technician_name}"""
+		make(subject = subject,content=body,recipients="helpdesk.kenya@groupmfi.com",
+			send_email=True, sender="erp@groupmfi.com")
+
+		frappe.msgprint("Task assignment email has been sent")
+
 
 def on_change(doc,method):
 	if doc.get("issue"):
@@ -574,6 +598,9 @@ def repetitive_call(doc):
 	frappe.msgprint(mr)
 
 def email_status(doc):
+	"""
+	Send emails (to project customer emails) on creation of a task
+	"""
 	pro_email = frappe.db.sql("select c.idx from `tabProject` p Left Join `tabCustomer Email List` c on c.parent = p.name where p.customer = %s", doc.customer)
 	idx=str(pro_email)
 	idx=idx.replace("(","")
@@ -601,3 +628,7 @@ def email_status(doc):
 		frappe.msgprint("email id not found for the customer in project")
 
 
+def get_customer_emails(project):
+	emails_list = frappe.db.sql(f"""select distinct e.email_id from `tabProject` p, `tabCustomer Email List` e
+									where e.parent={project} """, as_dict=1,)
+	return emails_list
