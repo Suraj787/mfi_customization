@@ -16,7 +16,7 @@ from datetime import datetime, timedelta
 def make_issues_on_PM_call_interval():
    project_list = [p.get('name') for p in frappe.db.get_all('Project', 'name')]
    for project in project_list:
-      project_doc = frappe.get_doc('Project', project) 
+      project_doc = frappe.get_doc('Project', project)
       if project_doc.expected_end_date and project_doc.pm_call_interval > 0 and date.today() <= project_doc.expected_end_date:
          till_end_date = (project_doc.expected_end_date - project_doc.expected_start_date).days
          date_list = [project_doc.expected_start_date + timedelta(days=x) for x in range(0,till_end_date,project_doc.pm_call_interval)]
@@ -108,7 +108,7 @@ def check_duplicate_issue(doc, asset):
 #                 task_doc.project = doc.get('name')
 #                 task_doc.completed_by = "s.karuturi@groupmfi.com"
 #                 task_doc.customer= doc.get('customer')
-#                 task_doc.save() 
+#                 task_doc.save()
 #                 out.append(task_doc)
 #             return [p.name for p in out]
 
@@ -138,8 +138,8 @@ def date_invoice_cycle(expected_end_date,invoicing_starts_from,invoice_cycle_opt
        while invoce_startformating <= endateformating:
           half_yearlist.append(invoce_startformating.date())
           invoce_startformating += add_half_year_Month
-    
-    
+
+
     return monthlylist,yearlylist,quarterlylist ,half_yearlist
 
 @frappe.whitelist()
@@ -149,11 +149,17 @@ def contract_period(expected_start_date,contract_period):
     stratformate=datetime(start_strp.year,start_strp.month,start_strp.day)
     current = stratformate + relativedelta(months=(int(contract_period)))
     return current.date()
- 
+
 @frappe.whitelist()
 def customer_contect(customer):
    cus_contect = frappe.db.sql(f""" SELECT d.parent,c.email_id FROM `tabDynamic Link` d LEFT Join `tabContact` c on c.name = d.parent  WHERE d.link_name='{customer}' """, as_dict=True)
    return cus_contect
 
-    
-    
+
+
+def get_customer_emails(project):
+	emails = frappe.db.sql(f"""select distinct e.email_id from `tabProject` p, `tabCustomer Email List` e
+									where e.parent="{project}" """, as_dict=1,)
+	emails_list = [e['email_id'] for e in emails]
+
+	return emails_list
