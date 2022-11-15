@@ -53,7 +53,6 @@ def validate(doc,method):
 	validate_link_fileds(doc)
 
 def before_insert(doc,method):
-	link_issue_attachments(doc)
 	send_task_assignment_email(doc)
 
 
@@ -469,7 +468,7 @@ def validate_link_fileds(doc):
 		validate_asset(doc,issue)
 		validate_serial_no(doc,issue)
 
-def link_issue_attachments(task):
+def link_issue_attachments(task, method):
 	if task.issue:
 		issue=frappe.get_doc("Issue",task.issue)
 		attachments = frappe.get_all("File", {"attached_to_doctype":"Issue", "attached_to_name":issue.name})
