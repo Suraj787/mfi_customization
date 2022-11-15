@@ -323,22 +323,23 @@ def after_insert(doc,method):
 	"""
 	Send email notifications when Issue is created
 	"""
-	client_emails = (get_customer_emails(doc.project))
-	subject = f"""Ticket created for Issue"""
-	helpdesk_body = f"""Issue ticket number {doc.name} has been
-						created by {doc.customer}"""
-	if doc.type_of_call == "Service Request":
-		client_body = f"""Your issue has been successfully created with ticket number {doc.name}
-				 Kindly wait as we assign our Engineer."""
+	if doc.type_of_call == "Service Request" and doc.type_of_call == "Toner":
+		client_emails = (get_customer_emails(doc.project))
+		subject = f"""Ticket created for Issue"""
+		helpdesk_body = f"""Issue ticket number {doc.name} has been
+							created by {doc.customer}"""
+		if doc.type_of_call == "Service Request":
+			client_body = f"""Your issue has been successfully created with ticket number {doc.name}
+					Kindly wait as we assign our Engineer."""
 
-	elif doc.type_of_call == "Tonner":
-		client_body = f"""Your issue has been successfully created with ticket number
-						{doc.name}. Kindly wait as we resolve it."""
+		elif doc.type_of_call == "Toner":
+			client_body = f"""Your issue has been successfully created with ticket number
+							{doc.name}. Kindly wait as we resolve it."""
 
-	make(subject = subject,content=client_body,
-		 recipients=client_emails,
-		 send_email=True, sender="erp@groupmfi.com")
-	make(subject = subject,content=helpdesk_body,
-		recipients="helpdesk.kenya@groupmfi.com",
-		send_email=True, sender="erp@groupmfi.com")
-	frappe.msgprint("Issue ticket creation email has been sent")
+		make(subject = subject,content=client_body,
+			recipients=client_emails,
+			send_email=True, sender="erp@groupmfi.com")
+		make(subject = subject,content=helpdesk_body,
+			recipients="helpdesk.kenya@groupmfi.com",
+			send_email=True, sender="erp@groupmfi.com")
+		frappe.msgprint("Issue ticket creation email has been sent")
