@@ -463,9 +463,9 @@ def set_yeild_details(doc):
 
 def on_submit(doc,method):
     set_yeild_details_on_machine_reading(doc)
-    if doc.task_:
-        frappe.db.set_value("Task", doc.task_, 'status', 'Material Issued')
-        issue = frappe.db.get_value("Task",{'name': doc.task_}, 'issue')
+    if doc.task:
+        frappe.db.set_value("Task", doc.task, 'status', 'Material Issued')
+        issue = frappe.db.get_value("Task",{'name': doc.task}, 'issue')
         if issue:
             frappe.db.set_value("Issue", issue, 'status', 'Material Issued')
 
