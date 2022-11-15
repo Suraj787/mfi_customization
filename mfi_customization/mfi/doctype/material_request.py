@@ -529,7 +529,8 @@ def notify_client_about_material_requested(doc, method):
 
             # notify helpdesk
             email_body = f"""Kindly note that Material Request for ticket number {issue} is awaiting your approval"""
-            recipients="helpdesk.kenya@groupmfi.com"
+            recipients = frappe.db.get_value("Company", doc.company, "support_email")
+
             make(subject = subject, content=email_body, recipients=recipients,
                     send_email=True, sender="erp@groupmfi.com")
 
@@ -542,11 +543,11 @@ def notify_helpdesk_about_material_approval(doc, method):
             # notify helpdesk
             subject = f"""Material request approved for ticket {issue}"""
             email_body = f"""Kindly note that material request for ticket number {issue} has been approved."""
-            recipients="helpdesk.kenya@groupmfi.com"
+            recipients = frappe.db.get_value("Company", doc.company, "support_email")
             make(subject = subject, content=email_body, recipients=recipients,
                     send_email=True, sender="erp@groupmfi.com")
 
-            # notify helpdesk
+            # notify client
             email_body = f"""Task Ticket number {issue} has been dispatched, kindly expect it any time soon."""
             recipients = get_customer_emails(doc.project)
             make(subject = subject, content=email_body, recipients=recipients,

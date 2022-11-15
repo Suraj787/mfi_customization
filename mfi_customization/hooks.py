@@ -164,6 +164,9 @@ doc_events = {
     },
     "Machine Reading":{
         "after_save":"mfi_customization.utils.machine_reading.repetitive_call"
+    },
+    "Company":{
+        "validate": "mfi_customization.mfi.doctype.company.validate_support_email"
     }
     # "Material Request":{
     #     "validate":"mfi_customization.mfi.doctype.material_request.validate",
