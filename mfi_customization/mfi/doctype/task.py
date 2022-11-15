@@ -69,7 +69,7 @@ def send_task_completion_email(doc):
 
 		# send email notification to helpdesk
 		helpdesk_email_body = f"""Task ticket number {doc.name} has been successfully completed."""
-		recipients="helpdesk.kenya@groupmfi.com"
+		recipients = frappe.db.get_value("Company", doc.company, "support_email")
 		make(subject = subject, content=helpdesk_email_body, recipients=recipients,
 				send_email=True, sender="erp@groupmfi.com")
 
@@ -118,7 +118,7 @@ def send_task_assignment_email(task):
 
 		# send email to helpdesk
 		body = f"""Ticket no. {task.issue} has been assigned to our Engineer {task.technician_name}"""
-		recipients="helpdesk.kenya@groupmfi.com"
+		recipients = frappe.db.get_value("Company", task.company, "support_email")
 		make(subject = subject,content=body,recipients=recipients,
 			send_email=True, sender="erp@groupmfi.com")
 

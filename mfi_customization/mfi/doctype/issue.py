@@ -325,6 +325,7 @@ def after_insert(doc,method):
 	"""
 	if doc.type_of_call == "Service Request" or doc.type_of_call == "Toner":
 		client_emails = (get_customer_emails(doc.project))
+		helpdesk_email = frappe.db.get_value("Company", doc.company, "support_email")
 		subject = f"""Ticket created for Issue"""
 		helpdesk_body = f"""Issue ticket number {doc.name} has been
 							created by {doc.customer}"""
@@ -340,6 +341,6 @@ def after_insert(doc,method):
 			recipients=client_emails,
 			send_email=True, sender="erp@groupmfi.com")
 		make(subject = subject,content=helpdesk_body,
-			recipients="helpdesk.kenya@groupmfi.com",
+			recipients=helpdesk_email,
 			send_email=True, sender="erp@groupmfi.com")
 		frappe.msgprint("Issue ticket creation email has been sent")
