@@ -13,7 +13,6 @@ def validate(doc,method):
 	email_validation(doc)
 	set_company(doc)
 	set_territory(doc)
-	email_status(doc)
 	# validate_link_fileds(doc)
 # 	validate_issue(doc)
 	# machine_reading=""
@@ -64,41 +63,6 @@ def set_territory(doc):
 		territory = frappe.db.get_value("Customer", {'name': doc.customer}, 'territory')
 	if territory:
 	 	doc.territory = territory
-
-
-def email_status(doc):
-	"""
-	send email (to project customer emails) when Issue status set to closed
-	"""
-	if doc.status == "Closed":
-		pro = frappe.db.sql("select c.idx from `tabProject` p Left Join `tabCustomer Email List` c on c.parent = p.name where p.customer = %s", doc.customer)
-		idx1=str(pro)
-		idx1=idx1.replace("(","")
-		idx1=idx1.replace(")","")
-		idx1=idx1.replace(",","")
-		idx1=idx1.replace("'","")
-
-		if idx1 != "None":
-
-			cust1 = frappe.db.sql("select c.email_id from `tabProject` p Left Join `tabCustomer Email List` c on c.parent = p.name where p.customer = %s and c.idx > 0", doc.customer)
-			cus1=str(cust1)
-			cus1=cus1.replace("(","")
-			cus1=cus1.replace(")","")
-			cus1=cus1.replace(",","")
-			cus1=cus1.replace("'","")
-			cus1=cus1.replace("'","")
-			cus1=cus1.replace("'","")
-			subject = """Ticket {0} is Closed""".format(doc.name)
-			body = """Your issue has been Closed, details given below,<br>Ticket No:{0}<br>we will try to sort it in time. for updates please visit on portal<br> http://supportke.groupmfi.com""".format(doc.name)
-
-			make(subject = subject,content=body, recipients=cus1,
-				send_email=True, sender="erp@groupmfi.com")
-
-			frappe.msgprint("Email send successfully Close Issue")
-		else:
-			frappe.msgprint("email id not found for the customer in project")
-
-
 
 @frappe.whitelist()
 def make_task(source_name, target_doc=None):
