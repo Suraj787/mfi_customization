@@ -469,11 +469,9 @@ def validate_link_fileds(doc):
 		validate_serial_no(doc,issue)
 
 def link_issue_attachments(task, method):
-	print('****************task.name****************', task.name)
 	if task.issue:
 		issue=frappe.get_doc("Issue",task.issue)
 		attachments = frappe.get_all("File", {"attached_to_doctype":"Issue", "attached_to_name":issue.name})
-		print('****************attachments****************', attachments)
 		if attachments:
 			for attachment in attachments:
 				file = frappe.get_doc("File", attachment.name)
