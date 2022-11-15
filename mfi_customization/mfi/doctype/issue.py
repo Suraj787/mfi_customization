@@ -331,7 +331,7 @@ def after_insert(doc,method):
 		client_body = f"""Your issue has been successfully created with ticket number {doc.name}
 				 Kindly wait as we assign our Engineer."""
 
-	elif doc.type_of_call == "Tonner":
+	elif doc.type_of_call == "Toner":
 		client_body = f"""Your issue has been successfully created with ticket number
 						{doc.name}. Kindly wait as we resolve it."""
 
