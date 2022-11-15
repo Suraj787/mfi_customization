@@ -106,7 +106,8 @@ doc_events = {
     "Task":{
         "before_insert": "mfi_customization.mfi.doctype.task.before_insert",
         "validate":"mfi_customization.mfi.doctype.task.validate",
-        "after_insert":"mfi_customization.mfi.doctype.task.after_insert",
+        "after_insert":["mfi_customization.mfi.doctype.task.after_insert",
+                        "mfi_customization.mfi.doctype.task.link_issue_attachments"],
         "on_trash":"mfi_customization.mfi.doctype.task.after_delete",
         "on_change":"mfi_customization.mfi.doctype.task.on_change"
         #"before_save":"mfi_customization.mfi.doctype.task.before_save"
