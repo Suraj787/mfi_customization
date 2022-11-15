@@ -323,7 +323,7 @@ def after_insert(doc,method):
 	"""
 	Send email notifications when Issue is created
 	"""
-	if doc.type_of_call == "Service Request" and doc.type_of_call == "Toner":
+	if doc.type_of_call == "Service Request" or doc.type_of_call == "Toner":
 		client_emails = (get_customer_emails(doc.project))
 		subject = f"""Ticket created for Issue"""
 		helpdesk_body = f"""Issue ticket number {doc.name} has been
