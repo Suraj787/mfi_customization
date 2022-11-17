@@ -19,4 +19,5 @@ def add_item_in_asset(doc, method):
 			row.item_name = item.item_name
 			row.item_group = item.item_group
 			row.yeild = item.yeild
+		asset.save()
 
