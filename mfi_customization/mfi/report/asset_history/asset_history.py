@@ -15,7 +15,7 @@ def execute(filters=None):
 def get_data(conditions, filters):
 
     item = frappe.db.sql("""select mr.name,mr.reading_date,mr.asset,mr.project,mr.machine_type,mr.colour_reading,mr.black_and_white_reading,mr.total,
-						mrt.item_code,mrt.item_name,mrt.item_group,mrt.yield,mrt.total_reading,mrt.percentage_yield
+						mrt.item_code,mrt.item_name,mrt.item_group,mrt.yeild,mrt.total_reading,mrt.percentage_yeild
                         from `tabMachine Reading` mr
                         LEFT Join `tabAsset Item Child Table` mrt on mrt.parent = mr.name
                         where mrt.idx > 0 """)
@@ -92,8 +92,8 @@ def get_columns(filters):
             "width": 150
         },
         {
-            "label": ("Yield"),
-            "fieldname": "mrt.yield",
+            "label": ("Yeild"),
+            "fieldname": "mrt.yeild",
             "width": 100
         },
         {
@@ -102,8 +102,8 @@ def get_columns(filters):
             "width": 100
         },
         {
-            "label": ("Percentage Yield"),
-            "fieldname": "mrt.percentage_yield",
+            "label": ("Percentage Yeild"),
+            "fieldname": "mrt.percentage_yeild",
             "width": 100
         },
 
