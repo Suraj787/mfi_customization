@@ -491,7 +491,7 @@ def set_yeild_details_on_machine_reading(doc):
                 if current_reading and first_reading:
                     reading_child.total_reading = flt(current_reading[0]) - flt(first_reading[0])
                     if reading_child.total_reading > 0:
-                        reading_child.percentage_yield = round((reading_child.yeild * 100)/(reading_child.total_reading),2)
+                        reading_child.percentage_yeild = round((reading_child.yeild * 100)/(reading_child.total_reading),2)
                 machine_reading_doc.save()
 
 
