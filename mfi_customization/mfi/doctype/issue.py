@@ -349,16 +349,17 @@ def after_insert(doc,method):
 		frappe.msgprint("Issue ticket creation email has been sent")
 
 def send_call_resolved_email(issue):
-	if issue.over_call_resolution and issue.resolution_reason and issue.type_of_call == "Service Request":
-		subject = f"Issue {issue.name} resolved on call"
-		helpdesk_email = frappe.db.get_value("Company", issue.company, "support_email")
-		client_emails = get_customer_emails(issue.project)
-		email_body = f"Issue ticket number {issue.name} has been resolved on call"
+	if not frappe.db.get_value("Issue", issue.name, "over_call_resolution"):
+		if issue.over_call_resolution and issue.resolution_reason and issue.type_of_call == "Service Request":
+			subject = f"Issue {issue.name} resolved on call"
+			helpdesk_email = frappe.db.get_value("Company", issue.company, "support_email")
+			client_emails = get_customer_emails(issue.project)
+			email_body = f"Issue ticket number {issue.name} has been resolved on call"
 
-		make(subject = subject,content=email_body,
-			recipients=client_emails,
-			send_email=True, sender="erp@groupmfi.com")
+			make(subject = subject,content=email_body,
+				recipients=client_emails,
+				send_email=True, sender="erp@groupmfi.com")
 
-		make(subject = subject,content=email_body,
-			recipients=helpdesk_email,
-			send_email=True, sender="erp@groupmfi.com")
+			make(subject = subject,content=email_body,
+				recipients=helpdesk_email,
+				send_email=True, sender="erp@groupmfi.com")

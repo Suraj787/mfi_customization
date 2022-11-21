@@ -129,7 +129,7 @@ doc_events = {
         # "onload":"mfi_customization.mfi.doctype.material_request.onload",
         "before_save":"mfi_customization.mfi.doctype.material_request.before_save",
         "before_insert": "mfi_customization.mfi.doctype.material_request.notify_client_about_material_requested",
-        "validate": "mfi_customization.mfi.doctype.material_request.notify_helpdesk_about_material_approval"
+        "on_submit": "mfi_customization.mfi.doctype.material_request.notify_helpdesk_about_material_approval"
     },
     # "Machine Reading":{
     #  "validate":"mfi_customization.mfi.doctype.machine_reading.machine_reading.validate"

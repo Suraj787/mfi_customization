@@ -19,6 +19,7 @@ def validate(doc,method):
 	set_company(doc)
 	set_actual_time(doc)
 	send_task_completion_email(doc)
+	send_task_escalation_email(doc)
 	# machine_reading=""
 	for d in doc.get("current_reading"):
 		# machine_reading=d.machine_reading
@@ -82,6 +83,27 @@ def send_task_completion_email(doc):
 		doc.completed_sent=1
 		frappe.msgprint("Task completion email has been sent")
 
+def send_task_escalation_email(doc):
+	if not frappe.db.get_value("Task", doc.name, "escalation"):
+		if doc.escalation and doc.escalation_:
+			subject = f"Task has been escalated"
+
+			# send email notification to helpdesk
+			helpdesk_email_body = f"""Task ticket number {doc.name} has been
+								Escalated By {doc.technician_name} for Follow Up."""
+			recipients = frappe.db.get_value("Company", doc.company, "support_email")
+			make(subject = subject, content=helpdesk_email_body, recipients=recipients,
+					send_email=True, sender="erp@groupmfi.com")
+
+			# send email notification to client
+			client_email_body = f"""Task Ticket Number {doc.issue} has been Escalated By
+								{doc.technician_name} for Follow Up. Any inconvenience is highly regrated."""
+			recipients = get_customer_emails(doc.project)
+			make(subject = subject, content=client_email_body, recipients=recipients,
+					send_email=True, sender="erp@groupmfi.com")
+
+			frappe.msgprint("Task escalation email has been sent")
+
 
 def after_insert(doc,method):
 	if doc.get('issue'):
@@ -110,7 +132,7 @@ def send_task_assignment_email(task):
 		subject = f"""Engineer assigned to issue ticket {task.issue}"""
 
 		# send email to client
-		body = f"""Task ticket no. {task.issue} has been assigned to our Engineer {task.completed_by} named {task.technician_name}, kindly
+		body = f"""Task ticket no. {task.issue} has been assigned to our Engineer {task.technician_name}, kindly
 					expect him/her as soon as possible"""
 		recipients = get_customer_emails(task.project)
 		make(subject = subject,content=body, recipients=recipients,
