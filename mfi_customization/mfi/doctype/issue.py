@@ -330,8 +330,9 @@ def after_insert(doc,method):
 		client_emails = get_customer_emails(doc.project)
 		helpdesk_email = frappe.db.get_value("Company", doc.company, "support_email")
 		subject = f"""Ticket created for Issue"""
+		customer_name = frappe.db.get_value("Customer", doc.customer, "customer_name")
 		helpdesk_body = f"""Issue ticket number {doc.name} has been
-							created by {doc.customer}"""
+							created by {doc.customer} - {customer_name}"""
 		if doc.type_of_call == "Service Request":
 			client_body = f"""Your issue has been successfully created with ticket number {doc.name}
 					Kindly wait as we assign our Engineer."""
