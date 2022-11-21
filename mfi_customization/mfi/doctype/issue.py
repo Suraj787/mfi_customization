@@ -14,7 +14,7 @@ def validate(doc,method):
 	set_company(doc)
 	set_territory(doc)
 	# validate_link_fileds(doc)
-# 	validate_issue(doc)
+	# validate_issue(doc)
 	# machine_reading=""
 	for d in doc.get("current_reading"):
 		# machine_reading=d.machine_reading
@@ -43,6 +43,9 @@ def validate(doc,method):
 				"reading_2":d.get('colour_reading'),
 				"total":( int(d.get('black_and_white_reading') or 0)  + int(d.get('colour_reading') or 0))
 				})
+
+	send_call_resolved_email(doc)
+
 
 def on_change(doc,method):
 	validate_reading(doc)
@@ -324,7 +327,7 @@ def after_insert(doc,method):
 	Send email notifications when Issue is created
 	"""
 	if doc.type_of_call == "Service Request" or doc.type_of_call == "Toner":
-		client_emails = (get_customer_emails(doc.project))
+		client_emails = get_customer_emails(doc.project)
 		helpdesk_email = frappe.db.get_value("Company", doc.company, "support_email")
 		subject = f"""Ticket created for Issue"""
 		helpdesk_body = f"""Issue ticket number {doc.name} has been
@@ -344,3 +347,18 @@ def after_insert(doc,method):
 			recipients=helpdesk_email,
 			send_email=True, sender="erp@groupmfi.com")
 		frappe.msgprint("Issue ticket creation email has been sent")
+
+def send_call_resolved_email(issue):
+	if issue.over_call_resolution and issue.resolution_reason and issue.type_of_call == "Service Request":
+		subject = f"Issue {issue.name} resolved on call"
+		helpdesk_email = frappe.db.get_value("Company", issue.company, "support_email")
+		client_emails = get_customer_emails(issue.project)
+		email_body = f"Issue ticket number {issue.name} has been resolved on call"
+
+		make(subject = subject,content=email_body,
+			recipients=client_emails,
+			send_email=True, sender="erp@groupmfi.com")
+
+		make(subject = subject,content=email_body,
+			recipients=helpdesk_email,
+			send_email=True, sender="erp@groupmfi.com")
