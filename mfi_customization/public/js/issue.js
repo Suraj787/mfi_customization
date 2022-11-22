@@ -1,19 +1,19 @@
 frappe.ui.form.on('Issue', {
 	onload:function(frm){
 	    if(frappe.user.has_role("Technicians")==1 && frappe.user!="Administrator"){
-	        frm.set_df_property('symptoms',"reqd",1); 
-	        frm.set_df_property('action',"reqd",1); 
-	        frm.set_df_property('cause',"reqd",1); 
-	        frm.set_df_property('signature',"reqd",1); 
+	        frm.set_df_property('symptoms',"reqd",1);
+	        frm.set_df_property('action',"reqd",1);
+	        frm.set_df_property('cause',"reqd",1);
+	        frm.set_df_property('signature',"reqd",1);
 	        frm.set_df_property('priority',"read_only",1);
 	        frm.remove_custom_button('Close');
 
 	    }
 	    if(frappe.user.has_role("Call Coordinator")==1 && frappe.user!="Administrator"){
 	        frm.set_df_property('symptoms',"read_only",1);
-	        frm.set_df_property('action',"read_only",1); 
-	        frm.set_df_property('cause',"read_only",1); 
-	        frm.set_df_property('signature',"read_only",1); 
+	        frm.set_df_property('action',"read_only",1);
+	        frm.set_df_property('cause',"read_only",1);
+	        frm.set_df_property('signature',"read_only",1);
 	        frm.set_df_property('current_reading',"hidden",1);
 	        frm.set_df_property('priority',"read_only",1);
 	    }
@@ -22,15 +22,15 @@ frappe.ui.form.on('Issue', {
 			frappe.call({
 			method: "mfi_customization.mfi.doctype.issue.get_logged_user",
 			args: {
-			
+
 			},
 			callback: function(r) {
-			
-			frm.set_value("customer",r.message);				
-				
+
+			frm.set_value("customer",r.message);
+
 			}
-	
-			
+
+
 	      });
 		*/
 		if(frappe.user.has_role("Customer")==1 && frappe.user!="Administrator"){
@@ -43,27 +43,27 @@ frappe.ui.form.on('Issue', {
 		    $(".prev-doc").hide();
 	        $(".next-doc").hide();
             $(".menu-btn-group").hide();
-            
+
             frm.set_df_property('customer',"read_only",1);
             frm.set_df_property('current_reading',"hidden",1);
             // frm.set_value('status', "Open")
 
-    
+
         }
-   
-		
+
+
 	},
-	
+
 	before_save:function(frm){
 		if(!frm.doc.first_responded_on && frm.doc.status == 'Closed'){
 			frappe.throw("Status Cannot be Closed before working")
 		}
 	},
 	raised_by: function ( frm ) {
-	
+
 	if (!(frappe.utils.validate_type(frm.doc.raised_by, "email")) && !(frappe.utils.validate_type(frm.doc.raised_by, "number"))) {
 		frappe.msgprint('Please Enter valid email or contact');
-		
+
 	}
    },
    type_of_call: function (frm) {
@@ -90,7 +90,7 @@ frappe.ui.form.on('Issue', {
 				    }
 				});
             }
-			
+
 		}
    },
 	serial_no:function(frm){
@@ -107,15 +107,15 @@ frappe.ui.form.on('Issue', {
 				"asset":frm.doc.asset
 			},
 			callback: function(r) {
-			
-					frm.set_value('customer',r.message);				
+
+					frm.set_value('customer',r.message);
 				}
 			});
 		}
-		
+
 		frappe.db.get_value('Asset Serial No',{'name':frm.doc.serial_no},['asset','location'])
 		.then(({ message }) => {
-			
+
 			if (!frm.doc.asset){
 					frm.set_value('asset',message.asset);
 				}
@@ -123,7 +123,7 @@ frappe.ui.form.on('Issue', {
 			if (!frm.doc.location){
 					frm.set_value('location',message.location);
 				}
-		});                                                                                  
+		});
 	}},
 	clear:function(frm){
         frm.set_value('asset','');
@@ -153,17 +153,12 @@ frappe.ui.form.on('Issue', {
 					}
 				}
 			});
-	} 
+	}
 		if (!frm.doc.asset){
 			frm.set_value('asset_name','');
-		}  
+		}
 	},
 	status:function(frm){
-		if(frm.doc.status == 'Working'){
-			// frm.set_value('closing_date_time',"");
-			let today = new Date()
-			frm.set_value('first_responded_on',today);
-		}
 		if(frm.doc.status == 'Closed'){
 			if(frm.doc.type_of_call && frappe.user.has_role("Call Coordinator") !=1 && frappe.user=="Administrator" && frappe.user.has_role("Customer")!=1){
                 frappe.db.get_value('Type of Call',{'name':frm.doc.type_of_call},'ignore_reading', (r) => {
@@ -177,7 +172,7 @@ frappe.ui.form.on('Issue', {
                 });
             }
 			frm.set_value('closing_date_time',frappe.datetime.now_datetime());
-			
+
 		}
 		if (!["Cancelled","Closed"].includes(frm.doc.status)){
 			frm.add_custom_button(__('Cancel'), function() {
@@ -208,14 +203,14 @@ frappe.ui.form.on('Issue', {
 				frm.set_df_property('serial_no','read_only',0);
 			}
 	},
-	location:function(frm){        
+	location:function(frm){
 		if (frm.doc.location){
 			frappe.db.get_value('Location',{'name':frm.doc.location},['company'])
 			.then(({ message }) => {
 				frm.set_value('company',message.company);
-			});    
+			});
 		}
-		
+
 	},
 	setup:function(frm){
 
@@ -228,16 +223,16 @@ frappe.ui.form.on('Issue', {
 			}
 		});
 		// frm.set_query("asset", "current_reading", function() {
-			
+
 		// 	return {
 		// 		filters: {
 		// 			"name": frm.doc.asset || ""
 		// 		}
-			
+
 		// }
 		// });
-		
-		  
+
+
 
 
 
@@ -251,11 +246,11 @@ frappe.ui.form.on('Issue', {
 			}
 			}
 		});
-		
-		
-		
-		
-		
+
+
+
+
+
 		frm.set_query("asset", function() {
 			if (frm.doc.project) {
 				return {
@@ -294,11 +289,11 @@ frappe.ui.form.on('Issue', {
 					}
 				};
 			}
-	
+
 		});
 
 		frm.set_query("serial_no", function() {
-			if(frm.doc.location && frm.doc.asset){	
+			if(frm.doc.location && frm.doc.asset){
 			return {
 					query: 'mfi_customization.mfi.doctype.issue.get_serial_no_list',
 					filters: {
@@ -341,7 +336,7 @@ frappe.ui.form.on('Issue', {
 					frm.save()
 				})
 			}
-			
+
 		frm.add_custom_button(__('Task'), function() {
 			frappe.set_route('List', 'Task', {issue: frm.doc.name});
 		},__("View"));
@@ -349,7 +344,7 @@ frappe.ui.form.on('Issue', {
 		if (frm.doc.status == "Hold"){
 			frm.remove_custom_button("Task", 'Create')
 		}
-		
+
 		if (frm.doc.status !== "Closed" && frm.doc.agreement_fulfilled === "Ongoing") {
 			frm.remove_custom_button("Task", 'Make')
 			frm.add_custom_button(__("Task"), function () {
@@ -379,13 +374,13 @@ frappe.ui.form.on('Issue', {
 		frm.remove_custom_button('Task','View');
 		frm.remove_custom_button('Close');
 
-	} 
+	}
 	if(frm.doc.details_available){
 		frm.set_df_property('asset','reqd',1);
 		frm.set_df_property('serial_no','reqd',1);
 		frm.set_df_property('location','reqd',1);
 	}
-	
+
 	if(frappe.user.has_role("Customer")==1 && frappe.user!="Administrator"){
 	    frm.remove_custom_button('Task','Create')
 	    frm.remove_custom_button('Close')
@@ -393,7 +388,7 @@ frappe.ui.form.on('Issue', {
 	    frm.remove_custom_button('Task','View')
 
 	}
-	
+
 	},
 	customer:function(frm){
 		if (frm.doc.customer){
@@ -411,7 +406,7 @@ frappe.ui.form.on('Issue', {
 		// 			"customer":frm.doc.customer
 		// 		}
 		// 	};}
-		// });	
+		// });
 
 
 		// frm.set_query('asset', 'asset_details', function() {
@@ -434,7 +429,7 @@ frappe.ui.form.on('Issue', {
 
 
 	},
-	
+
 })
 
 frappe.ui.form.on("Asset Readings", "type", function(frm, cdt, cdn) {
@@ -460,7 +455,7 @@ frappe.ui.form.on("Asset Readings", "date", function(frm, cdt, cdn) {
     refresh_field("asset", d.name, d.parentfield);
 });
 // frappe.ui.form.on("Asset Details", "location", function(frm, cdt, cdn) {
-    
+
 //     var d = locals[cdt][cdn];
 //     if(d.location){
 //     frappe.db.get_value('Asset', {location: d.location,"docstatus":1}, ['asset_name','name','serial_no'], (r) => {
@@ -480,7 +475,7 @@ frappe.ui.form.on("Asset Readings", "date", function(frm, cdt, cdn) {
 //         frappe.db.get_value('Asset', {name: d.asset,"docstatus":1}, ['location','serial_no'], (r) => {
 //         d.location=r.location
 //         d.serial_no=r.serial_no
-        
+
 //         refresh_field("location", d.name, d.parentfield);
 //         refresh_field("serial_no", d.name, d.parentfield);
 //        })
@@ -504,14 +499,14 @@ frappe.ui.form.on("Asset Readings", "date", function(frm, cdt, cdn) {
 // 		frm.set_df_property("reading_2","read_only",0);
 
 // 	}
-   
+
 // });
 
 
 
 // frappe.ui.form.on("Asset Details", "serial_no", function(frm, cdt, cdn) {
 //     var d = locals[cdt][cdn];
-    
+
 //     if(d.serial_no){
 //     frappe.db.get_value('Asset', {serial_no: d.serial_no,"docstatus":1}, ['location','name','asset_name'], (r) => {
 //         d.asset_name=r.asset_name
@@ -525,4 +520,4 @@ frappe.ui.form.on("Asset Readings", "date", function(frm, cdt, cdn) {
 //     d.asset = frm.doc.asset
 //     refresh_field("asset", d.name, d.parentfield);
 // });
-		
+
