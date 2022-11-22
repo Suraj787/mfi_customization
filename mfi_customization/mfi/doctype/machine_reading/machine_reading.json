@@ -1,5 +1,6 @@
 {
  "actions": [],
+ "allow_import": 1,
  "autoname": "MCN-RDG-.####S",
  "creation": "2021-05-26 21:07:49.333414",
  "doctype": "DocType",
@@ -109,7 +110,7 @@
   }
  ],
  "links": [],
- "modified": "2022-10-22 09:06:22.248951",
+ "modified": "2022-11-08 14:49:28.019099",
  "modified_by": "Administrator",
  "module": "mfi",
  "name": "Machine Reading",

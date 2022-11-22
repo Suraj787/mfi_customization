@@ -1,0 +1,30 @@
+{
+ "attach_print": 0,
+ "channel": "Email",
+ "condition": "",
+ "creation": "2022-11-15 09:53:15.337310",
+ "days_in_advance": 0,
+ "docstatus": 0,
+ "doctype": "Notification",
+ "document_type": "Material Request",
+ "enabled": 0,
+ "event": "New",
+ "idx": 0,
+ "is_standard": 1,
+ "message": "Kindly Note that Material Request<br>\nTicket Number:{{doc.task}} is awaiting your approval",
+ "modified": "2022-11-21 12:39:54.011779",
+ "modified_by": "Administrator",
+ "module": "mfi",
+ "name": "Material Request Approval",
+ "owner": "Administrator",
+ "recipients": [
+  {
+   "receiver_by_document_field": "assigned_to"
+  }
+ ],
+ "send_system_notification": 0,
+ "send_to_all_assignees": 0,
+ "sender": "Ajit2356",
+ "sender_email": "erp@groupmfi.com",
+ "subject": "Material Request is awaiting your approval"
+}

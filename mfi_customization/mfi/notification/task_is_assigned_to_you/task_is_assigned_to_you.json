@@ -1,0 +1,30 @@
+{
+ "attach_print": 0,
+ "channel": "Email",
+ "condition": "",
+ "creation": "2022-11-21 09:53:27.593216",
+ "days_in_advance": 0,
+ "docstatus": 0,
+ "doctype": "Notification",
+ "document_type": "Task",
+ "enabled": 1,
+ "event": "New",
+ "idx": 0,
+ "is_standard": 1,
+ "message": "Task Ticket Number:{{doc.issue}} has assigned to you",
+ "modified": "2022-11-21 09:53:27.593216",
+ "modified_by": "Administrator",
+ "module": "mfi",
+ "name": "Task is Assigned to you",
+ "owner": "Administrator",
+ "recipients": [
+  {
+   "receiver_by_document_field": "completed_by"
+  }
+ ],
+ "send_system_notification": 0,
+ "send_to_all_assignees": 0,
+ "sender": "Ajit2356",
+ "sender_email": "erp@groupmfi.com",
+ "subject": "Task is Assigned to you"
+}

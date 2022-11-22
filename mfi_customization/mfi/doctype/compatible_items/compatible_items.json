@@ -1,5 +1,6 @@
 {
  "actions": [],
+ "allow_import": 1,
  "allow_rename": 1,
  "creation": "2022-11-16 13:38:39.375895",
  "doctype": "DocType",
@@ -34,7 +35,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-11-16 16:04:28.833308",
+ "modified": "2022-11-17 13:19:30.092949",
  "modified_by": "Administrator",
  "module": "mfi",
  "name": "Compatible Items",
