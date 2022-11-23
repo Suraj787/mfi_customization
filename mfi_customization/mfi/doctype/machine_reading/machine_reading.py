@@ -5,20 +5,30 @@
 from __future__ import unicode_literals
 import frappe
 from frappe.model.document import Document
+from frappe.utils import month_diff
 
 class MachineReading(Document):
 
-	def after_insert(self):
+	def before_insert(self):
 		task = frappe.get_doc("Task", self.task)
 		asset = frappe.get_doc("Asset", self.asset)
 		item_total = frappe.db.get_value("Item", asset.item_code, "total")
+		item_months = frappe.db.get_value("Item", asset.item_code, "no_of_month")
 		if task.type_of_call == "CM" and asset.docstatus:
-			filters = {"asset": self.asset, "task": self.task, "project": self.project}
-			previous_readings = frappe.db.get_all("Machine Reading", filters=filters, fields=['name', 'total'])[0] # sort desc?
-			diff = self.total-previous_readings.total
-			if diff<item_total:
-				task.repetitive_call = 1
-				task.save()
+			filters = {"asset": self.asset, "project": self.project}
+			previous_readings = frappe.db.get_all("Machine Reading", filters=filters, fields=['name', 'total', 'task'], order_by="creation desc")
+			machine_readings = []
+			for reading in previous_readings:
+				task_type = frappe.db.get_value("Task", reading.task, 'type_of_call')
+				if task_type == "CM":
+					machine_readings.append(reading)
+			total_diff = int(self.total)-int(machine_readings[0].total)
+			last_mr_posting_date = frappe.db.get_value("Machine Reading", machine_readings[0].name, "posting_date")
+			months_diff = month_diff(self.posting_date, last_mr_posting_date)
+			if total_diff<item_total or months_diff<item_months:
+				frappe.db.sql("UPDATE `tabTask` SET repetitive_call = 1 WHERE name=%s",task.name)
+
+
 
 
 # def validate(doc,method):
