@@ -7,41 +7,18 @@ import frappe
 from frappe.model.document import Document
 
 class MachineReading(Document):
-    
+
 	def after_insert(self):
-		toc = frappe.db.sql("select type_of_call from `tabTask` where name =%s", self.task)
-		toc=str(toc)
-		toc=toc.replace("(","")
-		toc=toc.replace(")","")
-		toc=toc.replace(",","")
-		toc=toc.replace("'","")	
-		mr_count = frappe.db.sql("select sum(total) from `tabMachine Reading` where asset = %s", self.asset)
-		mr=str(mr_count)
-		mr=mr.replace("(","")
-		mr=mr.replace(")","")
-		mr=mr.replace(",","")
-		mr=mr.replace(".0","")
-		
-		items = frappe.db.sql("select item_code from `tabAsset` where name = %s", self.asset)
-		
-		bandw = frappe.db.sql("select total from `tabItem` where name = %s", items)
-		b=str(bandw)
-		b=b.replace("(","")
-		b=b.replace(")","")
-		b=b.replace(",","")
-		
-		if mr >= b:
-			if toc == "CM":
-				frappe.db.sql("UPDATE `tabTask` SET repetitive_call = 1 WHERE name=%s",self.task)
-			
-
-
-  
-       
-       
-               
-		
-
+		task = frappe.get_doc("Task", self.task)
+		asset = frappe.get_doc("Asset", self.asset)
+		item_total = frappe.db.get_value("Item", asset.item_code, "total")
+		if task.type_of_call == "CM" and asset.docstatus:
+			filters = {"asset": self.asset, "task": self.task, "project": self.project}
+			previous_readings = frappe.db.get_all("Machine Reading", filters=filters, fields=['name', 'total'])[0] # sort desc?
+			diff = self.total-previous_readings.total
+			if diff<item_total:
+				task.repetitive_call = 1
+				task.save()
 
 
 # def validate(doc,method):
@@ -62,8 +39,7 @@ class MachineReading(Document):
 # 					mr_child.yeild=int(machine_reding_with_itm[0]) - int(machine_reading_asset[0])
 # 					mr_child.total_yeild =float(item_yeild[0])
 # 					mr_doc.save()
-		
 
 
 
-				   
+
