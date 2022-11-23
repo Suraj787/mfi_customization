@@ -18,15 +18,16 @@ class MachineReading(Document):
 			filters = {"asset": self.asset, "project": self.project}
 			previous_readings = frappe.db.get_all("Machine Reading", filters=filters, fields=['name', 'total', 'task'], order_by="creation desc")
 			machine_readings = []
-			for reading in previous_readings:
-				task_type = frappe.db.get_value("Task", reading.task, 'type_of_call')
-				if task_type == "CM":
-					machine_readings.append(reading)
-			total_diff = int(self.total)-int(machine_readings[0].total)
-			last_mr_posting_date = frappe.db.get_value("Machine Reading", machine_readings[0].name, "posting_date")
-			months_diff = month_diff(self.posting_date, last_mr_posting_date)
-			if total_diff<item_total or months_diff<item_months:
-				frappe.db.sql("UPDATE `tabTask` SET repetitive_call = 1 WHERE name=%s",task.name)
+			if machine_readings:
+				for reading in previous_readings:
+					task_type = frappe.db.get_value("Task", reading.task, 'type_of_call')
+					if task_type == "CM":
+						machine_readings.append(reading)
+				total_diff = int(self.total)-int(machine_readings[0].total)
+				last_mr_posting_date = frappe.db.get_value("Machine Reading", machine_readings[0].name, "posting_date")
+				months_diff = month_diff(self.posting_date, last_mr_posting_date)
+				if total_diff<item_total or months_diff<item_months:
+					frappe.db.sql("UPDATE `tabTask` SET repetitive_call = 1 WHERE name=%s",task.name)
 
 
 
