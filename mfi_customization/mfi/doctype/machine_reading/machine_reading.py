@@ -22,10 +22,7 @@ class MachineReading(Document):
 		mr=mr.replace(",","")
 		mr=mr.replace(".0","")
 		
-		#   items = []  
-		items = frappe.db.sql("select item_code from `tabAsset Item Child Table` where parent = %s", self.asset)
-		#   for item in scrapitems:
-		#        items.append(item[0])
+		items = frappe.db.sql("select item_code from `tabAsset` where name = %s", self.asset)
 		
 		bandw = frappe.db.sql("select total from `tabItem` where name = %s", items)
 		b=str(bandw)
@@ -36,6 +33,8 @@ class MachineReading(Document):
 		if mr >= b:
 			if toc == "CM":
 				frappe.db.sql("UPDATE `tabTask` SET repetitive_call = 1 WHERE name=%s",self.task)
+			
+
 
   
        
