@@ -124,12 +124,12 @@ doc_events = {
     },
     "Material Request":{
         #"on_change":"mfi_customization.mfi.doctype.material_request.set_item_from_material_req",
-        "on_submit":"mfi_customization.mfi.doctype.material_request.on_submit",
+        "on_submit": ["mfi_customization.mfi.doctype.material_request.on_submit",
+                    "mfi_customization.mfi.doctype.material_request.notify_helpdesk_about_material_approval"],
        # "after_save":"mfi_customization.mfi.doctype.material_request.after_save",
         # "onload":"mfi_customization.mfi.doctype.material_request.onload",
-        "before_save":"mfi_customization.mfi.doctype.material_request.before_save",
+        # "before_save":"mfi_customization.mfi.doctype.material_request.before_save",
         "before_insert": "mfi_customization.mfi.doctype.material_request.notify_client_about_material_requested",
-        "on_submit": "mfi_customization.mfi.doctype.material_request.notify_helpdesk_about_material_approval"
     },
     # "Machine Reading":{
     #  "validate":"mfi_customization.mfi.doctype.machine_reading.machine_reading.validate"
