@@ -20,8 +20,8 @@ from mfi_customization.mfi.doctype.project import get_customer_emails
 #                     doc.approver=emp2.user_id
 #                     doc.approver_name=frappe.db.get_value("User",emp2.user_id,"full_name")
 
-def before_save(doc,method):
-    set_yeild_details(doc)
+# def before_save(doc,method):
+    # set_yeild_details(doc)
 
 # def on_submit(doc,method):
 #     validate_mr(doc)
@@ -462,12 +462,13 @@ def set_yeild_details(doc):
 
 
 def on_submit(doc,method):
-    set_yeild_details_on_machine_reading(doc)
     if doc.task:
         frappe.db.set_value("Task", doc.task, 'status', 'Material Issued')
         issue = frappe.db.get_value("Task",{'name': doc.task}, 'issue')
         if issue:
             frappe.db.set_value("Issue", issue, 'status', 'Material Issued')
+    set_yeild_details_on_machine_reading(doc)
+
 
 def set_yeild_details_on_machine_reading(doc):
     if doc.asset and doc.task:
