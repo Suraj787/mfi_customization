@@ -20,6 +20,8 @@ def validate(doc,method):
 	set_actual_time(doc)
 	send_task_completion_email(doc)
 	send_task_escalation_email(doc)
+	send_toner_task_email(doc)
+
 	# machine_reading=""
 	for d in doc.get("current_reading"):
 		# machine_reading=d.machine_reading
@@ -104,6 +106,21 @@ def send_task_escalation_email(doc):
 
 			frappe.msgprint("Task escalation email has been sent")
 
+def send_toner_task_email(task):
+	toc = frappe.db.get_value("Task", task.name, "type_of_call")
+	if toc != "Toner" and task.type_of_call == "Toner":
+		subject = f"Task created regarding Toner"
+		client_emails = get_customer_emails(task.project)
+		recipient = frappe.db.get_value("Company", task.company, "toner_support_email")
+		email_body = f"A task with ticket number {task.issue } has been created regarding toner."
+
+		make(subject = subject,content=email_body,
+			recipients=client_emails,
+			send_email=True, sender="erp@groupmfi.com")
+
+		make(subject = subject,content=email_body,
+			recipients=recipient,
+			send_email=True, sender="erp@groupmfi.com")
 
 def after_insert(doc,method):
 	if doc.get('issue'):
