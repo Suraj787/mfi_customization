@@ -20,7 +20,6 @@ def validate(doc,method):
 	set_actual_time(doc)
 	send_task_completion_email(doc)
 	send_task_escalation_email(doc)
-	send_toner_task_email(doc)
 
 	# machine_reading=""
 	for d in doc.get("current_reading"):
@@ -106,21 +105,6 @@ def send_task_escalation_email(doc):
 
 			frappe.msgprint("Task escalation email has been sent")
 
-def send_toner_task_email(task):
-	toc = frappe.db.get_value("Task", task.name, "type_of_call")
-	if toc != "Toner" and task.type_of_call == "Toner":
-		subject = f"Task created regarding Toner"
-		client_emails = get_customer_emails(task.project)
-		recipient = frappe.db.get_value("Company", task.company, "toner_support_email")
-		email_body = f"A task with ticket number {task.issue } has been created regarding toner."
-
-		make(subject = subject,content=email_body,
-			recipients=client_emails,
-			send_email=True, sender="erp@groupmfi.com")
-
-		make(subject = subject,content=email_body,
-			recipients=recipient,
-			send_email=True, sender="erp@groupmfi.com")
 
 def after_insert(doc,method):
 	if doc.get('issue'):
@@ -146,19 +130,20 @@ def after_insert(doc,method):
 
 def send_task_assignment_email(task):
 	if task.completed_by:
-		subject = f"""Engineer assigned to issue ticket {task.issue}"""
-
-		# send email to client
+		assign_subject = f"""Engineer assigned to issue ticket {task.issue}"""
 		body = f"""Task ticket no. {task.issue} has been assigned to our Engineer {task.technician_name}, kindly
 					expect him/her as soon as possible"""
 		recipients = get_customer_emails(task.project)
-		make(subject = subject,content=body, recipients=recipients,
+		make(subject = assign_subject,content=body, recipients=recipients,
 			send_email=True, sender="erp@groupmfi.com")
 
-		# send email to helpdesk
 		body = f"""Ticket no. {task.issue} has been assigned to our Engineer {task.technician_name}"""
 		recipients = frappe.db.get_value("Company", task.company, "support_email")
-		make(subject = subject,content=body,recipients=recipients,
+		if task.type_of_call == "Toner":
+			body = f"""Ticket no. {task.issue} with type of call "Toner" has been assigned to our Engineer {task.technician_name}"""
+			recipients = frappe.db.get_value("Company", task.company, "toner_support_email")
+
+		make(subject = assign_subject,content=body,recipients=recipients,
 			send_email=True, sender="erp@groupmfi.com")
 
 		frappe.msgprint("Task assignment email has been sent")

@@ -329,7 +329,7 @@ def after_insert(doc,method):
 	"""
 	if doc.type_of_call == "Service Request" or doc.type_of_call == "Toner":
 		client_emails = get_customer_emails(doc.project)
-		helpdesk_email = frappe.db.get_value("Company", doc.company, "support_email")
+		support_email = frappe.db.get_value("Company", doc.company, "support_email")
 		subject = f"""Ticket created for Issue"""
 		customer_name = frappe.db.get_value("Customer", doc.customer, "customer_name")
 		helpdesk_body = f"""Issue ticket number {doc.name} has been
@@ -339,14 +339,16 @@ def after_insert(doc,method):
 					Kindly wait as we assign our Engineer."""
 
 		elif doc.type_of_call == "Toner":
-			client_body = f"""Your issue has been successfully created with ticket number
+			client_body = f"""Your issue regarding Toner has been successfully created with ticket number
 							{doc.name}. Kindly wait as we resolve it."""
+			support_email = frappe.db.get_value("Company", doc.company, "toner_support_email")
+
 
 		make(subject = subject,content=client_body,
 			recipients=client_emails,
 			send_email=True, sender="erp@groupmfi.com")
 		make(subject = subject,content=helpdesk_body,
-			recipients=helpdesk_email,
+			recipients=support_email,
 			send_email=True, sender="erp@groupmfi.com")
 		frappe.msgprint("Issue ticket creation email has been sent")
 
@@ -366,19 +368,3 @@ def send_call_resolved_email(issue):
 				recipients=helpdesk_email,
 				send_email=True, sender="erp@groupmfi.com")
 
-
-def send_toner_issue_email(issue):
-	toc = frappe.db.get_value("Issue", issue.name, "type_of_call")
-	if toc != "Toner" and issue.type_of_call == "Toner":
-		subject = f"Issue created regarding Toner"
-		client_emails = get_customer_emails(issue.project)
-		recipient = frappe.db.get_value("Company", issue.company, "toner_support_email")
-		email_body = f"An Issue with ticket number {issue.name } has been created regarding toner."
-
-		make(subject = subject,content=email_body,
-			recipients=client_emails,
-			send_email=True, sender="erp@groupmfi.com")
-
-		make(subject = subject,content=email_body,
-			recipients=recipient,
-			send_email=True, sender="erp@groupmfi.com")
