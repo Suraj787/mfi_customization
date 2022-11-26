@@ -45,6 +45,7 @@ def validate(doc,method):
 				})
 
 	send_call_resolved_email(doc)
+	send_toner_issue_email(doc)
 
 
 def on_change(doc,method):
@@ -364,3 +365,20 @@ def send_call_resolved_email(issue):
 			make(subject = subject,content=email_body,
 				recipients=helpdesk_email,
 				send_email=True, sender="erp@groupmfi.com")
+
+
+def send_toner_issue_email(issue):
+	toc = frappe.db.get_value("Issue", issue.name, "type_of_call")
+	if toc != "Toner" and issue.type_of_call == "Toner":
+		subject = f"Issue created regarding Toner"
+		client_emails = get_customer_emails(issue.project)
+		recipient = frappe.db.get_value("Company", issue.company, "toner_support_email")
+		email_body = f"An Issue with ticket number {issue.name } has been created regarding toner."
+
+		make(subject = subject,content=email_body,
+			recipients=client_emails,
+			send_email=True, sender="erp@groupmfi.com")
+
+		make(subject = subject,content=email_body,
+			recipients=recipient,
+			send_email=True, sender="erp@groupmfi.com")
