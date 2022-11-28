@@ -45,7 +45,6 @@ def validate(doc,method):
 				})
 
 	send_call_resolved_email(doc)
-	send_toner_issue_email(doc)
 
 
 def on_change(doc,method):
