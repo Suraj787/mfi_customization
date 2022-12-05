@@ -169,7 +169,8 @@ doc_events = {
         "validate": "mfi_customization.mfi.doctype.company.validate_support_email"
     },
     "Compatible Items": {
-        "before_insert": "mfi_customization.mfi.doctype.compatible_items.compatible_items.add_item_in_asset"
+        "before_insert": "mfi_customization.mfi.doctype.compatible_items.compatible_items.add_item"
+        # "before_insert": "mfi_customization.mfi.doctype.compatible_items.compatible_items.add_item_in_asset"
     }
     # "Material Request":{
     #     "validate":"mfi_customization.mfi.doctype.material_request.validate",
