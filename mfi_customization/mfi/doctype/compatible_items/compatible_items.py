@@ -8,7 +8,7 @@ class CompatibleItems(Document):
 	pass
 
 def add_item(doc, method):
-    item = frappe.get_doc('Item',doc.item)
+    item = frappe.get_doc('Item',doc.asset_item)
     if doc.type == "Accessories":
             add_on_entry_child = item.append('items',{})
             add_on_entry_child.item_code = item.name
