@@ -11,15 +11,11 @@ def add_item(doc, method):
     item = frappe.get_doc('Item',doc.asset_item)
     if doc.type == "Accessories":
             add_on_entry_child = item.append('items',{})
-            add_on_entry_child.item_code = item.name
-            add_on_entry_child.item_name = item.item_name
-            add_on_entry_child.item_group = item.item_group
+            add_on_entry_child.item_code = doc.item
 
     elif doc.type == "Toner":
             add_on_entry_child = item.append('compatible_toners',{})
-            add_on_entry_child.item_code = item.name
-            add_on_entry_child.item_name = item.item_name
-            add_on_entry_child.item_group = item.item_group
+            add_on_entry_child.item_code = doc.item
             
     item.save()
 
