@@ -367,3 +367,11 @@ def send_call_resolved_email(issue):
 				recipients=helpdesk_email,
 				send_email=True, sender="erp@groupmfi.com")
 
+@frappe.whitelist() 
+def asset_name_item(item_code):
+  items = []  
+  scrapitems = frappe.db.sql("select aic.item_code from `tabItem` i LEFT JOIN `tabAsset Item Child Table` aic on aic.parent = i.name where i.name = %s and aic.item_group='Toner' group by aic.item_code",item_code)
+  for item in scrapitems: 
+    
+      items.append(item[0]) 
+  return items
