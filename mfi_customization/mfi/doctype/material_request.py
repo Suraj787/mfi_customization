@@ -367,13 +367,25 @@ from mfi_customization.mfi.doctype.project import get_customer_emails
 #     return ""
 
 
+# @frappe.whitelist()
+# def item_child_table_filter(doctype, txt, searchfield, start, page_len, filters):
+#     AssetName = filters.get("asset")
+#     data = frappe.db.sql(f"""
+#     SELECT item_code,item_name,item_group from `tabAsset Item Child Table` where parent= '{AssetName}'
+#  """, as_dict=0)
+#     return data
+
 @frappe.whitelist()
 def item_child_table_filter(doctype, txt, searchfield, start, page_len, filters):
     AssetName = filters.get("asset")
-    data = frappe.db.sql(f"""
-    SELECT item_code,item_name,item_group from `tabAsset Item Child Table` where parent= '{AssetName}'
- """, as_dict=0)
-    return data
+    asset_item = frappe.db.get_value('Asset',{'name':AssetName},'item_code')
+    task = frappe.db.get_value('Task',{'asset':AssetName},'type_of_call')
+    if task =="Toner":
+        data = frappe.db.sql(f"""SELECT aic.item_code,aic.item_name,aic.item_group from `tabItem`i LEFT JOIN `tabAsset Item Child Table` aic on aic.parent = i.name where i.item_code='{asset_item}' and aic.item_group='Toner'""", as_dict=0)
+        return data
+    else:
+        data = frappe.db.sql(f"""SELECT aic.item_code,aic.item_name,aic.item_group from `tabItem`i LEFT JOIN `tabAsset Item Child Table` aic on aic.parent = i.name where i.item_code='{asset_item}' and aic.item_group!='Toner'""", as_dict=0)
+        return data
 
 @frappe.whitelist()
 def get_atm_users(doctype, txt, searchfield, start, page_len, filters):
