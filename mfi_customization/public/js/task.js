@@ -87,22 +87,34 @@ frappe.ui.form.on('Task', {
         }
     },
     onload: function(frm) {
-        if (frappe.user.has_role("Technicians") == 1 && frappe.user != "Administrator") {
-            frm.set_df_property('symptoms', "reqd", 1);
-            frm.set_df_property('action', "reqd", 1);
-            frm.set_df_property('cause', "reqd", 1);
-            frm.set_df_property('signature', "reqd", 1);
-            frm.set_df_property('priority', "read_only", 1);
-        }
-        if (frappe.user.has_role("Call Coordinator") == 1 && frappe.user != "Administrator") {
-            frm.set_df_property('symptoms', "read_only", 1);
-            frm.set_df_property('action', "read_only", 1);
-            frm.set_df_property('cause', "read_only", 1);
-            frm.set_df_property('signature', "read_only", 1);
-            frm.set_df_property('current_reading', 'hidden', 1);
-            frm.set_df_property('priority', "read_only", 1);
-            frm.set_df_property('repair_items', 'hidden', 1);
+        if (frm.doc.type_of_call == "Tonner") {
+            if (frappe.user.has_role("Technicians") == 1 && frappe.user != "Administrator") {
+                frm.set_df_property('symptoms', "reqd", 0);
+                frm.set_df_property('action', "reqd", 0);
+                frm.set_df_property('cause', "reqd", 0);
+                frm.set_df_property('signature', "reqd", 1);
+                frm.set_df_property('symptoms', "read_only", 1);
+                frm.set_df_property('action', "read_only", 1);
+                frm.set_df_property('cause', "read_only", 1);
+            }
+        } else {
+            if (frappe.user.has_role("Technicians") == 1 && frappe.user != "Administrator") {
+                frm.set_df_property('symptoms', "reqd", 1);
+                frm.set_df_property('action', "reqd", 1);
+                frm.set_df_property('cause', "reqd", 1);
+                frm.set_df_property('signature', "reqd", 1);
+                frm.set_df_property('priority', "read_only", 1);
+            }
+            if (frappe.user.has_role("Call Coordinator") == 1 && frappe.user != "Administrator") {
+                frm.set_df_property('symptoms', "read_only", 1);
+                frm.set_df_property('action', "read_only", 1);
+                frm.set_df_property('cause', "read_only", 1);
+                frm.set_df_property('signature', "read_only", 1);
+                frm.set_df_property('current_reading', 'hidden', 1);
+                frm.set_df_property('priority', "read_only", 1);
+                frm.set_df_property('repair_items', 'hidden', 1);
 
+            }
         }
         // fetch_data_material_request_item(frm)
         /* 
