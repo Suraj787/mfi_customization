@@ -87,7 +87,7 @@ frappe.ui.form.on('Task', {
         }
     },
     onload: function(frm) {
-        if (frm.doc.type_of_call == "Tonner") {
+        if (frm.doc.type_of_call == "Toner") {
             if (frappe.user.has_role("Technicians") == 1 && frappe.user != "Administrator") {
                 frm.set_df_property('symptoms', "reqd", 0);
                 frm.set_df_property('action', "reqd", 0);
