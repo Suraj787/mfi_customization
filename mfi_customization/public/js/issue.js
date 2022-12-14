@@ -38,7 +38,7 @@ frappe.ui.form.on('Issue', {
 			},
 			callback: function(r) {
 			
-					frm.set_value('customer',r.message);				
+// 					frm.set_value('customer',r.message);				
 				}
 	
 			
