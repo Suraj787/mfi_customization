@@ -378,5 +378,5 @@ def asset_name_item(item_code):
 
 @frappe.whitelist() 
 def user_customer(user):
-    user = frappe.db.sql("select for_value from `tabUser Permission` where user=%s",user)
+    user = frappe.db.sql("select for_value from `tabUser Permission` where user=%s and allow='Customer'",user)
     return user
