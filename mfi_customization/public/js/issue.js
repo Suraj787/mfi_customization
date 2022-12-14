@@ -557,8 +557,7 @@ frappe.ui.form.on('Issue', {
                 },
                 callback: function(r) {
                     console.log(r.message);
-                    msgprint(r.message);
-                    frm.set_value("customer", r.message);
+                    frm.set_value("customer", r.message[0]);
                 }
             });
         }
