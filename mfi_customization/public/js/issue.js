@@ -523,8 +523,8 @@ frappe.ui.form.on("Asset Readings", "date", function(frm, cdt, cdn) {
 
 
 frappe.ui.form.on('Issue', {
-    item_code: function(frm) {
-        if (cur.frm.doc.item_code) {
+    asset_name: function(frm) {
+        // if (cur.frm.doc.item_code) {
             frappe.call({
                 method: 'mfi_customization.mfi.doctype.issue.asset_name_item',
                 args: {
@@ -542,7 +542,7 @@ frappe.ui.form.on('Issue', {
 
                 }
             });
-        }
+        // }
     }
 });
 
