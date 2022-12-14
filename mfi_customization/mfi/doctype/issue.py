@@ -278,3 +278,9 @@ def validate_location(doc):
 	if doc.status=="Closed" and not doc.location:
 		frappe.throw("Can't Closed Issue Without <b>Location</b>")
 
+		
+
+@frappe.whitelist() 
+def user_customer(user):
+    user = frappe.db.sql("select for_value from `tabUser Permission` where user=%s",user)
+    return user		
