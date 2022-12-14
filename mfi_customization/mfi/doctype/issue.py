@@ -376,7 +376,7 @@ def asset_name_item(item_code):
       items.append(item[0]) 
   return items
 
-@frappe.whitelist() 
-def user_customer(user):
-    user = frappe.db.sql(f"""select for_value from `tabUser Permission` where user='{user}' and allow='Customer'""")
-    return user
+# @frappe.whitelist() 
+# def user_customer(user):
+#     user = frappe.db.sql(f"""select for_value from `tabUser Permission` where user='{user}' and allow='Customer'""")
+#     return user

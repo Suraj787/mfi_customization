@@ -547,24 +547,24 @@ frappe.ui.form.on('Issue', {
 });
 
 
-frappe.ui.form.on('Issue', {
-    asset: function(frm) {
-        if (!frm.doc.asset) {
-            frappe.call({
-                method: 'mfi_customization.mfi.doctype.issue.user_customer',
-                args: {
-                    user: frappe.session.user_email
-                },
-                callback: function(r) {
+// frappe.ui.form.on('Issue', {
+//     asset: function(frm) {
+//         if (!frm.doc.asset) {
+//             frappe.call({
+//                 method: 'mfi_customization.mfi.doctype.issue.user_customer',
+//                 args: {
+//                     user: frappe.session.user_email
+//                 },
+//                 callback: function(r) {
 
-                    if (r.message) {
-                        console.log(r.message[0]);
-                        frm.set_value("customer", r.message);
-                    }
+//                     if (r.message) {
+//                         console.log(r.message[0]);
+//                         frm.set_value("customer", r.message);
+//                     }
 
 
-                }
-            });
-        }
-    }
-});
+//                 }
+//             });
+//         }
+//     }
+// });
