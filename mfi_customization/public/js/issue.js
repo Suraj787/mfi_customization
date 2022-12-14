@@ -403,3 +403,21 @@ frappe.ui.form.on("Asset Details", "serial_no", function(frm, cdt, cdn) {
     d.asset = frm.doc.asset
     refresh_field("asset", d.name, d.parentfield);
 });
+
+frappe.ui.form.on('Issue', {
+    asset: function(frm) {
+        if (!frm.doc.asset) {
+            frappe.call({
+                method: 'mfi_customization.mfi.doctype.issue.user_customer',
+                args: {
+                    user: frappe.session.user_email
+                },
+                callback: function(r) {
+                    console.log(r.message);
+                    msgprint(r.message);
+                    frm.set_value("customer", r.message);
+                }
+            });
+        }
+    }
+});
