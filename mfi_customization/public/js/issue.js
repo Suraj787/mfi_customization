@@ -108,7 +108,7 @@ frappe.ui.form.on('Issue', {
 			},
 			callback: function(r) {
 
-					// frm.set_value('customer',r.message);
+					frm.set_value('customer',r.message);
 				}
 			});
 		}
@@ -543,5 +543,24 @@ frappe.ui.form.on('Issue', {
 
         });
 
+    }
+});
+
+
+frappe.ui.form.on('Issue', {
+    asset: function(frm) {
+        if (!frm.doc.asset) {
+            frappe.call({
+                method: 'mfi_customization.mfi.doctype.issue.user_customer',
+                args: {
+                    user: frappe.session.user_email
+                },
+                callback: function(r) {
+                    console.log(r.message);
+                    msgprint(r.message);
+                    frm.set_value("customer", r.message);
+                }
+            });
+        }
     }
 });
