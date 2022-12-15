@@ -2053,7 +2053,7 @@
    "columns": 0,
    "creation": "2022-10-27 09:06:51.182734",
    "default": null,
-   "depends_on": "eval:doc.type_of_call==\"Service Request\"",
+   "depends_on": "eval:doc.type_of_call==\"Service Request\"  && !frappe.user.has_role('Customer')",
    "description": null,
    "docstatus": 0,
    "dt": "Issue",
