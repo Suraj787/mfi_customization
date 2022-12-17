@@ -130,6 +130,5 @@ def get_conditions(filters):
     if filters.get("asset"): conditions += "and mr.asset = %(asset)s"
     if filters.get("project"): conditions += "and mr.project = %(project)s"
     if filters.get("task"): conditions += "and mr.task = %(task)s"
-       
     return conditions
 
