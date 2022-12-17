@@ -8,7 +8,7 @@ def comment(doc,method):
         userList.append(u.name)
     from bs4 import BeautifulSoup
     if doc.content:
-        soup = BeautifulSoup(doc.content)
+        soup = BeautifulSoup(doc.content, features="lxml")
         if "data-id=" in doc.content:
             for d in doc.content.split("data-id="):
                 if (d.split(' ')[0]).replace('"','') in userList:

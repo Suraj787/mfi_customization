@@ -9,9 +9,9 @@
   "item_code",
   "item_name",
   "item_group",
-  "yield",
+  "yeild",
   "total_reading",
-  "percentage_yield"
+  "percentage_yeild"
  ],
  "fields": [
   {
@@ -36,26 +36,26 @@
    "label": "Item Group"
   },
   {
-   "fieldname": "yield",
-   "fieldtype": "Data",
-   "label": "Yield"
-  },
-  {
-   "fieldname": "percentage_yield",
-   "fieldtype": "Data",
-   "label": "Percentage Yield"
-  },
-  {
    "fieldname": "total_reading",
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Total Reading"
+  },
+  {
+   "fieldname": "yeild",
+   "fieldtype": "Data",
+   "label": "Yeild"
+  },
+  {
+   "fieldname": "percentage_yeild",
+   "fieldtype": "Data",
+   "label": "Percentage Yeild"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-10-22 09:05:47.194442",
+ "modified": "2022-11-17 08:55:45.540974",
  "modified_by": "Administrator",
  "module": "mfi",
  "name": "Asset Item Child Table",

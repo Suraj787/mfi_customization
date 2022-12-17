@@ -9,8 +9,6 @@ def execute(filters=None):
     columns = get_columns(filters)
     return columns, data
 
-
-
 def get_columns(filters):
 
     return [
@@ -73,8 +71,8 @@ def get_columns(filters):
             "width": 150
         },
         {
-            "label": ("Yield"),
-            "fieldname": "mrt.yield",
+            "label": ("Yeild"),
+            "fieldname": "mrt.yeild",
             "width": 100
         },
         {
@@ -83,8 +81,8 @@ def get_columns(filters):
             "width": 100
         },
         {
-            "label": ("Percentage Yield"),
-            "fieldname": "mrt.percentage_yield",
+            "label": ("Percentage Yeild"),
+            "fieldname": "mrt.percentage_yeild",
             "width": 100
         },
 
@@ -97,10 +95,7 @@ def get_columns(filters):
 def prepare_data(filters):
     data=[]
     fltr={}
-    #if filters.get('task'):
-     #  fltr.update({"task":filters.get("task")})
-    #if filters.get('project'):
-    #if filters.get('asset'):
+   
     conditions = get_conditions(filters)
     item = frappe.db.sql("""select mr.name,mr.reading_date,mr.asset,mr.project,mr.machine_type,mr.colour_reading,mr.black_and_white_reading,
     mr.total,mrt.item_code,mrt.item_name,mrt.item_group,mrt.total_reading,mrt.percentage_yield,mrt.yield as yld

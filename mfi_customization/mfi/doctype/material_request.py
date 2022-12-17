@@ -8,6 +8,9 @@ from datetime import datetime
 import time
 import threading
 from frappe.desk.query_report import get_report_doc,get_prepared_report_result,generate_report_result
+from frappe.core.doctype.communication.email import make
+from mfi_customization.mfi.doctype.project import get_customer_emails
+
 
 # def validate(doc,method):
 #     for emp in frappe.get_all("Employee",{"user_id":frappe.session.user},['material_request_approver']):
@@ -17,8 +20,8 @@ from frappe.desk.query_report import get_report_doc,get_prepared_report_result,g
 #                     doc.approver=emp2.user_id
 #                     doc.approver_name=frappe.db.get_value("User",emp2.user_id,"full_name")
 
-def before_save(doc,method):
-    set_yeild_details(doc)
+# def before_save(doc,method):
+    # set_yeild_details(doc)
 
 # def on_submit(doc,method):
 #     validate_mr(doc)
@@ -26,7 +29,7 @@ def before_save(doc,method):
 # def validate_mr(doc):
 #     if doc.report_name and doc.approval_status!="Second Approved":
 #         frappe.throw("Cann't Submit Before Final Approval")
-        
+
 # @frappe.whitelist()
 # def get_approver(user):
 #     id = ""
@@ -37,9 +40,9 @@ def before_save(doc,method):
 #                 if emp2.user_id:
 #                     id = emp2.user_id
 #                     approver_name=frappe.db.get_value("User",emp2.user_id,"full_name")
-                    
+
 #     return {"approver":id,"approver_name":approver_name}
-    
+
 # @frappe.whitelist()
 # def get_approver_name(user):
 
@@ -129,16 +132,16 @@ def before_save(doc,method):
 #                             "qty": d.get('qty')
 #                         })
 #         task.material_request=doc.name
-#         task.save()   
+#         task.save()
 
 
-# @frappe.whitelist() 
+# @frappe.whitelist()
 # def get_material_request(current_mr):
 #     fields = ['name', 'schedule_date', 'status']
 #     MR_list = frappe.db.get_all("Material Request", filters={'docstatus': 0,"name":("!=",current_mr)}, fields=fields)
 #     return MR_list
 
-# @frappe.whitelist() 
+# @frappe.whitelist()
 # def make_po(checked_values):
 #     checked_values = json.loads(checked_values)
 #     item_shipment=[]
@@ -320,7 +323,7 @@ def before_save(doc,method):
 #             item_details[d.get("part_number")]=i.update({"uom":i.get("purchase_uom") if i.get("purchase_uom") else i.get("stock_uom"),'conversion_factor':0})
 #             for uom in frappe.get_all("UOM Conversion Detail",{"parent":d.get("part_number"),"uom":i.get("uom")},['conversion_factor']):
 #                 (item_details[d.get("part_number")]).update(uom)
-    
+
 #     result["item_details"]=item_details
 #     return result
 
@@ -330,11 +333,11 @@ def before_save(doc,method):
 #     if frappe.db.exists("Requisition Analysis Reference",doc.get("name")):
 #         requisition_doc=frappe.get_doc("Requisition Analysis Reference",doc.get("name"))
 #         requisition_doc.set("items",[])
-        
+
 #     else:
 #         requisition_doc=frappe.new_doc("Requisition Analysis Reference")
 #         requisition_doc.material_request=doc.get("name")
-    
+
 #     print(requisition_items)
 #     requisition_doc.html_format=table_format
 #     requisition_doc.items__data=requisition_items
@@ -358,27 +361,33 @@ def before_save(doc,method):
 #         for d in sorted_list:
 #             data[d[0]]=d[1]
 #             html_format_result.append(html_format_data[d[0]])
-            
+
 #         html_format["result"]=html_format_result
 #         return {"html_format":html_format,"data":data}
 #     return ""
-    
-    
-    
-    
-    
-    
-    
-    
-@frappe.whitelist() 
+
+
+# @frappe.whitelist()
+# def item_child_table_filter(doctype, txt, searchfield, start, page_len, filters):
+#     AssetName = filters.get("asset")
+#     data = frappe.db.sql(f"""
+#     SELECT item_code,item_name,item_group from `tabAsset Item Child Table` where parent= '{AssetName}'
+#  """, as_dict=0)
+#     return data
+
+@frappe.whitelist()
 def item_child_table_filter(doctype, txt, searchfield, start, page_len, filters):
     AssetName = filters.get("asset")
-    data = frappe.db.sql(f"""
-    SELECT item_code,item_name,item_group from `tabAsset Item Child Table` where parent= '{AssetName}'
- """, as_dict=0)
-    return data
-    
-@frappe.whitelist() 
+    asset_item = frappe.db.get_value('Asset',{'name':AssetName},'item_code')
+    task = frappe.db.get_value('Task',{'asset':AssetName},'type_of_call')
+    if task =="Toner":
+        data = frappe.db.sql(f"""SELECT aic.item_code,aic.item_name,aic.item_group from `tabItem`i LEFT JOIN `tabAsset Item Child Table` aic on aic.parent = i.name where i.item_code='{asset_item}' and aic.item_group='Toner'""", as_dict=0)
+        return data
+    else:
+        data = frappe.db.sql(f"""SELECT aic.item_code,aic.item_name,aic.item_group from `tabItem`i LEFT JOIN `tabAsset Item Child Table` aic on aic.parent = i.name where i.item_code='{asset_item}' and aic.item_group!='Toner'""", as_dict=0)
+        return data
+
+@frappe.whitelist()
 def get_atm_users(doctype, txt, searchfield, start, page_len, filters):
     from frappe.utils.user import get_users_with_role
 
@@ -400,8 +409,8 @@ def onload(doc,method):
          doc.append("labour_contract",{
          "labour_contract_item":lbr_itm.labour_contract_item
          })
-                
-  
+
+
 def set_yeild_details(doc):
     machine_reading_list= frappe.db.sql(f"""select name, total from `tabMachine Reading` where asset ='{doc.asset}' ORDER BY name DESC """,as_dict=1)
     asset_reading=0
@@ -415,11 +424,11 @@ def set_yeild_details(doc):
     doc.items_with_yeild = []
     for i in doc.get('items'):
         machine_reding_with_itm =[i.total for i in  frappe.db.sql(f"""select m.total, m.reading_date from `tabMachine Reading` as m inner join `tabAsset Item Child Table` as a on a.parent=m.name where m.asset ='{doc.asset}' and a.item_code ='{i.item_code}' ORDER BY m.name DESC LIMIT 3 """,as_dict=1)if i.total is not None ]
-        item_yeild =[itm.yeild for itm in frappe.db.sql(f""" SELECT yeild from `tabItem` where item_code ='{i.item_code}' """,as_dict=1)]  
-        coverage = [cvrg.coverage for cvrg in frappe.db.sql(f""" SELECT coverage from `tabItem` where item_code='{i.item_code}'""",as_dict=1) ]        
+        item_yeild =[itm.yeild for itm in frappe.db.sql(f""" SELECT yeild from `tabItem` where item_code ='{i.item_code}' """,as_dict=1)]
+        coverage = [cvrg.coverage for cvrg in frappe.db.sql(f""" SELECT coverage from `tabItem` where item_code='{i.item_code}'""",as_dict=1) ]
         print(f"asset_reading {asset_reading}")
-  
-        if asset_reading: 
+
+        if asset_reading:
             if  machine_reding_with_itm:
                 percent = (int(item_yeild[0])/int(machine_reding_with_itm[0]))*100
                 last_coverage = (float(coverage[0])/100) * (percent/100)
@@ -435,7 +444,7 @@ def set_yeild_details(doc):
                   "3rd_reading": int(asset_reading) - int(machine_reding_with_itm[2]) if 2 < len(machine_reding_with_itm) else 0
                     })
             else:
-                mchn_reading_installation = frappe.db.sql("""select name, total from `tabMachine Reading` 
+                mchn_reading_installation = frappe.db.sql("""select name, total from `tabMachine Reading`
                 where asset ='{0}' and reading_type = 'Installation' ORDER BY name DESC LIMIT 3""".format(doc.asset),as_dict=1)
                 if mchn_reading_installation and mchn_reading_installation[0]['total']:
                     frappe.msgprint(" asset_reading {0} and mchn_reading_installation {1} for item '{2}'".format(asset_reading, mchn_reading_installation[0]['total'],i.item_code) )
@@ -453,7 +462,7 @@ def set_yeild_details(doc):
                         })
                 else:
                     frappe.msgprint("Machine reading not found for any item or for type installation.")
-                 
+
 
 
 #def before_submit(doc,method):
@@ -461,16 +470,17 @@ def set_yeild_details(doc):
 #        coverage = [cvrg.coverage for cvrg in frappe.db.sql(f""" SELECT coverage from `tabItem` where item_code='{i.item_code}'""",as_dict=1) ]
 #        if i.last_coverage > coverage[0]:
 #           frappe.throw("coverage is low ")
-    
+
 
 
 def on_submit(doc,method):
-    set_yeild_details_on_machine_reading(doc)
-    if doc.task_:
-        frappe.db.set_value("Task", doc.task_, 'status', 'Material Issued')
-        issue = frappe.db.get_value("Task",{'name': doc.task_}, 'issue')
+    if doc.task:
+        frappe.db.set_value("Task", doc.task, 'status', 'Material Issued')
+        issue = frappe.db.get_value("Task",{'name': doc.task}, 'issue')
         if issue:
             frappe.db.set_value("Issue", issue, 'status', 'Material Issued')
+    set_yeild_details_on_machine_reading(doc)
+
 
 def set_yeild_details_on_machine_reading(doc):
     if doc.asset and doc.task:
@@ -485,18 +495,18 @@ def set_yeild_details_on_machine_reading(doc):
                 reading_child.item_group= i.item_group
                 reading_child.yeild= frappe.db.get_value("Item", {'name':i.item_code}, 'yeild')
                 current_reading =[m.total for m in frappe.db.sql(f"""select m.reading_date, m.total as total from `tabMachine Reading` as m
-                 inner join `tabAsset Item Child Table` as a on a.parent=m.name 
+                 inner join `tabAsset Item Child Table` as a on a.parent=m.name
                  where m.asset ='{doc.asset}' ORDER BY reading_date DESC LIMIT 1""",as_dict=1)]
 
-                first_reading =[m.total for m in frappe.db.sql(f"""select m.reading_date, m.total as total 
-                    from `tabMachine Reading` as m inner join `tabAsset Item Child Table` as a 
+                first_reading =[m.total for m in frappe.db.sql(f"""select m.reading_date, m.total as total
+                    from `tabMachine Reading` as m inner join `tabAsset Item Child Table` as a
                     on a.parent=m.name where m.asset ='{doc.asset}' and a.item_code ='{i.item_code}' ORDER BY reading_date ASC LIMIT 1""",as_dict=1)]
                 if current_reading and first_reading:
                     reading_child.total_reading = flt(current_reading[0]) - flt(first_reading[0])
                     if reading_child.total_reading > 0:
-                        reading_child.percentage_yield = round((reading_child.yeild * 100)/(reading_child.total_reading),2)
+                        reading_child.percentage_yeild = round((reading_child.yeild * 100)/(reading_child.total_reading),2)
                 machine_reading_doc.save()
-                
+
 
 def set_item_details(doc,method):
   machine_reading_asset=[i.total for i in frappe.db.sql(f"""select max(reading_date),total from `tabMachine Reading` where asset ='{doc.asset}' """,as_dict=1)if i.total is not None]
@@ -514,4 +524,44 @@ def set_item_details(doc,method):
                   mr_child.yeild=int(machine_reding_with_itm[0]) - int(machine_reading_asset[0])
                   mr_child.total_yeild =float(item_yeild[0])
                   doc.save()
-        
+
+def notify_client_about_material_requested(doc, method):
+    """
+    Email clients about material request for their task ticket
+    """
+    if doc.task:
+        issue = frappe.db.get_value("Task", doc.task, 'issue')
+        if issue:
+            subject = f"""Material request created for issue {issue}"""
+
+            # notify client
+            email_body = f"""Kindly Note that Your Task Ticket Number {issue} is awaiting material to be resolved."""
+            recipients = get_customer_emails(doc.project)
+            make(subject = subject, content=email_body, recipients=recipients,
+                    send_email=True, sender="erp@groupmfi.com")
+
+            # notify helpdesk
+            email_body = f"""Kindly note that Material Request for ticket number {issue} is awaiting your approval"""
+            recipients = frappe.db.get_value("Company", doc.company, "support_email")
+
+            make(subject = subject, content=email_body, recipients=recipients,
+                    send_email=True, sender="erp@groupmfi.com")
+
+
+def notify_helpdesk_about_material_approval(doc, method):
+    """ Notify Helpdesk when Material Request is approved for a ticket"""
+    if doc.docstatus == 1 and doc.task:
+        issue = frappe.db.get_value("Task", doc.task, 'issue')
+        if issue:
+            # notify helpdesk
+            subject = f"""Material request approved for ticket {issue}"""
+            email_body = f"""Kindly note that material request for ticket number {issue} has been approved."""
+            recipients = frappe.db.get_value("Company", doc.company, "support_email")
+            make(subject = subject, content=email_body, recipients=recipients,
+                    send_email=True, sender="erp@groupmfi.com")
+
+            # notify client
+            email_body = f"""Task Ticket number {issue} has been dispatched, kindly expect it any time soon."""
+            recipients = get_customer_emails(doc.project)
+            make(subject = subject, content=email_body, recipients=recipients,
+                    send_email=True, sender="erp@groupmfi.com")

@@ -1,0 +1,33 @@
+{
+ "attach_print": 0,
+ "channel": "Email",
+ "condition": "",
+ "creation": "2022-11-14 13:40:44.870889",
+ "days_in_advance": 0,
+ "docstatus": 0,
+ "doctype": "Notification",
+ "document_type": "Material Request",
+ "enabled": 0,
+ "event": "New",
+ "idx": 0,
+ "is_standard": 1,
+ "message": "Hello",
+ "modified": "2022-11-14 13:45:48.795915",
+ "modified_by": "Administrator",
+ "module": "mfi",
+ "name": "Material Request Approver",
+ "owner": "Administrator",
+ "recipients": [
+  {
+   "receiver_by_document_field": "assigned_to"
+  },
+  {
+   "receiver_by_document_field": "helpdesk_email"
+  }
+ ],
+ "send_system_notification": 0,
+ "send_to_all_assignees": 0,
+ "sender": "Ajit2356",
+ "sender_email": "erp@groupmfi.com",
+ "subject": "Material Request is awaiting your approval"
+}

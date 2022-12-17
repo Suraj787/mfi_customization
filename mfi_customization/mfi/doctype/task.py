@@ -12,11 +12,15 @@ from mfi_customization.mfi.doctype.issue import set_company
 from datetime import datetime
 from frappe.utils import time_diff_in_hours
 from frappe.core.doctype.communication.email import make
+from mfi_customization.mfi.doctype.project import get_customer_emails
+
 
 def validate(doc,method):
 	set_company(doc)
 	set_actual_time(doc)
-	email_status_save(doc)
+	send_task_completion_email(doc)
+	send_task_escalation_email(doc)
+
 	# machine_reading=""
 	for d in doc.get("current_reading"):
 		# machine_reading=d.machine_reading
@@ -51,20 +55,55 @@ def validate(doc,method):
 	validate_link_fileds(doc)
 
 def before_insert(doc,method):
-	link_issue_attachments(doc)
+	send_task_assignment_email(doc)
+
 
 def set_actual_time(doc):
 	if doc.completion_date_time and doc.attended_date_time:
 		doc.actual_time = time_diff_in_hours(doc.completion_date_time ,doc.attended_date_time)
 
-def email_status_save(doc):
-	if doc.status == "Completed" and doc.completed_sent==0:
-		com_subject = """Issue {0} Has Been Completed""".format(doc.issue)
-		make(subject = com_subject,content="Demo Tetsing",
-		recipients="helpdesk.kenya@groupmfi.com",
-		send_email=True, sender="erp@groupmfi.com")
-		frappe.msgprint("Email send successfully Task Completed")
+def send_task_completion_email(doc):
+	"""
+	Send email notification to helpdesk and client when task status is set to 'Completed'
+	"""
+	if doc.status == "Completed" and doc.completed_sent == 0:
+		subject = f"""Issue {doc.issue} has been resolved"""
+
+		# send email notification to helpdesk
+		helpdesk_email_body = f"""Task ticket number {doc.name} has been successfully completed."""
+		recipients = frappe.db.get_value("Company", doc.company, "support_email")
+		make(subject = subject, content=helpdesk_email_body, recipients=recipients,
+				send_email=True, sender="erp@groupmfi.com")
+
+		# send email notification to client
+		client_email_body = f"""Your Ticket number {doc.issue} has been successfully closed"""
+		recipients = get_customer_emails(doc.project)
+		make(subject = subject, content=client_email_body, recipients=recipients,
+				send_email=True, sender="erp@groupmfi.com")
+
 		doc.completed_sent=1
+		frappe.msgprint("Task completion email has been sent")
+
+def send_task_escalation_email(doc):
+	if not frappe.db.get_value("Task", doc.name, "escalation"):
+		if doc.escalation and doc.escalation_:
+			subject = f"Task has been escalated"
+
+			# send email notification to helpdesk
+			helpdesk_email_body = f"""Task ticket number {doc.name} has been
+								Escalated By {doc.technician_name} for Follow Up."""
+			recipients = frappe.db.get_value("Company", doc.company, "support_email")
+			make(subject = subject, content=helpdesk_email_body, recipients=recipients,
+					send_email=True, sender="erp@groupmfi.com")
+
+			# send email notification to client
+			client_email_body = f"""Task Ticket Number {doc.issue} has been Escalated By
+								{doc.technician_name} for Follow Up. Any inconvenience is highly regrated."""
+			recipients = get_customer_emails(doc.project)
+			make(subject = subject, content=client_email_body, recipients=recipients,
+					send_email=True, sender="erp@groupmfi.com")
+
+			frappe.msgprint("Task escalation email has been sent")
 
 
 def after_insert(doc,method):
@@ -78,7 +117,6 @@ def after_insert(doc,method):
 
 
 	create_user_permission(doc)
-	email_status(doc)
 
 	# docperm = frappe.new_doc("DocShare")
 	# docperm.update({
@@ -89,6 +127,27 @@ def after_insert(doc,method):
 	#       "write": 1
 	#   })
 	# docperm.save(ignore_permissions=True)
+
+def send_task_assignment_email(task):
+	if task.completed_by:
+		assign_subject = f"""Engineer assigned to issue ticket {task.issue}"""
+		body = f"""Task ticket no. {task.issue} has been assigned to our Engineer {task.technician_name}, kindly
+					expect him/her as soon as possible"""
+		recipients = get_customer_emails(task.project)
+		make(subject = assign_subject,content=body, recipients=recipients,
+			send_email=True, sender="erp@groupmfi.com")
+
+		body = f"""Ticket no. {task.issue} has been assigned to our Engineer {task.technician_name}"""
+		recipients = frappe.db.get_value("Company", task.company, "support_email")
+		if task.type_of_call == "Toner":
+			body = f"""Ticket no. {task.issue} with type of call "Toner" has been assigned to our Engineer {task.technician_name}"""
+			recipients = frappe.db.get_value("Company", task.company, "toner_support_email")
+
+		make(subject = assign_subject,content=body,recipients=recipients,
+			send_email=True, sender="erp@groupmfi.com")
+
+		frappe.msgprint("Task assignment email has been sent")
+
 
 def on_change(doc,method):
 	if doc.get("issue"):
@@ -433,7 +492,7 @@ def validate_link_fileds(doc):
 		validate_asset(doc,issue)
 		validate_serial_no(doc,issue)
 
-def link_issue_attachments(task):
+def link_issue_attachments(task, method):
 	if task.issue:
 		issue=frappe.get_doc("Issue",task.issue)
 		attachments = frappe.get_all("File", {"attached_to_doctype":"Issue", "attached_to_name":issue.name})
@@ -572,32 +631,3 @@ def repetitive_call(doc):
 	mr=mr.replace(".0","")
 
 	frappe.msgprint(mr)
-
-def email_status(doc):
-	pro_email = frappe.db.sql("select c.idx from `tabProject` p Left Join `tabCustomer Email List` c on c.parent = p.name where p.customer = %s", doc.customer)
-	idx=str(pro_email)
-	idx=idx.replace("(","")
-	idx=idx.replace(")","")
-	idx=idx.replace(",","")
-	idx=idx.replace("'","")
-
-	if idx != "None":
-
-		cust = frappe.db.sql("select c.email_id from `tabProject` p Left Join `tabCustomer Email List` c on c.parent = p.name where p.customer = %s and c.idx > 0", doc.customer)
-		cus=str(cust)
-		cus=cus.replace("(","")
-		cus=cus.replace(")","")
-		cus=cus.replace(",","")
-		cus=cus.replace("'","")
-
-		subject = """New Ticket {0} is Assigned""".format(doc.issue)
-		body = """Your issue has been recorded, details given below,<br>Ticket No:{0}<br>we will try to sort it in time. for updates please visit on portal<br> http://supportke.groupmfi.com""".format(doc.issue)
-
-		make(subject = subject,content=body, recipients=cus,
-			send_email=True, sender="erp@groupmfi.com")
-
-		frappe.msgprint("Email send successfully Assigned Issue")
-	else:
-		frappe.msgprint("email id not found for the customer in project")
-
-

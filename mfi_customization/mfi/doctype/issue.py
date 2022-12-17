@@ -7,14 +7,14 @@ import frappe
 from frappe.model.mapper import get_mapped_doc
 from frappe.utils.data import today,getdate
 from frappe.core.doctype.communication.email import make
+from mfi_customization.mfi.doctype.project import get_customer_emails
 
 def validate(doc,method):
 	email_validation(doc)
 	set_company(doc)
 	set_territory(doc)
-	email_status(doc)
 	# validate_link_fileds(doc)
-# 	validate_issue(doc)
+	# validate_issue(doc)
 	# machine_reading=""
 	for d in doc.get("current_reading"):
 		# machine_reading=d.machine_reading
@@ -44,6 +44,9 @@ def validate(doc,method):
 				"total":( int(d.get('black_and_white_reading') or 0)  + int(d.get('colour_reading') or 0))
 				})
 
+	send_call_resolved_email(doc)
+
+
 def on_change(doc,method):
 	validate_reading(doc)
 	set_task_status_cancelled(doc)
@@ -54,83 +57,16 @@ def email_validation(doc):
 
 def set_company(doc):
 	if doc.asset:
-	 company = frappe.db.get_value("Asset", {'name': doc.asset}, 'company')
-	 if company:
-	 	doc.company = company
+		company = frappe.db.get_value("Asset", {'name': doc.asset}, 'company')
+	if company:
+		doc.company = company
 
 def set_territory(doc):
 	if doc.customer:
 		territory = frappe.db.get_value("Customer", {'name': doc.customer}, 'territory')
 	if territory:
 	 	doc.territory = territory
-   
-	
-def email_status(doc):
-	# if doc.status == "Assigned":
-	 
-	# 	pro_email = frappe.db.sql("select c.idx from `tabProject` p Left Join `tabCustomer Email List` c on c.parent = p.name where p.customer = %s", doc.customer)
-	# 	idx=str(pro_email)
-	# 	idx=idx.replace("(","")
-	# 	idx=idx.replace(")","")
-	# 	idx=idx.replace(",","")
-	# 	idx=idx.replace("'","")
-		
-	# 	if idx != "None":
-			
-	# 		cust = frappe.db.sql("select c.email_id from `tabProject` p Left Join `tabCustomer Email List` c on c.parent = p.name where p.customer = %s and c.idx > 0", doc.customer)
-	# 		cus=str(cust)
-	# 		cus=cus.replace("(","")
-	# 		cus=cus.replace(")","")
-	# 		cus=cus.replace(",","")
-	# 		cus=cus.replace("'","")
-			
-	# 		subject = """New Ticket {0} is Assigned""".format(doc.name)
-	# 		body = """Your issue has been recorded, details given below,<br>Ticket No:{0}<br>we will try to sort it in time. for updates please visit on portal<br> http://supportke.groupmfi.com""".format(doc.name)
 
-	# 		make(subject = subject,content=body, recipients=cus,
-	# 			send_email=True, sender="erp@groupmfi.com")
-		
-	# 		frappe.msgprint("Email send successfully Assigned Issue")
-	# 	else:
-	# 		frappe.msgprint("email id not found for the customer in project")
-		
-	# if doc.status == "Task Completed":
-	# 	com_subject = """Issue {0} Has Been Completed""".format(doc.name)
-	# 	make(subject = com_subject,content="Customer Name",
-	# 	 recipients="helpdesk.kenya@groupmfi.com",
-	# 	 send_email=True, sender="erp@groupmfi.com")
-	# 	frappe.msgprint("Email send successfully Task Completed")
-  		
-	
-	if doc.status == "Closed":
-		pro = frappe.db.sql("select c.idx from `tabProject` p Left Join `tabCustomer Email List` c on c.parent = p.name where p.customer = %s", doc.customer)
-		idx1=str(pro)
-		idx1=idx1.replace("(","")
-		idx1=idx1.replace(")","")
-		idx1=idx1.replace(",","")
-		idx1=idx1.replace("'","")
-		
-		if idx1 != "None":
-			
-			cust1 = frappe.db.sql("select c.email_id from `tabProject` p Left Join `tabCustomer Email List` c on c.parent = p.name where p.customer = %s and c.idx > 0", doc.customer)
-			cus1=str(cust1)
-			cus1=cus1.replace("(","")
-			cus1=cus1.replace(")","")
-			cus1=cus1.replace(",","")
-			cus1=cus1.replace("'","")
-			
-			subject = """Ticket {0} is Closed""".format(doc.name)
-			body = """Your issue has been Closed, details given below,<br>Ticket No:{0}<br>we will try to sort it in time. for updates please visit on portal<br> http://supportke.groupmfi.com""".format(doc.name)
-
-			make(subject = subject,content=body, recipients=cus1,
-				send_email=True, sender="erp@groupmfi.com")
-		
-			frappe.msgprint("Email send successfully Close Issue")
-		else:
-			frappe.msgprint("email id not found for the customer in project")
-		
-		
-		
 @frappe.whitelist()
 def make_task(source_name, target_doc=None):
 	return get_mapped_doc("Issue", source_name, {
@@ -166,7 +102,7 @@ def get_asset_in_issue(doctype, txt, searchfield, start, page_len, filters):
 		for ass in frappe.get_all('Asset',fltr2,['name']):
 			if ass.name not in lst:
 				lst.append(ass.name)
-	return [(d,) for d in lst]	
+	return [(d,) for d in lst]
 
 
 @frappe.whitelist()
@@ -193,7 +129,7 @@ def get_location(doctype, txt, searchfield, start, page_len, filters):
 		for a in frappe.get_all('Asset',fltr,['location']):
 			if a.location not in lst:
 				lst.append(a.location)
-	return [(d,) for d in lst]	
+	return [(d,) for d in lst]
 
 
 @frappe.whitelist()
@@ -211,8 +147,8 @@ def get_asset_on_cust(doctype, txt, searchfield, start, page_len, filters):
 			for ass in frappe.get_all('Asset',asst,['name']):
 				if ass.name not in lst:
 					lst.append(ass.name)
-		return [(d,) for d in lst]	
-		
+		return [(d,) for d in lst]
+
 
 
 @frappe.whitelist()
@@ -230,7 +166,7 @@ def get_asset_serial_on_cust(doctype, txt, searchfield, start, page_len, filters
 			for ass in frappe.get_all('Asset',asst,['serial_no']):
 				if ass.serial_no not in lst:
 					lst.append(ass.serial_no)
-		return [(d,) for d in lst]	
+		return [(d,) for d in lst]
 
 @frappe.whitelist()
 def get_serial_on_cust_loc(doctype, txt, searchfield, start, page_len, filters):
@@ -249,7 +185,7 @@ def get_serial_on_cust_loc(doctype, txt, searchfield, start, page_len, filters):
 		for j in frappe.get_all('Asset',fltr2,['serial_no']):
 			if j.serial_no not in lst:
 					lst.append(j.serial_no)
-	return [(d,) for d in lst]	
+	return [(d,) for d in lst]
 
 def set_reading_from_issue_to_task(doc,method):
 	for tsk in frappe.get_all("Task",{"issue":doc.name}):
@@ -339,7 +275,7 @@ def get_location_validation(customer):
 		for a in frappe.get_all('Asset',{'project':i.get('name')},['location']):
 			if a.location not in lst:
 				lst.append(a.location)
-	return lst	
+	return lst
 
 def get_asset(customer,location):
 	fltr1 = {}
@@ -349,7 +285,7 @@ def get_asset(customer,location):
 		fltr1.update({'customer':customer})
 	if location:
 		fltr2.update({'location':location})
-	
+
 	for i  in frappe.get_all('Project',fltr1,['name']):
 		fltr2.update({'project':i.get('name'),'docstatus':1})
 		for ass in frappe.get_all('Asset',fltr2,['name']):
@@ -360,37 +296,87 @@ def get_asset(customer,location):
 def validate_location(doc):
 	if doc.status=="Closed" and not doc.location:
 		frappe.throw("Can't Closed Issue Without <b>Location</b>")
-		
-		
+
+
 @frappe.whitelist()
 def get_logged_user():
 	user = frappe.db.get_value('User',{"name":frappe.session.user},"full_name")
 	customerId_of_user=frappe.db.get_value("Customer",{"customer_name":user},"name")
 	return customerId_of_user
-		 
-	
-@frappe.whitelist()		
+
+
+@frappe.whitelist()
 def get_locationlist(doctype, txt, searchfield, start, page_len, filters):
 	location_list=[]
 	project_list = [p.name for p in frappe.db.get_list("Project", filters={"customer":filters.get("Customer_Name")},fields={"name"})]
 	for p in project_list:
 		location_list =[[l.location] for l in frappe.db.get_list("Asset",{"project":p},"location") if [l.location] not in location_list ]
-	return location_list    
-	
-@frappe.whitelist()		
+	return location_list
+
+@frappe.whitelist()
 def check_type_of_call(project, type_of_call):
 	call_type_list = [c.call_type for c in frappe.db.get_list("Hold Call Types",{'parent':project}, "call_type")]
 	if len(call_type_list) > 0 and type_of_call in call_type_list:
 		return True
 	else:
 		return False
-		
+
 
 def after_insert(doc,method):
-	after_subject = """Issue {0} Has Been Created""".format(doc.name)
-	make(subject = after_subject,content="Customer Name",
-		 recipients="helpdesk.kenya@groupmfi.com",
-		 send_email=True, sender="erp@groupmfi.com")
-	
-		
+	"""
+	Send email notifications when Issue is created
+	"""
+	if doc.type_of_call == "Service Request" or doc.type_of_call == "Toner":
+		client_emails = get_customer_emails(doc.project)
+		support_email = frappe.db.get_value("Company", doc.company, "support_email")
+		subject = f"""Ticket created for Issue"""
+		customer_name = frappe.db.get_value("Customer", doc.customer, "customer_name")
+		helpdesk_body = f"""Issue ticket number {doc.name} has been
+							created by {doc.customer} - {customer_name}"""
+		if doc.type_of_call == "Service Request":
+			client_body = f"""Your issue has been successfully created with ticket number {doc.name}
+					Kindly wait as we assign our Engineer."""
 
+		elif doc.type_of_call == "Toner":
+			client_body = f"""Your issue regarding Toner has been successfully created with ticket number
+							{doc.name}. Kindly wait as we resolve it."""
+			support_email = frappe.db.get_value("Company", doc.company, "toner_support_email")
+
+
+		make(subject = subject,content=client_body,
+			recipients=client_emails,
+			send_email=True, sender="erp@groupmfi.com")
+		make(subject = subject,content=helpdesk_body,
+			recipients=support_email,
+			send_email=True, sender="erp@groupmfi.com")
+		frappe.msgprint("Issue ticket creation email has been sent")
+
+def send_call_resolved_email(issue):
+	if not frappe.db.get_value("Issue", issue.name, "over_call_resolution"):
+		if issue.over_call_resolution and issue.resolution_reason and issue.type_of_call == "Service Request":
+			subject = f"Issue {issue.name} resolved on call"
+			helpdesk_email = frappe.db.get_value("Company", issue.company, "support_email")
+			client_emails = get_customer_emails(issue.project)
+			email_body = f"Issue ticket number {issue.name} has been resolved on call"
+
+			make(subject = subject,content=email_body,
+				recipients=client_emails,
+				send_email=True, sender="erp@groupmfi.com")
+
+			make(subject = subject,content=email_body,
+				recipients=helpdesk_email,
+				send_email=True, sender="erp@groupmfi.com")
+
+@frappe.whitelist() 
+def asset_name_item(item_code):
+  items = []  
+  scrapitems = frappe.db.sql("select aic.item_code from `tabItem` i LEFT JOIN `tabAsset Item Child Table` aic on aic.parent = i.name where i.name = %s and aic.item_group='Toner' group by aic.item_code",item_code)
+  for item in scrapitems: 
+    
+      items.append(item[0]) 
+  return items
+
+# @frappe.whitelist() 
+# def user_customer(user):
+#     user = frappe.db.sql(f"""select for_value from `tabUser Permission` where user='{user}' and allow='Customer'""")
+#     return user
