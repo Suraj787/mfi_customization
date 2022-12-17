@@ -5,29 +5,10 @@ import frappe
 
 
 def execute(filters=None):
-    conditions, filters = get_conditions(filters)
+    data = prepare_data(filters)
     columns = get_columns(filters)
-    data = get_data(conditions, filters)
-
     return columns, data
 
-
-def get_data(conditions, filters):
-
-    item = frappe.db.sql("""select mr.name,mr.reading_date,mr.asset,mr.project,mr.machine_type,mr.colour_reading,mr.black_and_white_reading,mr.total,
-						mrt.item_code,mrt.item_name,mrt.item_group,mrt.yield,mrt.total_reading,mrt.percentage_yield
-                        from `tabMachine Reading` mr
-                        LEFT Join `tabAsset Item Child Table` mrt on mrt.parent = mr.name
-                        where mrt.idx > 0 """)
-
-    return item
-
-
-def get_conditions(filters):
-    conditions = ""
-    # if filters.get("mr.name"): conditions += " and mr.name = %(name)s"
-
-    return conditions, filters
 
 
 def get_columns(filters):
@@ -110,3 +91,45 @@ def get_columns(filters):
 
 
     ]
+    
+    
+    
+def prepare_data(filters):
+    data=[]
+    fltr={}
+    #if filters.get('task'):
+     #  fltr.update({"task":filters.get("task")})
+    #if filters.get('project'):
+    #if filters.get('asset'):
+    conditions = get_conditions(filters)
+    item = frappe.db.sql("""select mr.name,mr.reading_date,mr.asset,mr.project,mr.machine_type,mr.colour_reading,mr.black_and_white_reading,
+    mr.total,mrt.item_code,mrt.item_name,mrt.item_group,mrt.total_reading,mrt.percentage_yield,mrt.yield as yld
+                        from `tabMachine Reading` mr
+                        LEFT Join `tabAsset Item Child Table` mrt on mrt.parent = mr.name
+                        where mrt.idx > 0 %s"""%conditions,filters,as_dict=1)
+    for i in item:             
+        row={}
+        row.update(i)
+
+        row.update({"mr.name":i.name,"mr.reading_date":i.reading_date,"mr.asset":i.asset,"mr.project":i.project,
+        "mr.machine_type":i.machine_type,"mr.colour_reading":i.colour_reading,
+        "mr.black_and_white_reading":i.black_and_white_reading,"mr.total":i.total,"mrt.item_code":i.item_code,
+      "mrt.item_name":i.item_name,"mrt.item_group":i.item_group,"mrt.yield":i.yld,
+      "mrt.total_reading":i.total_reading,"mrt.percentage_yield":i.percentage_yield})
+
+        data.append(row)
+
+
+    return data
+ 
+ 
+ 
+ 
+def get_conditions(filters):
+    conditions = ""
+    if filters.get("asset"): conditions += "and mr.asset = %(asset)s"
+    if filters.get("project"): conditions += "and mr.project = %(project)s"
+    if filters.get("task"): conditions += "and mr.task = %(task)s"
+       
+    return conditions
+
