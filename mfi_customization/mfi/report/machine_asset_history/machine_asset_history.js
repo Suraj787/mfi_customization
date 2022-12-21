@@ -22,7 +22,7 @@ frappe.query_reports["Machine Asset History"] = {
             "options": "Asset",
         },
 
-
+      
 
     ]
 };
