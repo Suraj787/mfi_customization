@@ -102,7 +102,7 @@ def prepare_data(filters):
     mr.total,mrt.item_code,mrt.item_name,mrt.item_group,mrt.total_reading,mrt.percentage_yeild,mrt.yeild as yld
                         from `tabMachine Reading` mr
                         LEFT Join `tabAsset Item Child Table` mrt on mrt.parent = mr.name
-                       %s"""%conditions,filters,as_dict=1)
+                         where mr.docstatus!=2 %s"""%conditions,filters,as_dict=1)
                                             
     for i in item:             
         row={}
@@ -115,8 +115,6 @@ def prepare_data(filters):
       "mrt.total_reading":i.total_reading,"mrt.percentage_yeild":i.percentage_yeild})
 
         data.append(row)
-
-
     return data
  
  
@@ -124,8 +122,12 @@ def prepare_data(filters):
  
 def get_conditions(filters):
     conditions = ""
-    if filters.get("asset"): conditions += "where mr.asset = %(asset)s"
-    if filters.get("project"): conditions += "where mr.project = %(project)s"
-    if filters.get("task"): conditions += " where mr.task = %(task)s"
+    if filters.get("asset"): conditions += "and mr.asset = %(asset)s"
+    if filters.get("project"): conditions += "and mr.project = %(project)s"
+    if filters.get("task"): conditions += "and mr.task = %(task)s"
     return conditions
+
+
+
+
 
