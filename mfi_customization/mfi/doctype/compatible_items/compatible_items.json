@@ -8,7 +8,7 @@
  "engine": "InnoDB",
  "field_order": [
   "item",
-  "asset",
+  "asset_item",
   "type"
  ],
  "fields": [
@@ -20,22 +20,22 @@
    "options": "Item"
   },
   {
-   "fieldname": "asset",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Asset",
-   "options": "Asset"
-  },
-  {
    "fieldname": "type",
    "fieldtype": "Select",
    "label": "Type",
    "options": "Accessories\nToner"
+  },
+  {
+   "fieldname": "asset_item",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Asset Item ",
+   "options": "Item"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-11-17 13:19:30.092949",
+ "modified": "2022-12-05 13:39:28.856582",
  "modified_by": "Administrator",
  "module": "mfi",
  "name": "Compatible Items",
