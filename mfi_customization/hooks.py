@@ -185,9 +185,9 @@ scheduler_events = {
 # 	"all": [
 # 		"mfi_customization.tasks.all"
 # 	],
-# 	"daily": [
-# 		"mfi_customization.tasks.daily"
-# 	],
+	"daily": [
+		"mfi_customization.mfi.doctype.Asset.make_task_on_PM_call_interval"
+	],
 # 	"hourly": [
 # 		"mfi_customization.tasks.hourly"
 # 	],
@@ -201,7 +201,7 @@ scheduler_events = {
     "cron": {
         "0 9 * * *": [
             "mfi_customization.mfi.doctype.project.make_issues_on_PM_call_interval",
-            "mfi_customization.mfi.doctype.Asset.make_task_on_PM_call_interval"
+            # "mfi_customization.mfi.doctype.Asset.make_task_on_PM_call_interval"
         ]
     }
 }
