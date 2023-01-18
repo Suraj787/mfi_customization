@@ -544,7 +544,7 @@ frappe.ui.form.on('Task', {
 	completed_by:function(frm) {
     if(cur_frm.doc.escalation)
     {
-        frm.set_df_property('technical_description', "hidden", 0);
+        frm.set_df_property('senior_technician_description', "hidden", 0);
     }
 	}
 });
