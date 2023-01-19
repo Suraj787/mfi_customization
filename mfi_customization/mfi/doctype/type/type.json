@@ -1,29 +1,27 @@
 {
  "actions": [],
  "allow_rename": 1,
- "creation": "2023-01-16 19:59:24.714474",
+ "creation": "2023-01-14 10:22:53.890153",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "toner_type"
+  "toner_cyan"
  ],
  "fields": [
   {
-   "fieldname": "toner_type",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Toner Type",
-   "options": "Toner Type"
+   "fieldname": "toner_cyan",
+   "fieldtype": "Data",
+   "label": "Toner Cyan "
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-01-19 10:29:39.892538",
+ "modified": "2023-01-14 10:22:53.890153",
  "modified_by": "Administrator",
  "module": "mfi",
- "name": "Toner Type Child",
+ "name": "Type",
  "owner": "Administrator",
  "permissions": [],
  "sort_field": "modified",
