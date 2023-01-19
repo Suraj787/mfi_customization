@@ -551,20 +551,23 @@ frappe.ui.form.on("Material Request", 'onload_post_render', function(frm,cdt,cdn
        }
    });
 
-frappe.ui.form.on('Material Request', {
-    refresh(frm) {
-        if (!cur_frm.doc.mr_status) {
-            frm.add_custom_button(__('Reject'), function() {
-                frappe.call({
-                    method: "mfi_customization.mfi.doctype.material_request.material_reject",
-                    args: {
-                        doc: cur_frm.doc,
-                    }
-                });
-                setTimeout(function() {
-                    location.reload(true);
-                }, 1000);
-            }).css({ 'background-color': 'red', 'color': 'white' });
+   frappe.ui.form.on('Material Request', {
+    onload: function(frm) {
+        if (frappe.user.has_role("Area Technical Manager") == 1 && frappe.user != "Administrator") {
+            if (!cur_frm.doc.mr_status) {
+                frm.add_custom_button(__('Reject'), function() {
+                    frappe.call({
+                        method: "mfi_customization.mfi.doctype.material_request.material_reject",
+                        args: {
+                            doc: cur_frm.doc,
+                        }
+                    });
+                    setTimeout(function() {
+                        location.reload(true);
+                    }, 1000);
+                }).css({ 'background-color': 'red', 'color': 'white' });
+            }
         }
     }
 });
+

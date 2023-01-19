@@ -541,10 +541,11 @@ frappe.ui.form.on('Task', {
 });
 
 frappe.ui.form.on('Task', {
-	completed_by:function(frm) {
-    if(cur_frm.doc.escalation)
-    {
-        frm.set_df_property('senior_technician_description', "hidden", 0);
+    onload: function(frm) {
+        if (frappe.user.name == cur_frm.doc.completed_by && cur_frm.doc.escalation) {
+            {
+                frm.set_df_property('senior_technician_description', "hidden", 0);
+            }
+        }
     }
-	}
 });
