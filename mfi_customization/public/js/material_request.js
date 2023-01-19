@@ -551,7 +551,6 @@ frappe.ui.form.on("Material Request", 'onload_post_render', function(frm,cdt,cdn
        }
    });
 
-
 frappe.ui.form.on('Material Request', {
     refresh(frm) {
         if (!cur_frm.doc.mr_status) {
@@ -565,7 +564,7 @@ frappe.ui.form.on('Material Request', {
                 setTimeout(function() {
                     location.reload(true);
                 }, 1000);
-            });
+            }).css({ 'background-color': 'red', 'color': 'white' });
         }
     }
 });
