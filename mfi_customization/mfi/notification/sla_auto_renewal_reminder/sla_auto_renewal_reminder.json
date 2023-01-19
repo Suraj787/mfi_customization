@@ -1,0 +1,33 @@
+{
+ "attach_print": 0,
+ "channel": "Email",
+ "condition": "",
+ "creation": "2022-12-22 15:39:18.111149",
+ "date_changed": "expected_end_date",
+ "days_in_advance": 30,
+ "docstatus": 0,
+ "doctype": "Notification",
+ "document_type": "Project",
+ "enabled": 1,
+ "event": "Days Before",
+ "idx": 0,
+ "is_standard": 1,
+ "message": "Your Service Level Agreement for {{doc.project_name}}is expiring on {{doc.expected_end_date}}.Please Renew it before ends ",
+ "modified": "2022-12-23 09:07:56.706529",
+ "modified_by": "Administrator",
+ "module": "mfi",
+ "name": "SLA Auto Renewal Reminder",
+ "owner": "Administrator",
+ "recipients": [
+  {
+   "receiver_by_document_field": "",
+   "receiver_by_role": "SLA Reminder"
+  }
+ ],
+ "send_system_notification": 0,
+ "send_to_all_assignees": 0,
+ "sender": "Ajit2356",
+ "sender_email": "erp@groupmfi.com",
+ "subject": "SLA Renewal Reminder",
+ "value_changed": "completed_by"
+}
