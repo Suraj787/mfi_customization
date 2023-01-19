@@ -561,14 +561,14 @@ def notify_helpdesk_about_material_approval(doc, method):
                     send_email=True, sender="erp@groupmfi.com")
 
             # notify client
-            email_body = f"""Task Ticket number {issue} has been dispatched, kindly expect it any time soon."""
-            recipients = get_customer_emails(doc.project)
-            make(subject = subject, content=email_body, recipients=recipients,
-                    send_email=True, sender="erp@groupmfi.com")
+            # email_body = f"""Task Ticket number {issue} has been dispatched, kindly expect it any time soon."""
+            # recipients = get_customer_emails(doc.project)
+            # make(subject = subject, content=email_body, recipients=recipients,
+            #         send_email=True, sender="erp@groupmfi.com")
 
-@frappe.whitelist()        
+@frappe.whitelist()
 def material_reject(doc):
     doc=json.loads(doc)
     doc_mr=frappe.get_doc("Material Request",doc.get("name"))
     doc_mr.mr_status = "Material Rejected"
-    doc_mr.submit() 
+    doc_mr.submit()
