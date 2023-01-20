@@ -535,10 +535,10 @@ def notify_client_about_material_requested(doc, method):
             subject = f"""Material request created for issue {issue}"""
 
             # notify client
-            email_body = f"""Kindly Note that Your Task Ticket Number {issue} is awaiting material to be resolved."""
-            recipients = get_customer_emails(doc.project)
-            make(subject = subject, content=email_body, recipients=recipients,
-                    send_email=True, sender="erp@groupmfi.com")
+            # email_body = f"""Kindly Note that Your Task Ticket Number {issue} is awaiting material to be resolved."""
+            # recipients = get_customer_emails(doc.project)
+            # make(subject = subject, content=email_body, recipients=recipients,
+            #         send_email=True, sender="erp@groupmfi.com")
 
             # notify helpdesk
             email_body = f"""Kindly note that Material Request for ticket number {issue} is awaiting your approval"""
