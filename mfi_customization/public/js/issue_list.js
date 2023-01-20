@@ -7,3 +7,12 @@ frappe.listview_settings['Issue'] = {
     }
 }
 };
+
+frappe.listview_settings['Issue'] = {
+  add_fields: ["mr_status"],
+  get_indicator: function(doc) {
+      if (doc.mr_status == 'Material Rejected') {
+          return [__("Material Rejected"), "red", "status,=,Material Rejected"];
+      }
+  }
+};
