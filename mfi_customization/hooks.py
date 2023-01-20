@@ -47,7 +47,8 @@ doctype_js = {
                 "Machine Reading":"public/js/machine_reading.js"
 }
 doctype_list_js = {"Material Request":"public/js/material_request_list.js",
-                   "Issue":"public/js/issue_list.js"
+                   "Issue":"public/js/issue_list.js",
+                    "Task":"public/js/task_list.js"
 
 
                  }
