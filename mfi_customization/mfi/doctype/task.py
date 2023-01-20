@@ -12,7 +12,7 @@ from mfi_customization.mfi.doctype.issue import set_company
 from datetime import datetime
 from frappe.utils import time_diff_in_hours
 from frappe.core.doctype.communication.email import make
-from mfi_customization.mfi.doctype.project import get_customer_emails
+# from mfi_customization.mfi.doctype.project import get_customer_emails
 
 
 def validate(doc,method):
@@ -76,10 +76,10 @@ def send_task_completion_email(doc):
 				send_email=True, sender="erp@groupmfi.com")
 
 		# send email notification to client
-		client_email_body = f"""Your Ticket number {doc.issue} has been successfully closed"""
-		recipients = get_customer_emails(doc.project)
-		make(subject = subject, content=client_email_body, recipients=recipients,
-				send_email=True, sender="erp@groupmfi.com")
+		# client_email_body = f"""Your Ticket number {doc.issue} has been successfully closed"""
+		# recipients = get_customer_emails(doc.project)
+		# make(subject = subject, content=client_email_body, recipients=recipients,
+		# 		send_email=True, sender="erp@groupmfi.com")
 
 		doc.completed_sent=1
 		frappe.msgprint("Task completion email has been sent")
@@ -97,13 +97,13 @@ def send_task_escalation_email(doc):
 					send_email=True, sender="erp@groupmfi.com")
 
 			# send email notification to client
-			client_email_body = f"""Task Ticket Number {doc.issue} has been Escalated By
-								{doc.technician_name} for Follow Up. Any inconvenience is highly regrated."""
-			recipients = get_customer_emails(doc.project)
-			make(subject = subject, content=client_email_body, recipients=recipients,
-					send_email=True, sender="erp@groupmfi.com")
+			# client_email_body = f"""Task Ticket Number {doc.issue} has been Escalated By
+			# 					{doc.technician_name} for Follow Up. Any inconvenience is highly regrated."""
+			# recipients = get_customer_emails(doc.project)
+			# make(subject = subject, content=client_email_body, recipients=recipients,
+			# 		send_email=True, sender="erp@groupmfi.com")
 
-			frappe.msgprint("Task escalation email has been sent")
+			# frappe.msgprint("Task escalation email has been sent")
 
 
 def after_insert(doc,method):
@@ -131,11 +131,11 @@ def after_insert(doc,method):
 def send_task_assignment_email(task):
 	if task.completed_by:
 		assign_subject = f"""Engineer assigned to issue ticket {task.issue}"""
-		body = f"""Task ticket no. {task.issue} has been assigned to our Engineer {task.technician_name}, kindly
-					expect him/her as soon as possible"""
-		recipients = get_customer_emails(task.project)
-		make(subject = assign_subject,content=body, recipients=recipients,
-			send_email=True, sender="erp@groupmfi.com")
+		# body = f"""Task ticket no. {task.issue} has been assigned to our Engineer {task.technician_name}, kindly
+		# 			expect him/her as soon as possible"""
+		# recipients = get_customer_emails(task.project)
+		# make(subject = assign_subject,content=body, recipients=recipients,
+		# 	send_email=True, sender="erp@groupmfi.com")
 
 		body = f"""Ticket no. {task.issue} has been assigned to our Engineer {task.technician_name}"""
 		recipients = frappe.db.get_value("Company", task.company, "support_email")
