@@ -69,12 +69,21 @@ def set_territory(doc):
 
 @frappe.whitelist()
 def make_task(source_name, target_doc=None):
+	issue = frappe.get_doc("Issue", source_name)
+	if issue.type_of_call == "Service Request" and issue.issue_type=="Error message":
+		return get_mapped_doc("Issue", source_name, {
+			"Issue": {
+				"doctype": "Task",
+				"field_map": {"last_readings": "current_reading"},
+			}
+		}, target_doc)
+
 	return get_mapped_doc("Issue", source_name, {
-		"Issue": {
-			"doctype": "Task",
-			"field_map": {"last_readings": "current_reading"},
-		}
-	}, target_doc)
+	"Issue": {
+		"doctype": "Task",
+		"field_map": {"last_readings": "current_reading"},
+	}
+}, target_doc)
 
 @frappe.whitelist()
 def get_asset_list(doctype, txt, searchfield, start, page_len, filters):
@@ -370,12 +379,11 @@ def send_call_resolved_email(issue):
 
 @frappe.whitelist()
 def asset_name_item(item_code):
-  items = []
-  scrapitems = frappe.db.sql("select aic.item_code from `tabItem` i LEFT JOIN `tabAsset Item Child Table` aic on aic.parent = i.name where i.name = %s and aic.item_group='Toner' group by aic.item_code",item_code)
-  for item in scrapitems:
-
-      items.append(item[0])
-  return items
+	items = []
+	scrapitems = frappe.db.sql("select aic.item_code from `tabItem` i LEFT JOIN `tabAsset Item Child Table` aic on aic.parent = i.name where i.name = %s and aic.item_group='Toner' group by aic.item_code",item_code)
+	for item in scrapitems:
+		items.append(item[0])
+	return items
 
 # @frappe.whitelist()
 # def user_customer(user):
