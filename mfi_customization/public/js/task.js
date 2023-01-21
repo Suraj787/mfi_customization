@@ -7,6 +7,9 @@ frappe.ui.form.on('Task', {
         }
     },
     status: function(frm) {
+        if (frm.doc.status=="Working"){
+            set_permissions_for_symptoms(frm);
+        }
         transfer_data_to_issue(frm)
             //fetch_data_material_request_item(frm)
         if (frm.doc.status == 'Working') {
@@ -87,45 +90,17 @@ frappe.ui.form.on('Task', {
         }
     },
     onload: function(frm) {
-        if (frm.doc.type_of_call == "Toner") {
-            if (frappe.user.has_role("Technicians") == 1 && frappe.user != "Administrator") {
-                frm.set_df_property('symptoms', "reqd", 0);
-                frm.set_df_property('action', "reqd", 0);
-                frm.set_df_property('cause', "reqd", 0);
-                frm.set_df_property('signature', "reqd", 1);
-                frm.set_df_property('symptoms', "read_only", 1);
-                frm.set_df_property('action', "read_only", 1);
-                frm.set_df_property('cause', "read_only", 1);
-            }
-        } else {
-            if (frappe.user.has_role("Technicians") == 1 && frappe.user != "Administrator") {
-                frm.set_df_property('symptoms', "reqd", 1);
-                frm.set_df_property('action', "reqd", 1);
-                frm.set_df_property('cause', "reqd", 1);
-                frm.set_df_property('signature', "reqd", 1);
-                frm.set_df_property('priority', "read_only", 1);
-            }
-            if (frappe.user.has_role("Call Coordinator") == 1 && frappe.user != "Administrator") {
-                frm.set_df_property('symptoms', "read_only", 1);
-                frm.set_df_property('action', "read_only", 1);
-                frm.set_df_property('cause', "read_only", 1);
-                frm.set_df_property('signature', "read_only", 1);
-                frm.set_df_property('current_reading', 'hidden', 1);
-                frm.set_df_property('priority', "read_only", 1);
-                frm.set_df_property('repair_items', 'hidden', 1);
-
-            }
-        }
+        set_permissions_for_symptoms(frm);
         // fetch_data_material_request_item(frm)
-        /* 
+        /*
    frappe.call({
      method: "mfi_customization.mfi.doctype.issue.get_logged_user",
      args: {
-			
+
 	},
      callback: function(r) {
-	    frm.set_value("customer",r.message);				
-	       }		
+	    frm.set_value("customer",r.message);
+	       }
 	});
     */
 
@@ -155,6 +130,7 @@ frappe.ui.form.on('Task', {
     },
     refresh: function(frm) {
 
+        set_permissions_for_symptoms(frm);
 
         transfer_data_to_issue(frm)
         if (!frm.doc.__islocal) {
@@ -164,10 +140,6 @@ frappe.ui.form.on('Task', {
             }, __("View"));
         }
         frm.trigger('customer');
-
-
-
-
 
         frm.add_custom_button('Material Request', () => {
             var check_machine_reading = frappe.db.get_value("Machine Reading", { 'task': frm.doc.name }, 'name', (r) => {
@@ -183,12 +155,6 @@ frappe.ui.form.on('Task', {
                 }
             })
         }, __('Make'))
-
-
-
-
-
-
 
         frm.set_query("completed_by", function() {
             return {
@@ -305,7 +271,7 @@ frappe.ui.form.on('Task', {
             //             "customer":frm.doc.customer
             //         }
             //     };}
-            // });	
+            // });
             frm.set_query('asset', 'asset_details_table', function() {
                 if (frm.doc.customer) {
                     return {
@@ -549,3 +515,36 @@ frappe.ui.form.on('Task', {
         }
     }
 });
+
+
+function set_permissions_for_symptoms(frm){
+    if (frm.doc.type_of_call == "Toner") {
+        if (frappe.user.has_role("Technicians") == 1 && frappe.user != "Administrator") {
+            frm.set_df_property('symptoms', "reqd", 0);
+            frm.set_df_property('action', "reqd", 0);
+            frm.set_df_property('cause', "reqd", 0);
+            frm.set_df_property('signature', "reqd", 1);
+            frm.set_df_property('symptoms', "read_only", 1);
+            frm.set_df_property('action', "read_only", 1);
+            frm.set_df_property('cause', "read_only", 1);
+        }
+    } else {
+        if (frappe.user.has_role("Technicians") == 1 && frappe.user != "Administrator" && frm.doc.status=="Working") {
+            frm.set_df_property('symptoms', "reqd", 1);
+            frm.set_df_property('action', "reqd", 1);
+            frm.set_df_property('cause', "reqd", 1);
+            frm.set_df_property('signature', "reqd", 1);
+            frm.set_df_property('priority', "read_only", 1);
+        }
+        if (frappe.user.has_role("Call Coordinator") == 1 && frappe.user != "Administrator") {
+            frm.set_df_property('symptoms', "read_only", 1);
+            frm.set_df_property('action', "read_only", 1);
+            frm.set_df_property('cause', "read_only", 1);
+            frm.set_df_property('signature', "read_only", 1);
+            frm.set_df_property('current_reading', 'hidden', 1);
+            frm.set_df_property('priority', "read_only", 1);
+            frm.set_df_property('repair_items', 'hidden', 1);
+
+        }
+    }
+}
