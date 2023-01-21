@@ -41,7 +41,7 @@ frappe.ui.form.on('Material Request', {
     //                 },
     //                 callback: function(r) {
     //                     frm.events.render_table(frm, r.message);
-    //                 } 
+    //                 }
     //             });}
     //         else{
     //             frappe.call({
@@ -53,7 +53,7 @@ frappe.ui.form.on('Material Request', {
     //                     if (r.message){
     //                         frm.events.render_table(frm, r.message['html_format'],r.message['data']);
     //                     }
-    //                 } 
+    //                 }
     //             });
     //         }
     //     }
@@ -66,11 +66,11 @@ frappe.ui.form.on('Material Request', {
  //                 }
  //            })
  //        });
-        
-               
-        
-        
-        
+
+
+
+
+
         // if (frm.doc.docstatus==1) {
             //  frm.add_custom_button(__('Purchase Order'), function () {
             //     get_items_from_MR(frm);
@@ -90,10 +90,10 @@ frappe.ui.form.on('Material Request', {
   //                   "user": frappe.session.user
   //               },
   //               callback: function(r) {
-  //                   frm.set_value('approver',r.message["approver"]);	
-  //                   frm.set_value('approver_name',r.message["approver_name"]);				
+  //                   frm.set_value('approver',r.message["approver"]);
+  //                   frm.set_value('approver_name',r.message["approver_name"]);
   //               }
-        
+
   //       });
   //       }
   //       var get_items_from_MR = function(frm) {
@@ -122,7 +122,7 @@ frappe.ui.form.on('Material Request', {
   //                   var method = "mfi_customization.mfi.doctype.material_request.get_material_request";
   //                   var columns = (['name', 'schedule_date', 'status']);
   //                   get_material_request_items(frm, true, $results, $placeholder, method, columns);
-            
+
   //           $results.on('click', '.list-item--head :checkbox', (e) => {
   //               $results.find('.list-item-container .list-row-check')
   //                   .prop("checked", ($(e.target).is(':checked')));
@@ -139,8 +139,8 @@ frappe.ui.form.on('Material Request', {
 //         make_po(checked_values);
 //         dialog.hide();
 //     });
-// };        
-    
+// };
+
 // var get_material_request_items = function(frm, project_tasks, $results, $placeholder, method, columns) {
 //     var me = this;
 //     $results.empty();
@@ -207,7 +207,7 @@ frappe.ui.form.on('Material Request', {
     //         let checked_values = {};
     //         if ($(this).find('.list-row-check:checkbox:checked').length > 0 ) {
     //             checked_values['name'] = $(this).attr('data-name');
-                
+
     //             if($(this).attr('data-scheduled_date') != 'undefined'){
     //                 checked_values['scheduled_date'] = $(this).attr('data-scheduled_date');
     //             }
@@ -220,7 +220,7 @@ frappe.ui.form.on('Material Request', {
     //             else{
     //                 checked_values['status'] = false;
     //             }
-                
+
     //             return checked_values;
     //         }
     //     }).get();
@@ -329,7 +329,7 @@ frappe.ui.form.on('Material Request', {
     //                                         frappe.throw(`<b>${resp.part_number}</b> Item ${shipment_type} Qty Must Be Multiple of Carton Qty <b>${carton_qty}</b>`);
     //                                     }
     //                                 }
-                                    
+
     //                                 item_qty+=qty
 
     //                                 var row=frm.add_child("item_shipment");
@@ -338,7 +338,7 @@ frappe.ui.form.on('Material Request', {
     //                                 row.qty=qty
     //                                 row.uom=uom;
     //                                 row.price_list=price_list;
-                                   
+
     //                                 frappe.db.get_doc("Price List", price_list).then(( pr ) => {
     //                                     (pr.price_list_supplier).forEach((  pr_row ) => {
     //                                         if (pr_row.company==cur_frm.doc.company){
@@ -351,7 +351,7 @@ frappe.ui.form.on('Material Request', {
     //                         });
     //                         frm.refresh_field("item_shipment");
     //                     });
-                        
+
     //                     if (item_qty>0){
     //                         if (!validation){
     //                             var item_row=frm.add_child("items");
@@ -369,9 +369,9 @@ frappe.ui.form.on('Material Request', {
     //                             frm.set_value('items',[]);
     //                             frm.set_value('item_shipment',[]);
     //                         }
-                           
+
     //                     }
-    //                 }) 
+    //                 })
     //                 frm.refresh_field("items");
     //             }
     //             if (!frm.doc.__islocal&&first_approval){
@@ -380,7 +380,7 @@ frappe.ui.form.on('Material Request', {
     //             if (!frm.doc.__islocal&&first_approval&&second_approval){
     //                 frm.set_value("approval_status","Second Approved")
     //             }
-    //         } 
+    //         }
     //     });
     // },
     // validate:function(frm){
@@ -395,9 +395,9 @@ frappe.ui.form.on('Material Request', {
         // frm.refresh()
         //frm.refresh_field("items_with_yeild")
        // items_with_yeild(frm)
-    
+
     // },
-    
+
     // after_save:function(frm){
     //     if (cur_frm.doc.report_name && cur_frm.doc.filters){
     //             frappe.call({
@@ -428,7 +428,7 @@ frappe.ui.form.on('Material Request', {
     //                         })
     //                         row["total_qty"]=total_qty
     //                         requisition_items[resp.part_number]=row;
-    //                     }) 
+    //                     })
     //                     frappe.call({
     //                         method: 'mfi_customization.mfi.doctype.material_request.create_requisition_reference',
     //                         args: {
@@ -442,7 +442,7 @@ frappe.ui.form.on('Material Request', {
     //                     })
     //                     frm.refresh_field("items");
     //                 }
-    //             } 
+    //             }
     //         });
     //     }
     // },
@@ -476,7 +476,7 @@ frappe.ui.form.on('Material Request', {
 //                             })
 //                             row["total_qty"]=total_qty
 //                             requisition_items[resp.part_number]=row;
-//                         }) 
+//                         })
 //                         frappe.call({
 //                             method: 'mfi_customization.mfi.doctype.material_request.create_requisition_reference',
 //                             args: {
@@ -490,7 +490,7 @@ frappe.ui.form.on('Material Request', {
 //                         })
 //                         frm.refresh_field("items");
 //                     }
-//                 } 
+//                 }
 //             });
 //         }
 //     },
@@ -525,7 +525,7 @@ frappe.ui.form.on("Material Request", 'onload_post_render', function(frm,cdt,cdn
 
         query: "mfi_customization.mfi.doctype.material_request.item_child_table_filter",
         filters:{
-            
+
             	"asset":frm.doc.asset
              }
           }
@@ -543,8 +543,7 @@ frappe.ui.form.on("Material Request", 'onload_post_render', function(frm,cdt,cdn
 
          query: "mfi_customization.mfi.doctype.material_request.item_child_table_filter",
          filters:{
-            
-             "asset":frm.doc.asset   
+             "asset":frm.doc.asset
                }
             }
          }
@@ -553,13 +552,13 @@ frappe.ui.form.on("Material Request", 'onload_post_render', function(frm,cdt,cdn
 
    frappe.ui.form.on('Material Request', {
     onload: function(frm) {
-        if (frappe.user.has_role("Area Technical Manager") == 1 && frappe.user != "Administrator") {
-            if (!cur_frm.doc.mr_status) {
+        if (frappe.user.has_role("Area Technical Manager")) {
+            if (frm.doc.mr_status != "Material Rejected") {
                 frm.add_custom_button(__('Reject'), function() {
                     frappe.call({
                         method: "mfi_customization.mfi.doctype.material_request.material_reject",
                         args: {
-                            doc: cur_frm.doc,
+                            doc: frm.doc,
                         }
                     });
                     setTimeout(function() {
