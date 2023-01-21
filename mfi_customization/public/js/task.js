@@ -166,9 +166,18 @@ frappe.ui.form.on('Task', {
             };
 
         });
-
+        if (frm.is_new()) {
+			frm.clear_table("current_reading");
+            let row = frm.add_child("current_reading");
+            frappe.model.set_value(row.doctype,row.name,'date', new Date());
+            frm.refresh_field("current_reading");
+            let first_row = frm.doc.current_reading[0];
+            frappe.db.get_value('Asset',{'name' : frm.doc.asset}, 'type',(r) =>{
+                frappe.model.set_value(first_row.doctype,first_row.name,'type',r.type);
+              });
+              frm.refresh_field("current_reading");
+        }
     },
-
     setup: function(frm) {
         // frm.set_query("location", function() {
         //     if (frm.doc.customer) {
