@@ -166,7 +166,9 @@ frappe.ui.form.on('Task', {
 			};
 
 		});
-		if (frm.is_new()) {
+		let issue = frappe.model.get_doc("Issue", frm.doc.issue);
+
+		if (frm.is_new() && issue.issue_type!="Error message") {
 			frm.clear_table("current_reading");
 			let row = frm.add_child("current_reading");
 			frappe.model.set_value(row.doctype, row.name, 'date', frappe.datetime.nowdate());
