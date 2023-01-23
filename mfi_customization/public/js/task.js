@@ -169,7 +169,7 @@ frappe.ui.form.on('Task', {
 		if (frm.is_new()) {
 			frm.clear_table("current_reading");
 			let row = frm.add_child("current_reading");
-			frappe.model.set_value(row.doctype, row.name, 'date', new Date());
+			frappe.model.set_value(row.doctype, row.name, 'date', frappe.datetime.nowdate());
 			frm.refresh_field("current_reading");
 			let first_row = frm.doc.current_reading[0];
 			frappe.db.get_value('Asset', { 'name': frm.doc.asset }, 'type', (r) => {
