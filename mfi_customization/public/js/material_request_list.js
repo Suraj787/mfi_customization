@@ -31,12 +31,3 @@ frappe.listview_settings['Material Request'] = {
     listview.page.add_actions_menu_item(__('Create Purchase Order'), action, false);
     }
 };
-
-frappe.listview_settings['Material Request'] = {
-    add_fields: ["mr_status"],
-    get_indicator: function(doc) {
-        if (doc.mr_status == 'Material Rejected') {
-            return [__("Material Rejected"), "red", "status,=,Material Rejected"];
-        }
-    }
-};

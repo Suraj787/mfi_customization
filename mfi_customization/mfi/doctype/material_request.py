@@ -565,26 +565,3 @@ def notify_helpdesk_about_material_approval(doc, method):
 			# recipients = get_customer_emails(doc.project)
 			# make(subject = subject, content=email_body, recipients=recipients,
 			#         send_email=True, sender="erp@groupmfi.com")
-
-
-@frappe.whitelist()
-def material_reject(doc):
-	doc = json.loads(doc)
-	doc_mr = frappe.get_doc("Material Request", doc.get("name"))
-	doc_mr.mr_status = "Material Rejected"
-	doc_mr.cancel()
-	task_reject(doc_mr.task)
-	issue_reject(doc_mr.task)
-
-
-def task_reject(task):
-	task = frappe.get_doc("Task", task)
-	task.mr_status = "Material Rejected"
-	task.save()
-
-
-def issue_reject(task):
-	issue = frappe.db.get_value("Task", task, 'issue')
-	issue = frappe.get_doc("Issue", issue)
-	issue.mr_status = "Material Rejected"
-	issue.save()
