@@ -449,16 +449,29 @@ def set_reading_from_task_to_issue(doc):
 	if doc.get("serial_no"):
 		issue_doc.serial_no = doc.get("serial_no")
 	issue_doc.save()
-
+	
 def validate_reading(doc):
-	for cur in doc.get('current_reading'):
-		cur.total=( int(cur.get('reading') or 0)  + int(cur.get('reading_2') or 0))
-		for lst in doc.get('last_readings'):
-			lst.total=( int(lst.get('reading') or 0)  + int(lst.get('reading_2') or 0))
-			if int(lst.total)>=int(cur.total):
-				frappe.throw("Current Reading Must be Greater than Last Reading")
-			if getdate(lst.date)>=getdate(cur.date):
-				frappe.throw("Current Reading <b>Date</b> Must be Greater than Last Reading")
+    user_roles= frappe.get_roles(frappe.session.user)
+    if "Call Coordinator" not in user_roles:
+       for cur in doc.get('current_reading'):
+           cur.total=( int(cur.get('reading') or 0)  + int(cur.get('reading_2') or 0))
+           for lst in doc.get('last_readings'):
+               lst.total=( int(lst.get('reading') or 0)  + int(lst.get('reading_2') or 0))
+               if int(lst.total)>=int(cur.total):
+                  frappe.throw("Current Reading Must be Greater than Last Reading")
+               if getdate(lst.date)>=getdate(cur.date):
+                  frappe.throw("Current Reading <b>Date</b> Must be Greater than Last Reading")
+
+
+#def validate_reading(doc):
+#	for cur in doc.get('current_reading'):
+#		cur.total=( int(cur.get('reading') or 0)  + int(cur.get('reading_2') or 0))
+#		for lst in doc.get('last_readings'):
+#			lst.total=( int(lst.get('reading') or 0)  + int(lst.get('reading_2') or 0))
+#			if int(lst.total)>=int(cur.total):
+#				frappe.throw("Current Reading Must be Greater than Last Reading")
+#			if getdate(lst.date)>=getdate(cur.date):
+#				frappe.throw("Current Reading <b>Date</b> Must be Greater than Last Reading")
 
 def validate_if_material_request_is_not_submitted(doc):
 	for mr in frappe.get_all("Material Request",{"task":doc.name,"docstatus":0}):
