@@ -27,7 +27,7 @@ class MachineReading(Document):
 				if machine_readings:
 					machine_readings = machine_readings[0]
 
-			if machine_readings:
+			if machine_readings and self.total is not None:
 				total_diff = int(self.total)-int(machine_readings[0].total)
 				last_mr_posting_date = frappe.db.get_value("Machine Reading", machine_readings[0].name, "posting_date")
 				months_diff = month_diff(self.posting_date, last_mr_posting_date)
