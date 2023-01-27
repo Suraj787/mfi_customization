@@ -449,7 +449,7 @@ frappe.ui.form.on("Asset Readings", "type", function(frm, cdt, cdn) {
 	}
 	if (d.type=="Colour"){
         $("div[data-idx='"+d.idx+"']").find("input[data-fieldname='reading_2']").css('pointer-events','all')
-		$("div[data-idx='"+d.idx+"']").find("input[data-fieldname='reading']").css('pointer-events','all')
+		$("div[data-idx='"+d.idx+"']").find("input[data-fieldname='reading']").css('pointer-events','none')
 	}
 	d.asset = frm.doc.asset
     refresh_field("asset", d.name, d.parentfield);

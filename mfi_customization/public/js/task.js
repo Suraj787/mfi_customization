@@ -366,16 +366,25 @@ frappe.ui.form.on("Asset Readings", "type", function (frm, cdt, cdn) {
 		bl_and_wht.read_only = 0;
 		clr.reqd = 0;
 		clr.read_only = 1;
+		d.set_df_property('reading_2', 'read_only', 1);
+		frm.refresh_fields("current_reading");
+		refresh_field("reading", d.name, d.parentfield);
+		refresh_field("reading_2", d.name, d.parentfield);
 	}
 	if (d.type == "Colour") {
-		bl_and_wht.reqd = 1;
-		bl_and_wht.read_only = 0;
+		bl_and_wht.reqd = 0;
+		bl_and_wht.read_only = 1;
 		clr.reqd = 1;
 		clr.read_only = 0;
+		d.set_df_property('reading', 'read_only', 1);
+		frm.refresh_fields("current_reading");
+		refresh_field("reading", d.name, d.parentfield);
+		refresh_field("reading_2", d.name, d.parentfield);
 	}
 
 	d.asset = frm.doc.asset
 	frm.set_df_property('asset', 'read_only', 1);
+	frm.refresh_fields("current_reading");
 	refresh_field("asset", d.name, d.parentfield);
 	refresh_field("reading", d.name, d.parentfield);
 	refresh_field("reading_2", d.name, d.parentfield);
@@ -514,6 +523,8 @@ frappe.ui.form.on('Task', {
 		frm.add_custom_button(__('Machine Asset History Report'), function () {
 			frappe.set_route(["query-report", "Machine Asset History"]);
 		});
+		frm.refresh_fields("current_reading");
+		refresh_field("current_reading");
 	}
 });
 

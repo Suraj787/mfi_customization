@@ -218,16 +218,22 @@ def set_reading_from_issue_to_task(doc,method):
 
 def validate_reading(doc):
     user_roles= frappe.get_roles(frappe.session.user)
-    if "Call Coordinator" not in user_roles:
-        for cur in doc.get('current_reading'):
+    curr = []
+    last = []
+    if "Call Coordinator" not in user_roles or "Administrator" in user_roles:
+        for cur in doc.get('current_reading'):     
+            print(f"\n\n\n\n\n321{cur.get('reading')},{cur.get('reading_2')},{cur.get('type')}\n\n\n\n\n")       
             cur.total=( int(cur.get('reading') or 0)  + int(cur.get('reading_2') or 0))
-            if doc.get('last_readings'):
-               for lst in doc.get('last_readings'):
-                   lst.total=( int(lst.get('reading') or 0)  + int(lst.get('reading_2') or 0))
-                   if int(lst.total)>int(cur.total):
-                      frappe.throw("Current Reading Must be Greater than Last Reading")
-                   if getdate(lst.date)>getdate(cur.date):
-                      frappe.throw("Current Reading <b>Date</b> Must be Greater than Last Reading")
+            curr.append(int(cur.get('reading') or 0)  + int(cur.get('reading_2') or 0))
+            for lst in doc.get('last_readings'):
+                lst.total=( int(lst.get('reading') or 0)  + int(lst.get('reading_2') or 0))
+                last.append(lst.total)
+                if getdate(lst.date)>=getdate(cur.date):
+                    frappe.throw("Current Reading <b>Date</b> Must be Greater than Last Reading")
+    if len(curr)>0 and len(last)>0:
+        print(f'\n\n\n\n\n321{curr},{last}\n\n\n\n\n')
+        if int(last[0])>=int(curr[0]):
+            frappe.throw("Current Reading Must be Greater than Last Reading")
 
 #def validate_reading(doc):
 #	for cur in doc.get('current_reading'):

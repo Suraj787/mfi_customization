@@ -20,8 +20,7 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Black & White Reading ",
-   "read_only": 1,
-   "read_only_depends_on": "doc.type=='Colour';"
+   "read_only_depends_on": "eval:doc.type=='Colour'\n"
   },
   {
    "fieldname": "date",
@@ -41,15 +40,14 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Type",
-   "options": "\nBlack & White\nColour"
+   "options": "Black & White\nColour"
   },
   {
    "fieldname": "reading_2",
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Color Reading ",
-   "read_only": 1,
-   "read_only_depends_on": "doc.type==\"Black & White\";"
+   "read_only_depends_on": "eval:doc.type=='Black & White'"
   },
   {
    "fieldname": "total",
@@ -73,7 +71,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-01-27 12:27:49.600827",
+ "modified": "2023-01-27 17:53:11.333240",
  "modified_by": "Administrator",
  "module": "mfi",
  "name": "Asset Readings",
