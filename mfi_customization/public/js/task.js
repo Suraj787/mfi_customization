@@ -362,7 +362,7 @@ frappe.ui.form.on("Asset Readings", "type", function (frm, cdt, cdn) {
 	var clr = frappe.meta.get_docfield("Asset Readings", "reading_2", d.name);
 
 	if (d.type == 'Black & White') {
-		bl_and_wht.reqd = 1;
+		// bl_and_wht.reqd = 1;
 		bl_and_wht.read_only = 0;
 		clr.reqd = 0;
 		clr.read_only = 1;
@@ -374,7 +374,7 @@ frappe.ui.form.on("Asset Readings", "type", function (frm, cdt, cdn) {
 	if (d.type == "Colour") {
 		bl_and_wht.reqd = 0;
 		bl_and_wht.read_only = 1;
-		clr.reqd = 1;
+		// clr.reqd = 1;
 		clr.read_only = 0;
 		d.set_df_property('reading', 'read_only', 1);
 		frm.refresh_fields("current_reading");
