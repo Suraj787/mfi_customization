@@ -44,7 +44,7 @@ def validate(doc,method):
 				"total": (int(d.get('black_and_white_reading') or 0) + int(d.get('colour_reading') or 0))
 				})
 
-	# set_field_values(doc)
+	set_field_values(doc)
 	assign_task_validation(doc)
 
 	if doc.get('__islocal'):
@@ -159,8 +159,9 @@ def send_task_assignment_email(task):
 
 def on_change(doc, method):
     validate_reading(doc)
-    # if doc.get("issue"):
-    #     set_reading_from_task_to_issue(doc)
+
+    if doc.get("issue"):
+        set_reading_from_task_to_issue(doc)
     existed_mr = []
     for d in doc.get('current_reading'):
         existed_mr = frappe.get_all("Machine Reading", {
@@ -188,7 +189,7 @@ def on_change(doc, method):
 
             elif doc.status == "Working" and doc.attended_date_time:
                 issue.first_responded_on = doc.attended_date_time
-        # issue.save()
+        issue.save()
 
 
 def after_delete(doc, method):
