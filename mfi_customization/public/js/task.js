@@ -7,8 +7,11 @@ frappe.ui.form.on('Task', {
 		}
 	},
 	status: function (frm) {
-		if (frm.doc.status == "Working") {
-			set_permissions_for_symptoms(frm);
+		// if (frm.doc.status == "Working") {
+		// 	set_permissions_for_symptoms(frm);
+		// }
+		if (frm.doc.status == "Working"){
+			frm.save()
 		}
 		transfer_data_to_issue(frm)
 		//fetch_data_material_request_item(frm)
@@ -46,6 +49,7 @@ frappe.ui.form.on('Task', {
 	},
 
 	after_save: function (frm) {
+		set_permissions_for_symptoms(frm);
 		//frm.reload();
 	},
 
@@ -129,8 +133,11 @@ frappe.ui.form.on('Task', {
 
 	},
 	refresh: function (frm) {
+		if (frm.doc.status == "Working"){
+			frm.save()
+		}
 
-		set_permissions_for_symptoms(frm);
+		// set_permissions_for_symptoms(frm);
 
 		transfer_data_to_issue(frm)
 		if (!frm.doc.__islocal) {
@@ -139,6 +146,7 @@ frappe.ui.form.on('Task', {
 
 			}, __("View"));
 		}
+		
 		frm.trigger('customer');
 
 		frm.add_custom_button('Material Request', () => {
@@ -552,7 +560,6 @@ function set_permissions_for_symptoms(frm) {
 		}
 	} else {
 		if (frappe.user.has_role("Technicians") == 1 && frappe.user != "Administrator" && frm.doc.status == "Working") {
-			frm.save();
 			frm.set_df_property('symptoms', "reqd", 1);
 			frm.set_df_property('action', "reqd", 1);
 			frm.set_df_property('cause', "reqd", 1);
