@@ -24,48 +24,43 @@ def validate(doc,method):
 	# machine_reading=""
 	for d in doc.get("current_reading"):
 		# machine_reading=d.machine_reading
-		if d.idx > 1:
+		if d.idx>1:
 			frappe.throw("More than one row not allowed")
 
-	last_reading = today()
-	if doc.asset and len(doc.get("last_readings")) == 0:
+	last_reading=today()
+	if doc.asset and  len(doc.get("last_readings"))==0:
 		doc.set("last_readings", [])
-		fltr = {"project": doc.project, "asset": doc.asset,
-		    "reading_date": ("<=", last_reading)}
+		fltr={"project":doc.project,"asset":doc.asset,"reading_date":("<=",last_reading)}
 		# if machine_reading:
 			# fltr.update({"name":("!=",machine_reading)})
-		for d in frappe.get_all("Machine Reading", filters=fltr, fields=["name", "reading_date", "asset", "black_and_white_reading", "colour_reading", "total", "machine_type"], limit=1, order_by="reading_date desc,name desc"):
+		for d in frappe.get_all("Machine Reading",filters=fltr,fields=["name","reading_date","asset","black_and_white_reading","colour_reading","total","machine_type"],limit=1,order_by="reading_date desc,name desc"):
 			doc.append("last_readings", {
-				"date": d.get('reading_date'),
-				"type": d.get('machine_type'),
-				"asset": d.get('asset'),
-				"reading": d.get('black_and_white_reading'),
-				"reading_2": d.get('colour_reading'),
-				"total": (int(d.get('black_and_white_reading') or 0) + int(d.get('colour_reading') or 0))
+				"date" : d.get('reading_date'),
+				"type" : d.get('machine_type'),
+				"asset":d.get('asset'),
+				"reading":d.get('black_and_white_reading'),
+				"reading_2":d.get('colour_reading'),
+				"total":( int(d.get('black_and_white_reading') or 0)  + int(d.get('colour_reading') or 0))
 				})
 
 	set_field_values(doc)
 	assign_task_validation(doc)
 
 	if doc.get('__islocal'):
-		for d in frappe.get_all("Task", {"issue": doc.issue}):
-			frappe.throw(
-			    "Task <b>{0}</b> Already Exist Against This Issue".format(doc.name))
+		for d in frappe.get_all("Task",{"issue":doc.issue}):
+			frappe.throw("Task <b>{0}</b> Already Exist Against This Issue".format(doc.name))
 	else:
 		create_user_permission(doc)
 
 	validate_link_fileds(doc)
 
-
-def before_insert(doc, method):
+def before_insert(doc,method):
 	send_task_assignment_email(doc)
 
 
 def set_actual_time(doc):
 	if doc.completion_date_time and doc.attended_date_time:
-		doc.actual_time = time_diff_in_hours(
-		    doc.completion_date_time, doc.attended_date_time)
-
+		doc.actual_time = time_diff_in_hours(doc.completion_date_time ,doc.attended_date_time)
 
 def send_task_completion_email(doc):
 	"""
@@ -77,7 +72,7 @@ def send_task_completion_email(doc):
 		# send email notification to helpdesk
 		helpdesk_email_body = f"""Task ticket number {doc.name} has been successfully completed."""
 		recipients = frappe.db.get_value("Company", doc.company, "support_email")
-		make(subject=subject, content=helpdesk_email_body, recipients=recipients,
+		make(subject = subject, content=helpdesk_email_body, recipients=recipients,
 				send_email=True, sender="erp@groupmfi.com")
 
 		# send email notification to client
@@ -86,9 +81,8 @@ def send_task_completion_email(doc):
 		# make(subject = subject, content=client_email_body, recipients=recipients,
 		# 		send_email=True, sender="erp@groupmfi.com")
 
-		doc.completed_sent = 1
+		doc.completed_sent=1
 		frappe.msgprint("Task completion email has been sent")
-
 
 def send_task_escalation_email(doc):
 	if not frappe.db.get_value("Task", doc.name, "escalation"):
@@ -99,7 +93,7 @@ def send_task_escalation_email(doc):
 			helpdesk_email_body = f"""Task ticket number {doc.name} has been
 								Escalated By {doc.technician_name} for Follow Up."""
 			recipients = frappe.db.get_value("Company", doc.company, "support_email")
-			make(subject=subject, content=helpdesk_email_body, recipients=recipients,
+			make(subject = subject, content=helpdesk_email_body, recipients=recipients,
 					send_email=True, sender="erp@groupmfi.com")
 
 			# send email notification to client
@@ -112,15 +106,15 @@ def send_task_escalation_email(doc):
 			# frappe.msgprint("Task escalation email has been sent")
 
 
-def after_insert(doc, method):
+def after_insert(doc,method):
 	if doc.get('issue'):
-		frappe.db.set_value('Issue', doc.get('issue'), 'status', 'Assigned')
+		frappe.db.set_value('Issue',doc.get('issue'),'status','Assigned')
 
 	if doc.failure_date_and_time and doc.issue:
-		doc.failure_date_and_time = frappe.db.get_value(
-		    "Issue", doc.issue, "failure_date_and_time")
+		doc.failure_date_and_time=frappe.db.get_value("Issue",doc.issue,"failure_date_and_time")
 	if doc.issue:
-		doc.description = frappe.db.get_value("Issue", doc.issue, "description")
+		doc.description=frappe.db.get_value("Issue",doc.issue,"description")
+
 
 	create_user_permission(doc)
 
@@ -133,7 +127,6 @@ def after_insert(doc, method):
 	#       "write": 1
 	#   })
 	# docperm.save(ignore_permissions=True)
-
 
 def send_task_assignment_email(task):
 	if task.completed_by:
@@ -148,61 +141,52 @@ def send_task_assignment_email(task):
 		recipients = frappe.db.get_value("Company", task.company, "support_email")
 		if task.type_of_call == "Toner":
 			body = f"""Ticket no. {task.issue} with type of call "Toner" has been assigned to our Engineer {task.technician_name}"""
-			recipients = frappe.db.get_value(
-			    "Company", task.company, "toner_support_email")
+			recipients = frappe.db.get_value("Company", task.company, "toner_support_email")
 
-		make(subject=assign_subject, content=body, recipients=recipients,
+		make(subject = assign_subject,content=body,recipients=recipients,
 			send_email=True, sender="erp@groupmfi.com")
 
 		frappe.msgprint("Task assignment email has been sent")
 
 
-def on_change(doc, method):
-    validate_reading(doc)
+def on_change(doc,method):
+	if doc.get("issue"):
+		set_reading_from_task_to_issue(doc)
+	validate_reading(doc)
+	existed_mr=[]
+	for d in doc.get('current_reading'):
+		existed_mr = frappe.get_all("Machine Reading",{"task":doc.name,"project":doc.project, 'row_id':d.get('name')}, 'name')
+	if existed_mr :
+		update_machine_reading(doc, existed_mr)
+	else:
+		create_machine_reading(doc)
+	if doc.get("issue"):
+		issue=frappe.get_doc("Issue",doc.issue)
+		issue.response_date_time=doc.attended_date_time
+		if doc.issue and doc.status != 'Open':
+			issue.status=doc.status
+			if doc.status == 'Completed':
+				validate_if_material_request_is_not_submitted(doc)
+				validate_current_reading(doc)
+				attachment_validation(doc)
 
-    if doc.get("issue"):
-        set_reading_from_task_to_issue(doc)
-    existed_mr = []
-    for d in doc.get('current_reading'):
-        existed_mr = frappe.get_all("Machine Reading", {
-                                    "task": doc.name, "project": doc.project, 'row_id': d.get('name')}, 'name')
-    if existed_mr:
-        update_machine_reading(doc, existed_mr)
-    else:
-        create_machine_reading(doc)
-    if doc.get("issue"):
-        issue = frappe.get_doc("Issue", doc.issue)
-        issue.response_date_time = doc.attended_date_time
-        if doc.issue and doc.status != 'Open':
-            issue.status = doc.status
-            if doc.status == 'Completed':
-                validate_if_material_request_is_not_submitted(doc)
-                validate_current_reading(doc)
-                attachment_validation(doc)
-
-                issue.status = "Task Completed"
-                issue.set("task_attachments", [])
-                for d in doc.get("attachments"):
-                    issue.append("task_attachments", {
-						"attach": d.attach
+				issue.status="Task Completed"
+				issue.set("task_attachments",[])
+				for d in doc.get("attachments"):
+					issue.append("task_attachments",{
+						"attach":d.attach
 					})
 
-            elif doc.status == "Working" and doc.attended_date_time:
-                issue.first_responded_on = doc.attended_date_time
-        issue.save()
-
-
-def after_delete(doc, method):
-	for t in frappe.get_all('Asset Repair', filters={'task': doc.name}):
-		frappe.delete_doc('Asset Repair', t.name)
-
+			elif doc.status=="Working" and doc.attended_date_time:
+				issue.first_responded_on=doc.attended_date_time
+		issue.save()
+def after_delete(doc,method):
+	for t in frappe.get_all('Asset Repair',filters={'task':doc.name}):
+		frappe.delete_doc('Asset Repair',t.name)
 
 def set_field_values(doc):
 	if doc.get("issue"):
-		issue = frappe.get_doc("Issue", {"name": doc.get("issue")})
-		for i, j in zip(issue.current_reading, doc.current_reading):
-			i.reading = j.reading
-			i.reading_2 = j.reading_2
+		issue = frappe.get_doc("Issue",{"name":doc.get("issue")})
 		if doc.get("completed_by"):
 			issue.assign_to = doc.get("completed_by")
 		if doc.get("assign_date"):
@@ -470,28 +454,17 @@ def validate_reading(doc):
     user_roles= frappe.get_roles(frappe.session.user)
     curr = []
     last = []
-    curr_date = []
-    last_date = []
     if "Call Coordinator" not in user_roles or "Administrator" in user_roles:
         for cur in doc.get('current_reading'):
-            print(f'\n\n\n\n\ntask{cur.get("reading")},{cur.get("reading_2")}\n\n\n\n\n')
             cur.total=( int(cur.get('reading') or 0)  + int(cur.get('reading_2') or 0))
             curr.append(cur.total)
-            curr_date.append(cur.date)
             for lst in doc.get('last_readings'):
                 lst.total=( int(lst.get('reading') or 0)  + int(lst.get('reading_2') or 0))
                 last.append(lst.total)
-                last_date.append(lst.date)
-		
-    if len(curr)>0 and len(last)>0:
-        print(f'\n\n\n\n\n122{curr},{last}\n\n\n\n\n')
-        if int(last[0])>=int(curr[0]):
-            frappe.throw("Current Reading Must be Greater than Last Reading")
-
-    if len(curr_date)>0 and len(last_date)>0:
-        if getdate(lst.date)>=getdate(cur.date):
-            frappe.throw("Current Reading <b>Date</b> Must be Greater than Last Reading")
-
+                if getdate(lst.date)>=getdate(cur.date):
+                    frappe.throw("Current Reading <b>Date</b> Must be Greater than Last Reading")
+    if int(last[0])>=int(curr[0]):
+        frappe.throw("Current Reading Must be Greater than Last Reading")
 	
 
 
