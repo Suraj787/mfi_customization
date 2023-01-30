@@ -469,8 +469,9 @@ def validate_reading(doc):
 		
     if len(curr)>0 and len(last)>0:
         print(f'\n\n\n\n\n122{curr},{last}\n\n\n\n\n')
-        if int(last[0])>=int(curr[0]):
-            frappe.throw("Current Reading Must be Greater than Last Reading")
+        if doc.issue_type != 'Error message':
+            if int(last[0])>=int(curr[0]):
+                frappe.throw("Current Reading Must be Greater than Last Reading")
 
     if len(curr_date)>0 and len(last_date)>0:
         if last_date[0] != today:
