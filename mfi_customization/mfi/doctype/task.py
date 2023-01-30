@@ -180,6 +180,7 @@ def on_change(doc,method):
 			elif doc.status=="Working" and doc.attended_date_time:
 				issue.first_responded_on=doc.attended_date_time
 		issue.save()
+	escalation_section(doc)	
 def after_delete(doc,method):
 	for t in frappe.get_all('Asset Repair',filters={'task':doc.name}):
 		frappe.delete_doc('Asset Repair',t.name)
@@ -647,6 +648,18 @@ def get_asset(customer,location):
 def validate_current_reading(doc):
 	if frappe.db.get_value('Type of Call',{'name':doc.type_of_call},'ignore_reading')==0 and len(doc.get("current_reading"))==0:
 		frappe.throw("Cann't Complete Task Without Current Reading")
+
+
+def escalation_section(doc):
+    if doc.escalation ==1 and doc.senior_technician_description:
+       issue= frappe.get_doc('Issue', doc.issue)
+       if issue:
+          issue.escalation=1
+          issue.escalated_technician_name=doc.escalated_technician_name
+          issue.escalation_description=doc.escalation_
+          issue.senior_technician_description=doc.senior_technician_description
+          issue.save()
+
 
 
 @frappe.whitelist()
