@@ -165,7 +165,7 @@ def on_change(doc,method):
 		issue.response_date_time=doc.attended_date_time
 		if doc.issue and doc.status != 'Open':
 			issue.status=doc.status
-			if doc.status == 'Working':
+			if doc.status == 'Completed':
 				validate_if_material_request_is_not_submitted(doc)
 				validate_current_reading(doc)
 				attachment_validation(doc)
