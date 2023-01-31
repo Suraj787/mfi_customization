@@ -387,7 +387,7 @@ def after_insert(doc,method):
 			send_email=True, sender="erp@groupmfi.com")
 		frappe.msgprint("Issue ticket creation email has been sent")
 
-	if doc.type_of_call == "Service Request" or doc.type_of_call == "Toner" and doc.status="Closed":
+	if doc.type_of_call == "Service Request" or doc.type_of_call == "Toner" and doc.status == "Closed":
 		client_emails = get_customer_emails(doc.project)
 		support_email = frappe.db.get_value("Company", doc.company, "support_email")
 		subject = f"""Ticket closed for Issue"""
