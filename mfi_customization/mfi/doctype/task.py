@@ -152,10 +152,8 @@ def send_task_assignment_email(task):
 def on_change(doc,method):
 	if doc.get("issue"):
 		set_reading_from_task_to_issue(doc)
-	# if frappe.db.get_value('Task', doc.name,'status') == 'Working':
-	# 	doc.reload()
-	# 	print('ddshhhfcgvhbjnkmnjhbgfcdxszxfcv')
-	# 	validate_reading(doc)
+	if doc.status == 'Working':
+		validate_reading(doc)
 	existed_mr=[]
 	for d in doc.get('current_reading'):
 		existed_mr = frappe.get_all("Machine Reading",{"task":doc.name,"project":doc.project, 'row_id':d.get('name')}, 'name')
@@ -453,35 +451,33 @@ def set_reading_from_task_to_issue(doc):
 	if doc.get("serial_no"):
 		issue_doc.serial_no = doc.get("serial_no")
 	issue_doc.save()
-
-@frappe.whitelist()
-def validate_reading(name):
+	
+def validate_reading(doc):
     user_roles= frappe.get_roles(frappe.session.user)
     curr = []
     last = []
     curr_date = []
     last_date = []
-    task = frappe.get_doc('Task',name)
-    if "Call Coordinator" not in user_roles or "Administrator" in user_roles:
-        for cur in task.get('current_reading'):
+    if "Call Coordinator" not in user_roles or "Administrator" in user_roles and doc.status=='Working':
+        for cur in doc.get('current_reading'):
             print(f'\n\n\n\n\ntask{cur.get("reading")},{cur.get("reading_2")}\n\n\n\n\n')
             cur.total=( int(cur.get('reading') or 0)  + int(cur.get('reading_2') or 0))
             curr.append(cur.total)
             curr_date.append(cur.date)
-            for lst in task.get('last_readings'):
+            for lst in doc.get('last_readings'):
                 lst.total=( int(lst.get('reading') or 0)  + int(lst.get('reading_2') or 0))
                 last.append(lst.total)
                 last_date.append(lst.date)
 		
     if len(curr)>0 and len(last)>0:
         print(f'\n\n\n\n\n122{curr},{last}\n\n\n\n\n')
-        if task.issue_type != 'Error message':
-            if int(last[0])>=int(curr[0]):
+        if doc.issue_type != 'Error message':
+            if int(last[0])>=int(curr[0]) and int(last[0])>0 and int(curr[0])>0:
                 frappe.throw("Current Reading Must be Greater than Last Reading")
 
     if len(curr_date)>0 and len(last_date)>0:
         if last_date[0] != today:
-            if last_date[0]>curr_date[0]:
+            if last_date[0]>curr_date[0] and int(last[0])>0 and int(curr[0])>0:
                 frappe.throw("Current Reading <b>Date</b> Must be Greater than Last Reading")
 
 #def validate_reading(doc):

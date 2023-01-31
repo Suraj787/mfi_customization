@@ -50,17 +50,6 @@ frappe.ui.form.on('Task', {
 
 	after_save: function (frm) {
 		set_permissions_for_symptoms(frm);
-		frappe.call({
-			method: "mfi_customization.mfi.doctype.task.validate_reading",
-			args: {"name": frm.doc.name },
-			callback: function (r) {
-				if (!r.exc) {
-					if (r.message) {
-						frappe.msgprint("done")
-					}
-				}
-			}
-		})
 		//frm.reload();
 	},
 
