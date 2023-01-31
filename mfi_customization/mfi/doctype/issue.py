@@ -387,6 +387,32 @@ def after_insert(doc,method):
 			send_email=True, sender="erp@groupmfi.com")
 		frappe.msgprint("Issue ticket creation email has been sent")
 
+	if doc.type_of_call == "Service Request" or doc.type_of_call == "Toner" and doc.status="Closed":
+		client_emails = get_customer_emails(doc.project)
+		support_email = frappe.db.get_value("Company", doc.company, "support_email")
+		subject = f"""Ticket closed for Issue"""
+		customer_name = frappe.db.get_value("Customer", doc.customer, "customer_name")
+		helpdesk_body = f"""Issue ticket number {doc.name} has been
+							closed by {doc.customer} - {customer_name}"""
+		if doc.type_of_call == "Service Request":
+			client_body = f"""Your issue has been successfully closed with ticket number {doc.name}
+					Kindly wait as we assign our Engineer."""
+
+		elif doc.type_of_call == "Toner":
+			client_body = f"""Your issue regarding Toner has been successfully closed with ticket number
+							{doc.name}. Kindly wait as we resolve it."""
+			support_email = frappe.db.get_value("Company", doc.company, "toner_support_email")
+
+
+		make(subject = subject,content=client_body,
+			recipients=client_emails,
+			send_email=True, sender="erp@groupmfi.com")
+		make(subject = subject,content=helpdesk_body,
+			recipients=support_email,
+			send_email=True, sender="erp@groupmfi.com")
+		frappe.msgprint("Issue ticket closing email has been sent")
+
+
 def send_call_resolved_email(issue):
 	if not frappe.db.get_value("Issue", issue.name, "over_call_resolution"):
 		if issue.over_call_resolution and issue.resolution_reason and issue.type_of_call == "Service Request":
