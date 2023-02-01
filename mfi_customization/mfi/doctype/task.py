@@ -152,7 +152,8 @@ def send_task_assignment_email(task):
 def on_change(doc,method):
 	if doc.get("issue"):
 		set_reading_from_task_to_issue(doc)
-	validate_reading(doc)
+	if doc.status == 'Working':
+		validate_reading(doc)
 	existed_mr=[]
 	for d in doc.get('current_reading'):
 		existed_mr = frappe.get_all("Machine Reading",{"task":doc.name,"project":doc.project, 'row_id':d.get('name')}, 'name')
@@ -165,7 +166,7 @@ def on_change(doc,method):
 		issue.response_date_time=doc.attended_date_time
 		if doc.issue and doc.status != 'Open':
 			issue.status=doc.status
-			if doc.status == 'Working':
+			if doc.status == 'Completed':
 				validate_if_material_request_is_not_submitted(doc)
 				validate_current_reading(doc)
 				attachment_validation(doc)
@@ -458,7 +459,7 @@ def validate_reading(doc):
     last = []
     curr_date = []
     last_date = []
-    if "Call Coordinator" not in user_roles or "Administrator" in user_roles:
+    if "Call Coordinator" not in user_roles or "Administrator" in user_roles and doc.status=='Working':
         for cur in doc.get('current_reading'):
             print(f'\n\n\n\n\ntask{cur.get("reading")},{cur.get("reading_2")}\n\n\n\n\n')
             cur.total=( int(cur.get('reading') or 0)  + int(cur.get('reading_2') or 0))
@@ -472,12 +473,12 @@ def validate_reading(doc):
     if len(curr)>0 and len(last)>0:
         print(f'\n\n\n\n\n122{curr},{last}\n\n\n\n\n')
         if doc.issue_type != 'Error message':
-            if int(last[0])>=int(curr[0]):
+            if int(last[0])>=int(curr[0]) and int(last[0])>0 and int(curr[0])>0:
                 frappe.throw("Current Reading Must be Greater than Last Reading")
 
     if len(curr_date)>0 and len(last_date)>0:
         if last_date[0] != today:
-            if last_date[0]>curr_date[0]:
+            if last_date[0]>curr_date[0] and int(last[0])>0 and int(curr[0])>0:
                 frappe.throw("Current Reading <b>Date</b> Must be Greater than Last Reading")
 
 #def validate_reading(doc):
@@ -491,7 +492,7 @@ def validate_reading(doc):
 #				frappe.throw("Current Reading <b>Date</b> Must be Greater than Last Reading")
 
 def validate_if_material_request_is_not_submitted(doc):
-	for mr in frappe.get_all("Material Request",{"task":doc.name,"docstatus":0}):
+	for mr in frappe.get_all("Material Request",{"task":doc.name,"workflow_state":['not in', ['Approved', 'Rejected']]}):
 		frappe.throw("Material Request is not completed yet. Name <b>{0}</b>".format(mr.name))
 
 def attachment_validation(doc):

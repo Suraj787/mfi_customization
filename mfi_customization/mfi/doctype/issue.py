@@ -45,6 +45,7 @@ def validate(doc,method):
 				})
 
 	send_call_resolved_email(doc)
+	send_issue_closed_email(doc)
 
 
 def on_change(doc,method):
@@ -232,7 +233,7 @@ def validate_reading(doc):
                 lst.total=( int(lst.get('reading') or 0)  + int(lst.get('reading_2') or 0))
                 last.append(lst.total)
                 last_date.append(lst.date)
-		
+
     if len(curr)>0 and len(last)>0:
         # print(f'\n\n\n\n\n122{curr},{last}\n\n\n\n\n')
         if int(last[0])>=int(curr[0]):
@@ -402,6 +403,22 @@ def send_call_resolved_email(issue):
 			make(subject = subject,content=email_body,
 				recipients=helpdesk_email,
 				send_email=True, sender="erp@groupmfi.com")
+
+def send_issue_closed_email(issue):
+	status = frappe.db.get_value("Issue", issue.name, "status")
+	if status != "Closed" and issue.status == "Closed":
+		subject = f"Issue {issue.name} closed"
+		helpdesk_email = frappe.db.get_value("Company", issue.company, "support_email")
+		client_emails = get_customer_emails(issue.project)
+		email_body = f"Issue ticket number {issue.name} has been closed"
+
+		make(subject = subject,content=email_body,
+			recipients=client_emails,
+			send_email=True, sender="erp@groupmfi.com")
+
+		make(subject = subject,content=email_body,
+			recipients=helpdesk_email,
+			send_email=True, sender="erp@groupmfi.com")
 
 @frappe.whitelist()
 def asset_name_item(item_code):
