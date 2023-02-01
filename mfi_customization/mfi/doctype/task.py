@@ -202,7 +202,8 @@ def make_material_req(source_name, target_doc=None):
 	doclist = get_mapped_doc("Task", source_name, {
 		"Task": {
 			"doctype": "Material Request",
-			"name":"custom_task"
+			"name":"custom_task",
+			"company":"company"
 		}
 	}, target_doc,set_missing_values )
 
