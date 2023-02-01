@@ -653,14 +653,19 @@ def validate_current_reading(doc):
 
 
 def escalation_section(doc):
+    issue= frappe.get_doc('Issue', doc.issue)
     if doc.escalation ==1 and doc.senior_technician_description:
-       issue= frappe.get_doc('Issue', doc.issue)
        if issue:
           issue.escalation=1
           issue.escalated_technician_name=doc.escalated_technician_name
           issue.escalation_description=doc.escalation_
           issue.senior_technician_description=doc.senior_technician_description
           issue.save()
+    if doc.status =="Completed" and doc.requested_material_status:
+       if issue:
+          issue.requested_material_status=doc.requested_material_status
+          issue.save()
+
 
 
 
