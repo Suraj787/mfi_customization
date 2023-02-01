@@ -142,6 +142,16 @@ def get_location(doctype, txt, searchfield, start, page_len, filters):
 				lst.append(a.location)
 	return [(d,) for d in lst]
 
+@frappe.whitelist()
+def add_item_filter(asset):
+	item_code = frappe.db.get_value('Asset',{'name':asset},'item_code')
+	item = frappe.get_doc('Item',{'item_code':item_code})
+	toner = []
+	for tone in item.compatible_toners:
+		toner.append(tone.item_code)
+	
+	return toner
+
 
 @frappe.whitelist()
 def get_asset_on_cust(doctype, txt, searchfield, start, page_len, filters):

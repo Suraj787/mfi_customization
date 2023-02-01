@@ -262,6 +262,7 @@ frappe.ui.form.on('Issue', {
 				};
 			}
 		});
+	
 		// frm.set_query("location", function() {
 		// 	if (frm.doc.customer) {
 		// 		return {
@@ -321,6 +322,7 @@ frappe.ui.form.on('Issue', {
 
 				}
 		});
+		
 	},
 	refresh: function (frm) {
 
@@ -397,6 +399,7 @@ frappe.ui.form.on('Issue', {
 	    frm.remove_custom_button('Task','View')
 
 	}
+	
 
 	},
 	customer:function(frm){
