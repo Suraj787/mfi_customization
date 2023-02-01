@@ -491,7 +491,7 @@ def validate_reading(doc):
 #				frappe.throw("Current Reading <b>Date</b> Must be Greater than Last Reading")
 
 def validate_if_material_request_is_not_submitted(doc):
-	for mr in frappe.get_all("Material Request",{"task":doc.name,"docstatus":0}):
+	for mr in frappe.get_all("Material Request",{"task":doc.name,"workflow_state":['not in', ['Approved', 'Rejected']]}):
 		frappe.throw("Material Request is not completed yet. Name <b>{0}</b>".format(mr.name))
 
 def attachment_validation(doc):
