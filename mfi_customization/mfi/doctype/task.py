@@ -152,8 +152,7 @@ def send_task_assignment_email(task):
 def on_change(doc,method):
 	if doc.get("issue"):
 		set_reading_from_task_to_issue(doc)
-	if doc.status == 'Working':
-		validate_reading(doc)
+	validate_reading(doc)
 	existed_mr=[]
 	for d in doc.get('current_reading'):
 		existed_mr = frappe.get_all("Machine Reading",{"task":doc.name,"project":doc.project, 'row_id':d.get('name')}, 'name')
@@ -459,7 +458,7 @@ def validate_reading(doc):
     last = []
     curr_date = []
     last_date = []
-    if "Call Coordinator" not in user_roles or "Administrator" in user_roles and doc.status=='Working':
+    if "Call Coordinator" not in user_roles or "Administrator" in user_roles:
         for cur in doc.get('current_reading'):
             print(f'\n\n\n\n\ntask{cur.get("reading")},{cur.get("reading_2")}\n\n\n\n\n')
             cur.total=( int(cur.get('reading') or 0)  + int(cur.get('reading_2') or 0))
