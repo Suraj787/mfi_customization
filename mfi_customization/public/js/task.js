@@ -7,11 +7,9 @@ frappe.ui.form.on('Task', {
 		}
 	},
 	status: function (frm) {
-		// if (frm.doc.status == "Working") {
-		// 	set_permissions_for_symptoms(frm);
-		// }
-		if (frm.doc.status == "Working"){
+		if (frm.doc.status == "Working") {
 			frm.save()
+			// set_permissions_for_symptoms(frm);
 		}
 		transfer_data_to_issue(frm)
 		//fetch_data_material_request_item(frm)
@@ -49,7 +47,6 @@ frappe.ui.form.on('Task', {
 	},
 
 	after_save: function (frm) {
-		set_permissions_for_symptoms(frm);
 		//frm.reload();
 	},
 
@@ -94,7 +91,9 @@ frappe.ui.form.on('Task', {
 		}
 	},
 	onload: function (frm) {
+		if (frm.doc.status == "Working") {
 		set_permissions_for_symptoms(frm);
+		}
 		// fetch_data_material_request_item(frm)
 		/*
    frappe.call({
@@ -133,20 +132,16 @@ frappe.ui.form.on('Task', {
 
 	},
 	refresh: function (frm) {
-		if (frm.doc.status == "Working"){
-			frm.save()
-		}
 
-		// set_permissions_for_symptoms(frm);
+		set_permissions_for_symptoms(frm);
 
-		// transfer_data_to_issue(frm)
+		transfer_data_to_issue(frm)
 		if (!frm.doc.__islocal) {
 			frm.add_custom_button(__('Material Request'), function () {
 				frappe.set_route('List', 'Material Request', { task: frm.doc.name });
 
 			}, __("View"));
 		}
-		
 		frm.trigger('customer');
 
 		frm.add_custom_button('Material Request', () => {
@@ -375,9 +370,9 @@ frappe.ui.form.on("Asset Readings", "type", function (frm, cdt, cdn) {
 		clr.reqd = 0;
 		clr.read_only = 1;
 		d.set_df_property('reading_2', 'read_only', 1);
-		frm.refresh_fields("current_reading");
-		refresh_field("reading", d.name, d.parentfield);
-		refresh_field("reading_2", d.name, d.parentfield);
+		// frm.refresh_fields("current_reading");
+		// refresh_field("reading", d.name, d.parentfield);
+		// refresh_field("reading_2", d.name, d.parentfield);
 	}
 	if (d.type == "Colour") {
 		bl_and_wht.reqd = 0;
@@ -385,14 +380,13 @@ frappe.ui.form.on("Asset Readings", "type", function (frm, cdt, cdn) {
 		// clr.reqd = 1;
 		clr.read_only = 0;
 		d.set_df_property('reading', 'read_only', 1);
-		frm.refresh_fields("current_reading");
-		refresh_field("reading", d.name, d.parentfield);
-		refresh_field("reading_2", d.name, d.parentfield);
+		// frm.refresh_fields("current_reading");
+		// refresh_field("reading", d.name, d.parentfield);
+		// refresh_field("reading_2", d.name, d.parentfield);
 	}
 
 	d.asset = frm.doc.asset
 	frm.set_df_property('asset', 'read_only', 1);
-	frm.refresh_fields("current_reading");
 	refresh_field("asset", d.name, d.parentfield);
 	refresh_field("reading", d.name, d.parentfield);
 	refresh_field("reading_2", d.name, d.parentfield);
@@ -531,8 +525,6 @@ frappe.ui.form.on('Task', {
 		frm.add_custom_button(__('Machine Asset History Report'), function () {
 			frappe.set_route(["query-report", "Machine Asset History"]);
 		});
-		frm.refresh_fields("current_reading");
-		refresh_field("current_reading");
 	}
 });
 
@@ -563,6 +555,13 @@ function set_permissions_for_symptoms(frm) {
 			frm.set_df_property('symptoms', "reqd", 1);
 			frm.set_df_property('action', "reqd", 1);
 			frm.set_df_property('cause', "reqd", 1);
+			frm.set_df_property('signature', "reqd", 1);
+			frm.set_df_property('priority', "read_only", 1);
+		}
+		if (frappe.user.has_role("Technicians") == 1 && frappe.user != "Administrator" && frm.doc.status == "Open") {
+			frm.set_df_property('symptoms', "reqd", 0);
+			frm.set_df_property('action', "reqd", 0);
+			frm.set_df_property('cause', "reqd", 0);
 			frm.set_df_property('signature', "reqd", 1);
 			frm.set_df_property('priority', "read_only", 1);
 		}
