@@ -139,7 +139,7 @@ frappe.ui.form.on('Task', {
 
 		// set_permissions_for_symptoms(frm);
 
-		transfer_data_to_issue(frm)
+		// transfer_data_to_issue(frm)
 		if (!frm.doc.__islocal) {
 			frm.add_custom_button(__('Material Request'), function () {
 				frappe.set_route('List', 'Material Request', { task: frm.doc.name });
