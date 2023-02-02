@@ -528,9 +528,9 @@ function transfer_data_to_issue(frm) {
 
 frappe.ui.form.on('Task', {
 	refresh(frm) {
-		frm.add_custom_button(__('Machine Asset History Report'), function () {
-			frappe.set_route(["query-report", "Machine Asset History"]);
-		});
+		//frm.add_custom_button(__('Machine Asset History Report'), function () {
+		//	frappe.set_route(["query-report", "Machine Asset History"]);
+		//});
 		frm.refresh_fields("current_reading");
 		refresh_field("current_reading");
 	}
