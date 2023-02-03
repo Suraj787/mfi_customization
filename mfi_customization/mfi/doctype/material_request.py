@@ -20,8 +20,8 @@ from mfi_customization.mfi.doctype.project import get_customer_emails
 #                     doc.approver=emp2.user_id
 #                     doc.approver_name=frappe.db.get_value("User",emp2.user_id,"full_name")
 
-# def before_save(doc,method):
-	# set_yeild_details(doc)
+def before_save(doc,method):
+    set_yeild_details(doc)
 
 # def on_submit(doc,method):
 #     validate_mr(doc)
