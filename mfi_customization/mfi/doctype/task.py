@@ -595,7 +595,7 @@ def get_locationlist(doctype, txt, searchfield, start, page_len, filters):
 
 @frappe.whitelist()
 def set_items_on_machine_reading_from_mr(asset,task):
-	material_request_list =[i.name for i in frappe.db.get_list('Material Request',{'task_':task, 'asset':asset}, 'name')]
+	material_request_list =[i.name for i in frappe.db.get_list('Material Request',{'task':task, 'asset':asset}, 'name')]
 	if material_request_list:
 		machine_reading_doc = frappe.get_last_doc('Machine Reading', filters={"task":task, "asset":asset})
 		machine_reading_doc.items =[]
