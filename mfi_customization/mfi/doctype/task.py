@@ -72,6 +72,8 @@ def send_task_completion_email(doc):
 		# send email notification to helpdesk
 		helpdesk_email_body = f"""Task ticket number {doc.name} has been successfully completed."""
 		recipients = frappe.db.get_value("Company", doc.company, "support_email")
+		if doc.type_of_call == "Toner":
+			recipients = frappe.db.get_value("Company", doc.company, "toner_support_email")
 		make(subject = subject, content=helpdesk_email_body, recipients=recipients,
 				send_email=True, sender="erp@groupmfi.com")
 
@@ -93,6 +95,9 @@ def send_task_escalation_email(doc):
 			helpdesk_email_body = f"""Task ticket number {doc.name} has been
 								Escalated By {doc.technician_name} for Follow Up."""
 			recipients = frappe.db.get_value("Company", doc.company, "support_email")
+			if doc.type_of_call == "Toner":
+				recipients = frappe.db.get_value("Company", doc.company, "toner_support_email")
+
 			make(subject = subject, content=helpdesk_email_body, recipients=recipients,
 					send_email=True, sender="erp@groupmfi.com")
 
@@ -180,7 +185,7 @@ def on_change(doc,method):
 			elif doc.status=="Working" and doc.attended_date_time:
 				issue.first_responded_on=doc.attended_date_time
 		issue.save()
-	escalation_section(doc)	
+	escalation_section(doc)
 def after_delete(doc,method):
 	for t in frappe.get_all('Asset Repair',filters={'task':doc.name}):
 		frappe.delete_doc('Asset Repair',t.name)
@@ -451,7 +456,7 @@ def set_reading_from_task_to_issue(doc):
 	if doc.get("serial_no"):
 		issue_doc.serial_no = doc.get("serial_no")
 	issue_doc.save()
-	
+
 def validate_reading(doc):
     user_roles= frappe.get_roles(frappe.session.user)
     curr = []
@@ -468,7 +473,7 @@ def validate_reading(doc):
                 lst.total=( int(lst.get('reading') or 0)  + int(lst.get('reading_2') or 0))
                 last.append(lst.total)
                 last_date.append(lst.date)
-		
+
     if len(curr)>0 and len(last)>0:
         print(f'\n\n\n\n\n122{curr},{last}\n\n\n\n\n')
         if doc.issue_type != 'Error message':
