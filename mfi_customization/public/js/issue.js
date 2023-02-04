@@ -325,7 +325,7 @@ frappe.ui.form.on('Issue', {
 		
 	},
 	refresh: function (frm) {
-
+                permision_fr_call_co_and_tech(frm)
 		cur_frm.dashboard.hide()
         frappe.db.get_value("Task", {"issue": frm.doc.name}, 'name',(r) =>{
 			if(r.name){
@@ -580,3 +580,16 @@ frappe.ui.form.on('Issue', {
 //         }
 //     }
 // });
+
+
+function permision_fr_call_co_and_tech(frm){
+if (frm.doc.type_of_call == "Toner") {
+		if (frappe.user.has_role("Technicians") == 1 && frappe.user.has_role == "Call Coordinator") {
+			frm.set_df_property('symptoms', "hidden", 1);
+			frm.set_df_property('action', "hidden", 1);
+			frm.set_df_property('cause', "hidden", 1);
+			frm.set_df_property('escalation', "hidden", 1);
+		}
+	}
+
+}

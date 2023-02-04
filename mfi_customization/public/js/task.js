@@ -35,6 +35,9 @@ frappe.ui.form.on('Task', {
 				args: {
 					'asset': frm.doc.asset,
 					'task': frm.doc.name
+				},
+				callback: function(r) {
+				 console.log(r)
 				}
 			});
 
@@ -132,10 +135,11 @@ frappe.ui.form.on('Task', {
 
 	},
 	refresh: function (frm) {
-
+  
 		set_permissions_for_symptoms(frm);
-
+                
 		transfer_data_to_issue(frm)
+		read_onl_for_call_codinator_status_complete(frm)
 		if (!frm.doc.__islocal) {
 			frm.add_custom_button(__('Material Request'), function () {
 				frappe.set_route('List', 'Material Request', { task: frm.doc.name });
@@ -583,5 +587,12 @@ function set_permissions_for_symptoms(frm) {
 			frm.set_df_property('repair_items', 'hidden', 1);
 
 		}
+	       
 	}
+}
+
+function read_onl_for_call_codinator_status_complete(frm){
+         if (frappe.user.has_role("Call Coordinator")==1 && frm.doc.status == "Completed"){
+	            frm.set_df_property('status',"read_only",1);
+	          }
 }
