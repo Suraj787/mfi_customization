@@ -405,6 +405,8 @@ def send_call_resolved_email(issue):
 			helpdesk_email = frappe.db.get_value("Company", issue.company, "support_email")
 			client_emails = get_customer_emails(issue.project)
 			email_body = f"Issue ticket number {issue.name} has been resolved on call"
+			if issue.type_of_call == "Toner":
+				helpdesk_email = frappe.db.get_value("Company", issue.company, "toner_support_email")
 
 			make(subject = subject,content=email_body,
 				recipients=client_emails,
@@ -419,6 +421,8 @@ def send_issue_closed_email(issue):
 	if status != "Closed" and issue.status == "Closed":
 		subject = f"Issue {issue.name} closed"
 		helpdesk_email = frappe.db.get_value("Company", issue.company, "support_email")
+		if issue.type_of_call == "Toner":
+			helpdesk_email = frappe.db.get_value("Company", issue.company, "toner_support_email")
 		client_emails = get_customer_emails(issue.project)
 		email_body = f"Issue ticket number {issue.name} has been closed"
 
