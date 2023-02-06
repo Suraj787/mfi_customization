@@ -137,7 +137,7 @@ frappe.ui.form.on('Task', {
 	refresh: function (frm) {
   
 		set_permissions_for_symptoms(frm);
-                
+               permision_fr_call_co_and_tech(frm);
 		transfer_data_to_issue(frm)
 		read_onl_for_call_codinator_status_complete(frm)
 		if (!frm.doc.__islocal) {
@@ -595,4 +595,18 @@ function read_onl_for_call_codinator_status_complete(frm){
          if (frappe.user.has_role("Call Coordinator")==1 && frm.doc.status == "Completed"){
 	            frm.set_df_property('status',"read_only",1);
 	          }
+}
+
+
+function permision_fr_call_co_and_tech(frm){
+if (frm.doc.type_of_call == "Toner") {
+		if (frappe.user.has_role("Technicians") == 1 && frappe.user.has_role == "Call Coordinator") {
+			frm.set_df_property('symptoms', "hidden", 1);
+			frm.set_df_property('action', "hidden", 1);
+			frm.set_df_property('cause', "hidden", 1);
+			frm.set_df_property('escalation', "hidden", 1);
+			frm.set_df_property('repetitive_call',"hidden",1)
+		}
+	}
+
 }
