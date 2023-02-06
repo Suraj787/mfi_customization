@@ -343,13 +343,13 @@ frappe.ui.form.on('Issue', {
 			frappe.set_route('List', 'Task', {issue: frm.doc.name});
 		},__("View"));
 		if (frm.doc.type_of_call=="Service Request" && frm.doc.issue_type=="Error message"){
-			// frm.remove_custom_button("Task", 'Create')
-			// frm.add_custom_button(__("Task"), function() {
-			// 	frappe.model.open_mapped_doc({
-			// 		method: "mfi_customization.mfi.doctype.issue.make_task",
-			// 		frm: frm
-			// 	});
-			// }, __("Create"));
+			frm.remove_custom_button("Task", 'Create')
+			frm.add_custom_button(__("Task"), function() {
+				frappe.model.open_mapped_doc({
+					method: "mfi_customization.mfi.doctype.issue.make_task",
+					frm: frm
+				});
+			}, __("Create"));
 		}
 		if (frm.doc.status == "Hold"){
 			frm.remove_custom_button("Task", 'Create')
