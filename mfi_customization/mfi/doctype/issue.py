@@ -70,14 +70,14 @@ def set_territory(doc):
 
 @frappe.whitelist()
 def make_task(source_name, target_doc=None):
-	issue = frappe.get_doc("Issue", source_name)
-	if issue.type_of_call == "Service Request" and issue.issue_type=="Error message":
-		return get_mapped_doc("Issue", source_name, {
-			"Issue": {
-				"doctype": "Task",
-				"field_map": {"last_readings": "current_reading"},
-			}
-		}, target_doc)
+	# issue = frappe.get_doc("Issue", source_name)
+	# if issue.type_of_call == "Service Request" and issue.issue_type=="Error message":
+	# 	return get_mapped_doc("Issue", source_name, {
+	# 		"Issue": {
+	# 			"doctype": "Task",
+	# 			"field_map": {"last_readings": "current_reading"},
+	# 		}
+	# 	}, target_doc)
 
 	return get_mapped_doc("Issue", source_name, {
 	"Issue": {
@@ -149,7 +149,7 @@ def add_item_filter(asset):
 	toner = []
 	for tone in item.compatible_toners:
 		toner.append(tone.item_code)
-	
+
 	return toner
 
 
