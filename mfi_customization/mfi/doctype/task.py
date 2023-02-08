@@ -28,12 +28,14 @@ def validate(doc,method):
 			frappe.throw("More than one row not allowed")
 
 	last_reading=today()
-	if doc.asset and  len(doc.get("last_readings"))==0:
+	#last_reading child table row will be less then 2 idx(3 row) then it will insert
+	if doc.asset and  len(doc.get("last_readings"))<=2:
 		doc.set("last_readings", [])
 		fltr={"project":doc.project,"asset":doc.asset,"reading_date":("<=",last_reading)}
 		# if machine_reading:
 			# fltr.update({"name":("!=",machine_reading)})
-		for d in frappe.get_all("Machine Reading",filters=fltr,fields=["name","reading_date","asset","black_and_white_reading","colour_reading","total","machine_type"],limit=1,order_by="reading_date desc,name desc"):
+			#limit has been set from 1 to 3 in below fields 
+		for d in frappe.get_all("Machine Reading",filters=fltr,fields=["name","reading_date","asset","black_and_white_reading","colour_reading","total","machine_type"],limit=3,order_by="reading_date desc,name desc"):
 			doc.append("last_readings", {
 				"date" : d.get('reading_date'),
 				"type" : d.get('machine_type'),
