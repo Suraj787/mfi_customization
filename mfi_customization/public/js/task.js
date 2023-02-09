@@ -135,6 +135,17 @@ frappe.ui.form.on('Task', {
 
 	},
 	refresh: function (frm) {
+		frm.doc.current_reading.map((i)=>{
+			if (i.type === 'Black & White'){
+				frm.fields_dict.current_reading.grid.toggle_reqd
+				("reading", frm.doc.status=='Working')
+			}
+			if (i.type === 'Colour'){
+				frm.fields_dict.current_reading.grid.toggle_reqd
+				("reading_2", frm.doc.status=='Working')
+			}
+		})
+		
 		set_permissions_for_symptoms(frm);
 		permision_fr_call_co_and_tech(frm);
 		transfer_data_to_issue(frm)
