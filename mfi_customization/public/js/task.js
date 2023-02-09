@@ -7,6 +7,7 @@ frappe.ui.form.on('Task', {
 		}
 	},
 	status: function (frm) {
+	       status_option_permision_for_technician(frm) 
 		if (frm.doc.status == "Working") {
 			frm.save()
 			// set_permissions_for_symptoms(frm);
@@ -135,11 +136,11 @@ frappe.ui.form.on('Task', {
 
 	},
 	refresh: function (frm) {
+	        status_option_permision_for_technician(frm)
 		set_permissions_for_symptoms(frm);
 		permision_fr_call_co_and_tech(frm);
 		transfer_data_to_issue(frm)
 		read_onl_for_call_codinator_status_complete(frm)
-		status_option_permision_for_technician(frm)
 		if (!frm.doc.__islocal) {
 			frm.add_custom_button(__('Material Request'), function () {
 				frappe.set_route('List', 'Material Request', { task: frm.doc.name });
@@ -625,12 +626,18 @@ if (frm.doc.type_of_call == "Toner") {
 
 
 function status_option_permision_for_technician(frm){
-      if(frappe.user.has_role("Technicians")==1){
-         if(frm.doc.status=="Working"){
-          frm.set_df_property('status', 'options', ['Working', 'Pending Review','Awaiting for Material','Overdue','Completed','Cancelled','Material Issued'])
+      if(frappe.user.has_role("Technicians")==1 && frappe.user != "Administrator"){
+         if(frm.doc.status=="Working" || frm.doc.status=="Completed"){
+          frm.set_df_property('status', 'options', ['Working','Completed'])
 
          }
-       }  
+       } 
+      else{
+          if(frappe.user.has_role("Call Coordinator")==1){
+           frm.set_df_property('status',"read_only",1);
+          }
+      
+      }  
 }
 
 
