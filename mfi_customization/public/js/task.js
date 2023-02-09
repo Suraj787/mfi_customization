@@ -145,7 +145,6 @@ frappe.ui.form.on('Task', {
 				("reading_2", frm.doc.status=='Working')
 			}
 		})
-		
 		set_permissions_for_symptoms(frm);
 		permision_fr_call_co_and_tech(frm);
 		transfer_data_to_issue(frm)
