@@ -474,6 +474,7 @@ def set_yeild_details(doc):
 
 
 def on_submit(doc,method):
+	itm_child_data_into_issue(doc)
 	if doc.task:
 		frappe.db.set_value("Task", doc.task, 'status', 'Material Issued')
 		issue = frappe.db.get_value("Task",{'name': doc.task}, 'issue')
@@ -600,11 +601,36 @@ def issue_reject(task):
 @frappe.whitelist()
 def assingn_to_fltr_bassed_on_techical_mngr_nd_area_tech_mngr(doctype, txt, searchfield, start, page_len, filters):
     list_user=[]
-    all_user_list=[i.name for i in  frappe.db.sql(""" select name from `tabUser`""",as_dict=1)]
+    all_user_list=[i.name for i in  frappe.db.sql("""select name from `tabUser`""",as_dict=1)]
     for usr in all_user_list:
         check_roles=frappe.get_roles(usr)
         for j in check_roles:
             if j == "Area Technical Manager" or j=="Technical Manager":
                list_user.append(usr)
     return  [[d] for d in list_user]
+	
+	
+
+def itm_child_data_into_issue(doc):
+    Task=frappe.get_doc("Task", doc.task)
+    if Task:
+       get_issue=frappe.get_doc("Issue",Task.issue)
+       if doc.items:
+          for i in doc.items:
+              issue_itm=get_issue.append("items",{})
+              issue_itm.item_code=i.item_code
+              issue_itm.item_name=i.item_name
+              issue_itm.schedule_date = i.schedule_date
+              issue_itm.warehouse=i.warehouse
+              issue_itm.description=i.description
+              issue_itm.qty=i.qty
+              issue_itm.stock_uom=i.stock_uom
+              issue_itm.uom=i.uom
+              issue_itm.conversion_factor=i.conversion_factor
+              get_issue.save()
+    
+    
+    
+
+	
 	
