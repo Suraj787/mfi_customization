@@ -7,6 +7,7 @@ frappe.ui.form.on('Task', {
 		}
 	},
 	status: function (frm) {
+	       status_option_permision_for_technician(frm) 
 		if (frm.doc.status == "Working") {
 			frm.save()
 			// set_permissions_for_symptoms(frm);
@@ -135,6 +136,13 @@ frappe.ui.form.on('Task', {
 
 	},
 	refresh: function (frm) {
+		if (frm.doc.status == "Working") {
+			$(".input-with-feedback option[value=" + 'Open' + "]").remove();
+			}
+		if (frm.doc.status == "Completed") {
+			$(".input-with-feedback option[value=" + 'Open' + "]").remove();
+			$(".input-with-feedback option[value=" + 'Working' + "]").remove();
+			}
 		frm.doc.current_reading.map((i)=>{
 			if (i.type === 'Black & White'){
 				frm.fields_dict.current_reading.grid.toggle_reqd
@@ -630,3 +638,23 @@ if (frm.doc.type_of_call == "Toner") {
 	}
 
 }
+
+
+
+function status_option_permision_for_technician(frm){
+      if(frappe.user.has_role("Technicians")==1 && frappe.user != "Administrator"){
+         if(frm.doc.status=="Working" || frm.doc.status=="Completed"){
+          frm.set_df_property('status', 'options', ['Working','Completed'])
+
+         }
+       } 
+      else{
+          if(frappe.user.has_role("Call Coordinator")==1){
+           frm.set_df_property('status',"read_only",1);
+          }
+      
+      }  
+}
+
+
+
