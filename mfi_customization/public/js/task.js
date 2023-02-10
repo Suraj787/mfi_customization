@@ -189,6 +189,7 @@ frappe.ui.form.on('Task', {
 		}
 	},
 	setup: function (frm) {
+	filter_bassed_on_role(frm)
 		// frm.set_query("location", function() {
 		//     if (frm.doc.customer) {
 		//         return {
@@ -554,6 +555,7 @@ frappe.ui.form.on('Task', {
 
 frappe.ui.form.on('Task', {
 	onload: function (frm) {
+	status_option_permision_for_technician(frm)
 		if (frappe.user.name == cur_frm.doc.completed_by && cur_frm.doc.escalation) {
 			{
 				frm.set_df_property('senior_technician_description', "hidden", 0);
@@ -624,12 +626,33 @@ if (frm.doc.type_of_call == "Toner") {
 }
 
 
+function filter_bassed_on_role(frm){
+         frm.set_query("completed_by", function() {
+                return {
+                    query: "mfi_customization.mfi.doctype.task.assingn_to_fltr_bassed_on_technician",
+                    //filters:{
+                      //  "company":frm.doc.company
+                    //}
+                }
+            });     
+}
+
+
+
+
 
 function status_option_permision_for_technician(frm){
       if(frappe.user.has_role("Technicians")==1 && frappe.user != "Administrator"){
-         if(frm.doc.status=="Working" || frm.doc.status=="Completed"){
+         if(frm.doc.status=="Working"){
           frm.set_df_property('status', 'options', ['Working','Completed'])
 
+         }
+         if(frm.doc.status=="Open"){
+          frm.set_df_property('status', 'options', ['Working','Completed'])
+
+         }
+         if(frm.doc.status=="Completed"){
+         frm.set_df_property('status', 'options', ['Completed'])
          }
        } 
       else{

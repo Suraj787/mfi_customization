@@ -3,6 +3,7 @@
 
 frappe.ui.form.on('Material Request', {
     setup:function(frm){
+        filter_bassed_on_role(frm)
         if(frm.doc.company){
             frm.set_query("assigned_to", function() {
                 return {
@@ -14,6 +15,10 @@ frappe.ui.form.on('Material Request', {
             });
         }
     }
+    //refresh(frm){
+    //filter_bassed_on_role(frm)
+   // }
+    
 });
 
 // frappe.ui.form.on('Material Request', {
@@ -569,4 +574,16 @@ frappe.ui.form.on("Material Request", 'onload_post_render', function(frm,cdt,cdn
 //         }
 //     }
 // });
+
+
+function filter_bassed_on_role(frm){
+         frm.set_query("assigned_to", function() {
+                return {
+                    query: "mfi_customization.mfi.doctype.material_request.assingn_to_fltr_bassed_on_techical_mngr_nd_area_tech_mngr",
+                    //filters:{
+                      //  "company":frm.doc.company
+                    //}
+                }
+            });     
+}
 

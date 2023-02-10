@@ -594,3 +594,17 @@ def issue_reject(task):
 	issue = frappe.get_doc("Issue", issue)
 	issue.mr_status = "Material Rejected"
 	issue.save()
+	
+	
+	
+@frappe.whitelist()
+def assingn_to_fltr_bassed_on_techical_mngr_nd_area_tech_mngr(doctype, txt, searchfield, start, page_len, filters):
+    list_user=[]
+    all_user_list=[i.name for i in  frappe.db.sql(""" select name from `tabUser`""",as_dict=1)]
+    for usr in all_user_list:
+        check_roles=frappe.get_roles(usr)
+        for j in check_roles:
+            if j == "Area Technical Manager" or j=="Technical Manager":
+               list_user.append(usr)
+    return  [[d] for d in list_user]
+	

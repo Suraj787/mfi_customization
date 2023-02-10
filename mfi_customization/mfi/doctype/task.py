@@ -685,3 +685,18 @@ def repetitive_call(doc):
 	mr=mr.replace(".0","")
 
 	frappe.msgprint(mr)
+	
+	
+@frappe.whitelist()
+def assingn_to_fltr_bassed_on_technician(doctype, txt, searchfield, start, page_len, filters):
+    list_user=[]
+    all_user_list=[i.name for i in  frappe.db.sql("""select name from `tabUser`""",as_dict=1)]
+    for usr in all_user_list:
+        check_roles=frappe.get_roles(usr)
+        for j in check_roles:
+            if j == "Technicians":
+               list_user.append(usr)
+    return  [[d] for d in list_user]
+	
+	
+	
