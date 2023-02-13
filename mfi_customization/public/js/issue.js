@@ -325,6 +325,7 @@ frappe.ui.form.on('Issue', {
 
 	},
 	refresh: function (frm) {
+	        hide_request_mtrl_stus(frm)
 	        status_read_oly_fr_call_cordinator(frm)
 		cur_frm.dashboard.hide()
         frappe.db.get_value("Task", {"issue": frm.doc.name}, 'name',(r) =>{
@@ -586,4 +587,11 @@ function status_read_oly_fr_call_cordinator(frm){
            frm.set_df_property('status',"read_only",1);
          }
 
+}
+
+
+function hide_request_mtrl_stus(frm){
+     if(frappe.user.has_role("Call Coordinator")!=1){
+           frm.set_df_property('requested_material_status',"hidden",1);
+     }
 }
