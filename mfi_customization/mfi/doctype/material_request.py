@@ -378,13 +378,15 @@ def before_save(doc,method):
 @frappe.whitelist()
 def item_child_table_filter(doctype, txt, searchfield, start, page_len, filters):
 	AssetName = filters.get("asset")
+	comp = filters.get("company")
+	print(f'\n\n\n\n\n\n{comp}\n\n\n\n\n\n')
 	asset_item = frappe.db.get_value('Asset',{'name':AssetName},'item_code')
 	task = frappe.db.get_value('Task',{'asset':AssetName},'type_of_call')
 	if task =="Toner":
-		data = frappe.db.sql(f"""SELECT aic.item_code,aic.item_name,aic.item_group from `tabItem`i LEFT JOIN `tabAsset Item Child Table` aic on aic.parent = i.name where i.item_code='{asset_item}' and aic.item_group='Toner'""", as_dict=0)
+		data = frappe.db.sql(f"""SELECT aic.item_code,aic.item_name,aic.item_group,aic.company from `tabItem`i LEFT JOIN `tabAsset Item Child Table` aic on aic.parent = i.name where i.item_code='{asset_item}'and aic.company = '{comp}' and aic.item_group='Toner'""", as_dict=0)
 		return data
 	else:
-		data = frappe.db.sql(f"""SELECT aic.item_code,aic.item_name,aic.item_group from `tabItem`i LEFT JOIN `tabAsset Item Child Table` aic on aic.parent = i.name where i.item_code='{asset_item}' and aic.item_group!='Toner'""", as_dict=0)
+		data = frappe.db.sql(f"""SELECT aic.item_code,aic.item_name,aic.item_group,aic.company from `tabItem`i LEFT JOIN `tabAsset Item Child Table` aic on aic.parent = i.name where i.item_code='{asset_item}'and aic.company = '{comp}' and aic.item_group!='Toner'""", as_dict=0)
 		return data
 
 @frappe.whitelist()

@@ -531,7 +531,8 @@ frappe.ui.form.on("Material Request", 'onload_post_render', function(frm,cdt,cdn
         query: "mfi_customization.mfi.doctype.material_request.item_child_table_filter",
         filters:{
 
-            	"asset":frm.doc.asset
+            	"asset":frm.doc.asset,
+                "company":frm.doc.company
              }
           }
        }
@@ -548,7 +549,8 @@ frappe.ui.form.on("Material Request", 'onload_post_render', function(frm,cdt,cdn
 
          query: "mfi_customization.mfi.doctype.material_request.item_child_table_filter",
          filters:{
-             "asset":frm.doc.asset
+            "asset":frm.doc.asset,
+            "company":frm.doc.company
                }
             }
          }
