@@ -34,7 +34,7 @@ def validate(doc,method):
 		fltr={"project":doc.project,"asset":doc.asset,"reading_date":("<=",last_reading)}
 		# if machine_reading:
 			# fltr.update({"name":("!=",machine_reading)})
-			#limit has been set from 1 to 3 in below fields 
+			#limit has been set from 1 to 3 in below fields
 		for d in frappe.get_all("Machine Reading",filters=fltr,fields=["name","reading_date","asset","black_and_white_reading","colour_reading","total","machine_type"],limit=3,order_by="reading_date desc,name desc"):
 			doc.append("last_readings", {
 				"date" : d.get('reading_date'),
@@ -292,7 +292,7 @@ def get_tech(doctype, txt, searchfield, start, page_len, filters):
 def get_assign_user(doctype, txt, searchfield, start, page_len, filters):
 	territory = frappe.db.get_value("User Permission", {'user':filters.get('user'), 'allow':'Territory'}, 'for_value')
 	user_list =[u.user for u in  frappe.db.get_all("User Permission",{'allow':'Territory', 'for_value':territory}, 'user')]
-	return [(d,) for d in user_list]
+	return [(d, frappe.db.get_value("User", d, "full_name")) for d in user_list]
 
 @frappe.whitelist()
 def check_material_request_status(task):
@@ -685,8 +685,8 @@ def repetitive_call(doc):
 	mr=mr.replace(".0","")
 
 	frappe.msgprint(mr)
-	
-	
+
+
 @frappe.whitelist()
 def assingn_to_fltr_bassed_on_technician(doctype, txt, searchfield, start, page_len, filters):
     list_user=[]
@@ -697,6 +697,6 @@ def assingn_to_fltr_bassed_on_technician(doctype, txt, searchfield, start, page_
             if j == "Technicians":
                list_user.append(usr)
     return  [[d] for d in list_user]
-	
-	
-	
+
+
+

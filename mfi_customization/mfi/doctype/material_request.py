@@ -397,7 +397,7 @@ def get_atm_users(doctype, txt, searchfield, start, page_len, filters):
 	for s in setting_doc.support_setting_details:
 		if s.company == filters.get('company'):
 			user_list = get_users_with_role(s.atm_role)
-			return [[d] for d in user_list]
+			return [(d, frappe.db.get_value("User", d, "full_name")) for d in user_list]
 	else:
 		return []
 
@@ -597,9 +597,9 @@ def issue_reject(task):
 	issue = frappe.get_doc("Issue", issue)
 	issue.mr_status = "Material Rejected"
 	issue.save()
-	
-	
-	
+
+
+
 @frappe.whitelist()
 def assingn_to_fltr_bassed_on_techical_mngr_nd_area_tech_mngr(doctype, txt, searchfield, start, page_len, filters):
     list_user=[]
@@ -610,8 +610,8 @@ def assingn_to_fltr_bassed_on_techical_mngr_nd_area_tech_mngr(doctype, txt, sear
             if j == "Area Technical Manager" or j=="Technical Manager":
                list_user.append(usr)
     return  [[d] for d in list_user]
-	
-	
+
+
 
 def itm_child_data_into_issue(doc):
     Task=frappe.get_doc("Task", doc.task)
@@ -630,9 +630,9 @@ def itm_child_data_into_issue(doc):
               issue_itm.uom=i.uom
               issue_itm.conversion_factor=i.conversion_factor
               get_issue.save()
-    
-    
-    
 
-	
-	
+
+
+
+
+
