@@ -289,10 +289,13 @@ def get_tech(doctype, txt, searchfield, start, page_len, filters):
 	return [(y,d) for d,y in dct.items()]
 
 @frappe.whitelist()
+@frappe.validate_and_sanitize_search_inputs
 def get_assign_user(doctype, txt, searchfield, start, page_len, filters):
 	territory = frappe.db.get_value("User Permission", {'user':filters.get('user'), 'allow':'Territory'}, 'for_value')
-	user_list =[u.user for u in  frappe.db.get_all("User Permission",{'allow':'Territory', 'for_value':territory}, 'user')]
-	return [(d, frappe.db.get_value("User", d, "full_name")) for d in user_list]
+	user_list = [u.user for u in  frappe.db.get_all("User Permission",{'allow':'Territory', 'for_value':territory}, 'user')]
+	query = f""" select u.name, u.full_name from `tabUser` u where u.name in {tuple(user_list)} and u.{searchfield} like "%{txt}%" """
+	return frappe.db.sql(query)
+
 
 @frappe.whitelist()
 def check_material_request_status(task):

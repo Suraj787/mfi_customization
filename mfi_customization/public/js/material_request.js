@@ -10,7 +10,8 @@ frappe.ui.form.on('Material Request', {
                     query: "mfi_customization.mfi.doctype.material_request.get_atm_users",
                     filters:{
                         "company":frm.doc.company
-                    }
+                    },
+    				searchfield: "full_name"
                 }
             });
         }
@@ -18,7 +19,7 @@ frappe.ui.form.on('Material Request', {
     //refresh(frm){
     //filter_bassed_on_role(frm)
    // }
-    
+
 });
 
 // frappe.ui.form.on('Material Request', {
@@ -586,6 +587,6 @@ function filter_bassed_on_role(frm){
                       //  "company":frm.doc.company
                     //}
                 }
-            });     
+            });
 }
 
