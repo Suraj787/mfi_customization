@@ -390,6 +390,7 @@ def item_child_table_filter(doctype, txt, searchfield, start, page_len, filters)
 		return data
 
 @frappe.whitelist()
+@frappe.validate_and_sanitize_search_inputs
 def get_atm_users(doctype, txt, searchfield, start, page_len, filters):
 	from frappe.utils.user import get_users_with_role
 
@@ -397,7 +398,8 @@ def get_atm_users(doctype, txt, searchfield, start, page_len, filters):
 	for s in setting_doc.support_setting_details:
 		if s.company == filters.get('company'):
 			user_list = get_users_with_role(s.atm_role)
-			return [(d, frappe.db.get_value("User", d, "full_name")) for d in user_list]
+			query = f""" select u.name, u.full_name from `tabUser` u where u.name in {tuple(user_list)} and u.{searchfield} like "%{txt}%" """
+			return frappe.db.sql(query)
 	else:
 		return []
 

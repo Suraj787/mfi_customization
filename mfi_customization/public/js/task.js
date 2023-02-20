@@ -7,7 +7,7 @@ frappe.ui.form.on('Task', {
 		}
 	},
 	status: function (frm) {
-	       status_option_permision_for_technician(frm) 
+	       status_option_permision_for_technician(frm)
 		if (frm.doc.status == "Working") {
 			frm.save()
 			// set_permissions_for_symptoms(frm);
@@ -186,7 +186,8 @@ frappe.ui.form.on('Task', {
 				query: 'mfi_customization.mfi.doctype.task.get_assign_user',
 				filters: {
 					"user": frappe.session.user
-				}
+				},
+				searchfield: "full_name"
 			};
 
 		});
@@ -544,18 +545,18 @@ function transfer_data_to_issue(frm) {
 
 frappe.ui.form.on('Task', {
 	refresh(frm) {
-		
+
 
 		frm.add_custom_button(__('Machine Asset History Report'), function () {
 			var asset = frm.doc.current_reading.map((i)=>{
 				frappe.route_options = {
-					"task": frm.doc.name, 
-					"project": frm.doc.project, 
+					"task": frm.doc.name,
+					"project": frm.doc.project,
 					"asset": i.asset
 				};
 			})
 			// frappe.route_options = {
-			// 	"task": frm.doc.name, 
+			// 	"task": frm.doc.name,
 			// };
 			frappe.set_route(["query-report", "Machine Asset History"]);
 		});
@@ -617,7 +618,7 @@ function set_permissions_for_symptoms(frm) {
 			frm.set_df_property('repair_items', 'hidden', 1);
 
 		}
-	       
+
 	}
 }
 
@@ -650,7 +651,7 @@ function filter_bassed_on_role(frm){
                       //  "company":frm.doc.company
                     //}
                 }
-            });     
+            });
 }
 
 
@@ -670,13 +671,13 @@ function status_option_permision_for_technician(frm){
          if(frm.doc.status=="Completed"){
          frm.set_df_property('status', 'options', ['Completed'])
          }
-       } 
+       }
       else{
           if(frappe.user.has_role("Call Coordinator")==1){
            frm.set_df_property('status',"read_only",1);
           }
-      
-      }  
+
+      }
 }
 
 
