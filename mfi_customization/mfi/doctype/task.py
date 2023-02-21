@@ -628,6 +628,10 @@ def transfer_data_to_issue(doc):
 		issue_doc.action=doc.get('action')
 		issue_doc.cause=doc.get('cause')
 		issue_doc.completed_sent=1
+		task = frappe.get_doc("Task", doc.get('name'))
+		for current_reading in issue_doc.current_reading:
+			current_reading.reading = task.current_reading[0].reading
+			current_reading.reading_2 = task.current_reading[0].reading_2
 		issue_doc.save()
 
 def get_location_validation(customer):
