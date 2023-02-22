@@ -609,15 +609,17 @@ def assingn_to_fltr_bassed_on_techical_mngr_nd_area_tech_mngr(doctype, txt, sear
 	# emp_list = [j.user_id for j in frappe.db.sql("""select user_id from `tabEmployee` where """,as_dict=1)]
     all_user_list=[i.name for i in  frappe.db.sql("""select name from `tabUser`""",as_dict=1)]
     for usr in all_user_list:
-        emp_list = frappe.db.get_all('Employee',{'user_id':usr,'company':filters.get("company")},'user_id',pluck='user_id')
-        for i in emp_list:
-            list_us.append(i)
-    for k in list_us:
-        check_roles=frappe.get_roles(k)
+        check_roles=frappe.get_roles(usr)
         for j in check_roles:
             if j == "Area Technical Manager" or j=="Technical Manager":
-                list_user.append(usr)
-    return  [[d] for d in list_user]
+                emp_list = frappe.db.get_all('Employee',{'user_id':usr,'company':filters.get("company")},'user_id',pluck='user_id')
+                for i in emp_list:
+                    list_us.append(i)
+                # list_user.append(usr)
+        
+    # for k in list_us:
+        
+    return  [[d] for d in list_us]
 
 
 
