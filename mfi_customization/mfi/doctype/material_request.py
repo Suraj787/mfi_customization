@@ -1,14 +1,16 @@
 import frappe,json
-from frappe.desk.reportview import get_match_cond, get_filters_cond
+# from frappe.desk.reportview import get_match_cond, get_filters_cond
 from frappe.utils import nowdate, getdate,today,add_months, flt
-from six import string_types, iteritems
-from frappe.desk.query_report import run
+# from six import string_types, iteritems
+# from frappe.desk.query_report import run
 from frappe import _
-from datetime import datetime
-import time
-import threading
-from frappe.desk.query_report import get_report_doc,get_prepared_report_result,generate_report_result
+# from datetime import datetime
+# import time
+# import threading
+# from frappe.desk.query_report import get_report_doc,get_prepared_report_result,generate_report_result
 from frappe.core.doctype.communication.email import make
+from frappe.utils.user import get_users_with_role
+
 from mfi_customization.mfi.doctype.project import get_customer_emails
 
 
@@ -392,16 +394,22 @@ def item_child_table_filter(doctype, txt, searchfield, start, page_len, filters)
 @frappe.whitelist()
 @frappe.validate_and_sanitize_search_inputs
 def get_atm_users(doctype, txt, searchfield, start, page_len, filters):
-	from frappe.utils.user import get_users_with_role
+	user_list = []
+	user_list.extend(get_users_with_role("Area Technical Manager"))
+	user_list.extend(get_users_with_role("Technical Manager"))
+	users = []
+	for user in user_list:
+		employee = frappe.get_all("Employee", {'user_id': user, 'company': filters.get('company')})
+		user_enabled = frappe.db.get_value("User", user, 'enabled')
+		if employee and user_enabled:
+			users.append(user)
+	search_cond = ''
+	if txt:
+		search_cond = f" and u.{searchfield} like '%{txt}%' "
+	sql_users = str(tuple([key for key in users])).replace(',)', ')')
+	query = f""" select u.name, u.full_name from `tabUser` u where u.name in {sql_users} {search_cond}"""
+	return frappe.db.sql(query)
 
-	setting_doc = frappe.get_doc("Support Setting", "Support Setting")
-	for s in setting_doc.support_setting_details:
-		if s.company == filters.get('company'):
-			user_list = get_users_with_role(s.atm_role)
-			query = f""" select u.name, u.full_name from `tabUser` u where u.name in {tuple(user_list)} and u.{searchfield} like "%{txt}%" """
-			return frappe.db.sql(query)
-	else:
-		return []
 
 def onload(doc,method):
 	project_name= frappe.db.get_value('Asset',{'name':doc.asset},'project')
@@ -599,28 +607,6 @@ def issue_reject(task):
 	issue = frappe.get_doc("Issue", issue)
 	issue.mr_status = "Material Rejected"
 	issue.save()
-
-
-
-@frappe.whitelist()
-def assingn_to_fltr_bassed_on_techical_mngr_nd_area_tech_mngr(doctype, txt, searchfield, start, page_len, filters):
-    list_user=[]
-    list_us=[]
-	# emp_list = [j.user_id for j in frappe.db.sql("""select user_id from `tabEmployee` where """,as_dict=1)]
-    all_user_list=[i.name for i in  frappe.db.sql("""select name from `tabUser`""",as_dict=1)]
-    for usr in all_user_list:
-        check_roles=frappe.get_roles(usr)
-        for j in check_roles:
-            if j == "Area Technical Manager" or j=="Technical Manager":
-                emp_list = frappe.db.get_all('Employee',{'user_id':usr,'company':filters.get("company")},'user_id',pluck='user_id')
-                for i in emp_list:
-                    list_us.append(i)
-                # list_user.append(usr)
-        
-    # for k in list_us:
-        
-    return  [[d] for d in list_us]
-
 
 
 def itm_child_data_into_issue(doc):
