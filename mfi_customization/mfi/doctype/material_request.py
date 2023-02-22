@@ -609,7 +609,7 @@ def assingn_to_fltr_bassed_on_techical_mngr_nd_area_tech_mngr(doctype, txt, sear
     for usr in all_user_list:
         check_roles=frappe.get_roles(usr)
         for j in check_roles:
-            if j == "Area Technical Manager" or j=="Technical Manager":
+            if j == "Sales Manager" or j=="Sales Master Manager":
                list_user.append(usr)
     return  [[d] for d in list_user]
 
