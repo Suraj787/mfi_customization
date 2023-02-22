@@ -583,9 +583,9 @@ function filter_bassed_on_role(frm){
          frm.set_query("assigned_to", function() {
                 return {
                     query: "mfi_customization.mfi.doctype.material_request.assingn_to_fltr_bassed_on_techical_mngr_nd_area_tech_mngr",
-                    //filters:{
-                      //  "company":frm.doc.company
-                    //}
+                    filters:{
+                       "company":frm.doc.company
+                    }
                 }
             });
 }
