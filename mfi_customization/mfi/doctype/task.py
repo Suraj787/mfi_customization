@@ -383,10 +383,10 @@ def create_user_permission(doc):
 			for emp2 in frappe.get_all("Employee",{"name":emp.material_request_approver},['user_id']):
 				if emp2.user_id:
 					add_user_permission("Task",doc.name,emp2.user_id)
-def assign_task_validation(doc):
-	if doc.status=="Working":
-		for d in frappe.get_all("Task",{"status":"Working","completed_by":doc.completed_by,"name":("!=",doc.name)}):
-			frappe.throw("Task <b>{0}</b> is already in working".format(d.name))
+# def assign_task_validation(doc):
+# 	if doc.status=="Working":
+# 		for d in frappe.get_all("Task",{"status":"Working","completed_by":doc.completed_by,"name":("!=",doc.name)}):
+# 			frappe.throw("Task <b>{0}</b> is already in working".format(d.name))
 
 def validate_link_fileds(doc):
 	if doc.get('issue'):
