@@ -46,7 +46,7 @@ def validate(doc,method):
 				})
 
 	set_field_values(doc)
-	assign_task_validation(doc)
+# 	assign_task_validation(doc)
 
 	if doc.get('__islocal'):
 		for d in frappe.get_all("Task",{"issue":doc.issue}):
