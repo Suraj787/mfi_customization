@@ -592,6 +592,7 @@ function set_permissions_for_symptoms(frm) {
 			frm.set_df_property('symptoms', "read_only", 1);
 			frm.set_df_property('action', "read_only", 1);
 			frm.set_df_property('cause', "read_only", 1);
+			frm.set_df_property('priority', "read_only", 1);
 		}
 		if (frappe.user.has_role("Call Coordinator") == 1 && frappe.user != "Administrator") {
 			// frm.set_df_property('symptoms', "hidden", 1);
