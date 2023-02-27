@@ -7,6 +7,14 @@ frappe.ui.form.on('Material Request', {
 	},
 	refresh: function (frm) {
 		assigned_to_filters(frm);
+		frm.set_query("item_code", "items", function(doc, cdt, cdn) {
+    		return {
+				filters:{
+			"asset":frm.doc.asset,
+			"company":frm.doc.company
+			   },
+    		};
+	});
 	},
 	company: function (frm) {
 		assigned_to_filters(frm);
@@ -515,21 +523,21 @@ frappe.ui.form.on('Material Request', {
 
 
 
-frappe.ui.form.on("Material Request", 'onload_post_render', function(frm,cdt,cdn) {
-	   cur_frm.fields_dict['items'].grid.get_field('item_code').get_query =
-		function() {
-		return {
+// frappe.ui.form.on("Material Request", 'onload_post_render', function(frm,cdt,cdn) {
+// 	   cur_frm.fields_dict['items'].grid.get_field('item_code').get_query =
+// 		function() {
+// 		return {
 
-		query: "mfi_customization.mfi.doctype.material_request.item_child_table_filter",
-		filters:{
+// 		query: "mfi_customization.mfi.doctype.material_request.item_child_table_filter",
+// 		filters:{
 
-				"asset":frm.doc.asset,
-				"company":frm.doc.company
-			 }
-		  }
-	   }
+// 				"asset":frm.doc.asset,
+// 				"company":frm.doc.company
+// 			 }
+// 		  }
+// 	   }
 
-	});
+// 	});
 
 
 

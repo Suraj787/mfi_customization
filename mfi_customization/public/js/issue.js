@@ -15,7 +15,7 @@ frappe.ui.form.on('Issue', {
 	        frm.set_df_property('cause',"read_only",1);
 	        frm.set_df_property('signature',"read_only",1);
 	        frm.set_df_property('current_reading',"hidden",1);
-	        frm.set_df_property('priority',"read_only",1);
+	        frm.set_df_property('priority',"read_only",0);
 	    }
 		cur_frm.dashboard.hide()
 		     /*

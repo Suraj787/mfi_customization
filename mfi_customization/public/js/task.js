@@ -593,6 +593,16 @@ function set_permissions_for_symptoms(frm) {
 			frm.set_df_property('action', "read_only", 1);
 			frm.set_df_property('cause', "read_only", 1);
 		}
+		if (frappe.user.has_role("Call Coordinator") == 1 && frappe.user != "Administrator") {
+			// frm.set_df_property('symptoms', "hidden", 1);
+			// frm.set_df_property('action', "hidden", 1);
+			// frm.set_df_property('cause', "hidden", 1);
+			// frm.set_df_property('signature', "read_only", 1);
+			frm.set_df_property('current_reading', 'hidden', 1);
+			// frm.set_df_property('priority', "read_only", 1);
+			// frm.set_df_property('repair_items', 'hidden', 1);
+
+		}
 	} else {
 		if (frappe.user.has_role("Technicians") == 1 && frappe.user != "Administrator" && frm.doc.status == "Working") {
 			frm.set_df_property('symptoms', "reqd", 1);
