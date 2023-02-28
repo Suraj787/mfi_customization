@@ -53,6 +53,7 @@ def validate(doc,method):
 			frappe.throw("Task <b>{0}</b> Already Exist Against This Issue".format(doc.name))
 	else:
 		create_user_permission(doc)
+		create_user_issue_permission(doc)
 
 	validate_link_fileds(doc)
 
@@ -124,6 +125,9 @@ def after_insert(doc,method):
 
 
 	create_user_permission(doc)
+	create_user_issue_permission(doc)
+
+	
 
 	# docperm = frappe.new_doc("DocShare")
 	# docperm.update({
@@ -513,12 +517,25 @@ def create_user_permission(doc):
 		for d in frappe.get_all("User Permission",{"allow":"Task","for_value":doc.name}):
 			frappe.delete_doc("User Permission",d.name)
 		add_user_permission("Task",doc.name,doc.completed_by)
+		add_user_permission("Issue",doc.issue,doc.completed_by)
 
 	for emp in frappe.get_all("Employee",{"user_id":doc.completed_by},['material_request_approver']):
 		if emp.material_request_approver:
 			for emp2 in frappe.get_all("Employee",{"name":emp.material_request_approver},['user_id']):
 				if emp2.user_id:
 					add_user_permission("Task",doc.name,emp2.user_id)
+
+def create_user_issue_permission(doc):
+		if len(frappe.get_all("User Permission",{"allow":"Issue","for_value":doc.issue,"user":doc.completed_by}))==0:
+			for d in frappe.get_all("User Permission",{"allow":"Issue","for_value":doc.issue}):
+				frappe.delete_doc("User Permission",d.name)
+			add_user_permission("Issue",doc.issue,doc.completed_by)
+
+		for emp in frappe.get_all("Employee",{"user_id":doc.completed_by},['material_request_approver']):
+			if emp.material_request_approver:
+				for emp2 in frappe.get_all("Employee",{"name":emp.material_request_approver},['user_id']):
+					if emp2.user_id:
+						add_user_permission("Issue",doc.issue,emp2.user_id)	
 # def assign_task_validation(doc):
 # 	if doc.status=="Working":
 # 		for d in frappe.get_all("Task",{"status":"Working","completed_by":doc.completed_by,"name":("!=",doc.name)}):
