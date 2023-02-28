@@ -157,7 +157,7 @@ def send_task_assignment_email(task):
 
 
 def on_change(doc,method):
-	if doc.get("issue"):
+	if doc.get("issue") and doc.status=='Completed':
 		set_reading_from_task_to_issue(doc)
 	validate_reading(doc)
 	existed_mr=[]
