@@ -541,22 +541,36 @@ frappe.ui.form.on('Material Request', {
 
 
 
-//  frappe.ui.form.on("Material Request Item",{
-// 	   items_add:function(frm){
-// 		cur_frm.fields_dict['items'].grid.get_field('item_code').get_query =
-// 		 function() {
-// 		 return {
+ frappe.ui.form.on("Material Request Item",{
+	   items_add:function(frm){
+		cur_frm.fields_dict['items'].grid.get_field('item_code').get_query =
+		 function() {
+		 return {
 
-// 		 query: "mfi_customization.mfi.doctype.material_request.item_child_table_filter",
-// 		 filters:{
-// 			"asset":frm.doc.asset,
-// 			"company":frm.doc.company
-// 			   },
-//          searchfield: "item_name"
-// 			}
-// 		 }
-// 	   }
-//    });
+		 query: "mfi_customization.mfi.doctype.material_request.item_child_table_filter",
+		 filters:{
+			"asset":frm.doc.asset,
+			"company":frm.doc.company
+			   },
+         searchfield: "item_name"
+			}
+		 }
+	   }
+   });
+
+//  frappe.ui.form.on("Material Request Item",{
+// 	items_add:function(frm){
+// 		frm.set_query("item_code", "items", function(doc, cdt, cdn) {
+//     		return {
+// 				filters:[
+//     				[parent.asset, "=", frm.doc.asset],
+//     				// ["Asset","company", "=", frm.doc.requesting_to]
+//     			]
+			   
+//     		};
+// 	});
+// 	}
+// });
 
 //    frappe.ui.form.on('Material Request', {
 //     onload: function(frm) {
