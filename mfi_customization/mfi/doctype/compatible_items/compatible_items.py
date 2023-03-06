@@ -16,7 +16,7 @@ def add_item(doc, method):
     elif doc.type == "Toner":
             add_on_entry_child = item.append('compatible_toners',{})
             add_on_entry_child.item_code = doc.item
-            
+
     item.save()
 
 # def add_item_in_asset(doc, method):
