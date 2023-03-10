@@ -42,7 +42,7 @@ def add_item():
 			if item_modified:
 				print('*************saving item***************')
 				item.save()
-				frappe.db.commit()
+	frappe.db.commit()
 
 # def add_item_in_asset(doc, method):
 # 	asset = frappe.get_doc("Asset", doc.asset)
