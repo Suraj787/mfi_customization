@@ -14,6 +14,7 @@ def add_item():
 		c_item = frappe.get_doc("Compatible Items", c_item)
 		if frappe.db.exists('Item',c_item.asset_item):
 			item = frappe.get_doc('Item',c_item.asset_item)
+			print('checking item to add compatible item')
 			company = "MFI DOCUMENT SOLUTIONS KENYA"
 			added_items = [row.item_code for row in item.items]
 			added_compatible_toners = [row.item_code for row in item.compatible_toners]
