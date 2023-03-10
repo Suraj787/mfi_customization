@@ -10,8 +10,10 @@ class CompatibleItems(Document):
 
 def add_item():
 	compatible_items = frappe.get_all("Compatible Items")
+	print('****************len(compatible_items)****************', len(compatible_items))
 	for c_item in compatible_items:
 		if frappe.db.exists('Item',c_item.asset_item):
+			print('*************asset_item exists***************')
 			item = frappe.get_doc('Item',c_item.asset_item)
 			company = "MFI DOCUMENT SOLUTIONS KENYA"
 			added_items = [row.item_code for row in item.items]
@@ -33,6 +35,7 @@ def add_item():
 				add_on_entry_child.yeild = item.yeild
 
 			item.save()
+			print('****************item.name****************', item.name)
 
 # def add_item_in_asset(doc, method):
 # 	asset = frappe.get_doc("Asset", doc.asset)
