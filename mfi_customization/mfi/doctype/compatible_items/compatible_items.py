@@ -18,6 +18,7 @@ def add_item():
 			added_items = [row.item_code for row in item.items]
 			added_compatible_toners = [row.item_code for row in item.compatible_toners]
 			if c_item.item not in added_items and c_item.type == "Accessories":
+				print('*************adding Accessories***************')
 				add_on_entry_child = item.append('items',{})
 				add_on_entry_child.item_code = c_item.item
 				add_on_entry_child.company = company
@@ -26,13 +27,14 @@ def add_item():
 				add_on_entry_child.yeild = item.yeild
 
 			elif c_item.item not in added_compatible_toners and c_item.type == "Toner":
+				print('*************adding Toner***************')
 				add_on_entry_child = item.append('compatible_toners',{})
 				add_on_entry_child.item_code = c_item.item
 				add_on_entry_child.company = company
 				add_on_entry_child.item_name = item.item_name
 				add_on_entry_child.item_group = item.item_group
 				add_on_entry_child.yeild = item.yeild
-
+			print('*************saving item***************')
 			item.save()
 			frappe.db.commit()
 
