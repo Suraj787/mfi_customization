@@ -41,3 +41,25 @@ def add_item(doc, method):
 # 			row.yeild = item.yeild
 # 	asset.save()
 
+def add_item():
+    comp_it = frappe.db.get_all('Compatible Items', pluck='name')
+    for i in comp_it:
+        comp_items = frappe.get_doc('Compatible Items',i)
+        item = frappe.get_doc('Item',comp_items.asset_item)
+        if comp_items.type == 'Accessories':
+            item.append("items",{
+                "item_code": comp_items.item,
+                "company": 'MFI DOCUMENT SOLUTIONS KENYA'
+                })
+            print(f'\n\n\nitem{item}\n\n\n\n')
+            item.save()
+
+        else:
+            item.append("compatible_toners",{
+                "item_code": comp_items.item,
+                "company": 'MFI DOCUMENT SOLUTIONS KENYA'
+                })
+            item.save()
+        
+
+
