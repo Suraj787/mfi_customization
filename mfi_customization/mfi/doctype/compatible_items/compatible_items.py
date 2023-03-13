@@ -104,7 +104,7 @@ def add_item_ton():
 # 	asset.save()
 
 def add_item_details_access():
-    comp_it = frappe.db.get_all('Compatible Items', pluck='name')
+    comp_it = frappe.db.get_all('Compatible Items',{'type':'Accessories'}, pluck='name')
     for i in comp_it:
         comp_items = frappe.get_doc('Compatible Items',i)
         item = frappe.get_doc('Item',comp_items.asset_item)
@@ -118,7 +118,7 @@ def add_item_details_access():
             item.save()
 
 def add_item_details_toner():
-    comp_it = frappe.db.get_all('Compatible Items', pluck='name')
+    comp_it = frappe.db.get_all('Compatible Items',{'type':'Toner'}, pluck='name')
     for i in comp_it:
         comp_items = frappe.get_doc('Compatible Items',i)
         item = frappe.get_doc('Item',comp_items.asset_item)
