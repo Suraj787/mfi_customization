@@ -21,7 +21,7 @@ def add_item():
 			item_modified = 0
 			if c_item.item not in added_items and c_item.type == "Accessories":
 				print('*************adding Accessories***************')
-				add_on_entry_child = item.append('items',{})
+				add_on_entry_child = item.append('compatible_spares',{})
 				add_on_entry_child.item_code = c_item.item
 				add_on_entry_child.company = company
 				add_on_entry_child.item_name = item.item_name
@@ -66,13 +66,13 @@ def add_item():
 # 			row.yeild = item.yeild
 # 	asset.save()
 
-def add_item():
+def add_item_details():
     comp_it = frappe.db.get_all('Compatible Items', pluck='name')
     for i in comp_it:
         comp_items = frappe.get_doc('Compatible Items',i)
         item = frappe.get_doc('Item',comp_items.asset_item)
         if comp_items.type == 'Accessories':
-            item.append("items",{
+            item.append("compatible_spares",{
                 "item_code": comp_items.item,
                 "company": 'MFI DOCUMENT SOLUTIONS KENYA'
                 })
