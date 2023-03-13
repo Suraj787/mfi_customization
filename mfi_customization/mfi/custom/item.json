@@ -2365,14 +2365,22 @@
    "hide_border": 0,
    "hide_days": 0,
    "hide_seconds": 0,
+<<<<<<< HEAD
    "idx": 17,
+=======
+   "idx": 15,
+>>>>>>> d7dffa8906c361d38df8071730978c0202a248b9
    "ignore_user_permissions": 0,
    "ignore_xss_filter": 0,
    "in_global_search": 0,
    "in_list_view": 0,
    "in_preview": 0,
    "in_standard_filter": 0,
+<<<<<<< HEAD
    "insert_after": "compatible_spares",
+=======
+   "insert_after": "duty_percentage",
+>>>>>>> d7dffa8906c361d38df8071730978c0202a248b9
    "label": "Compatible Toners",
    "length": 0,
    "mandatory_depends_on": null,
@@ -2411,7 +2419,11 @@
    "collapsible": 0,
    "collapsible_depends_on": null,
    "columns": 0,
+<<<<<<< HEAD
    "creation": "2023-03-12 22:49:16.553516",
+=======
+   "creation": "2023-03-12 22:58:48.864751",
+>>>>>>> d7dffa8906c361d38df8071730978c0202a248b9
    "default": null,
    "depends_on": null,
    "description": null,
@@ -2425,18 +2437,30 @@
    "hide_border": 0,
    "hide_days": 0,
    "hide_seconds": 0,
+<<<<<<< HEAD
    "idx": 15,
+=======
+   "idx": 17,
+>>>>>>> d7dffa8906c361d38df8071730978c0202a248b9
    "ignore_user_permissions": 0,
    "ignore_xss_filter": 0,
    "in_global_search": 0,
    "in_list_view": 0,
    "in_preview": 0,
    "in_standard_filter": 0,
+<<<<<<< HEAD
    "insert_after": "duty_percentage",
    "label": "Compatible Spares",
    "length": 0,
    "mandatory_depends_on": null,
    "modified": "2023-03-12 22:49:16.553516",
+=======
+   "insert_after": "compatible_toners",
+   "label": "Compatible Spares",
+   "length": 0,
+   "mandatory_depends_on": null,
+   "modified": "2023-03-12 22:58:48.864751",
+>>>>>>> d7dffa8906c361d38df8071730978c0202a248b9
    "modified_by": "Administrator",
    "name": "Item-compatible_spares",
    "no_copy": 0,
@@ -2878,7 +2902,11 @@
    "amend": 0,
    "cancel": 0,
    "create": 0,
+<<<<<<< HEAD
    "creation": "2023-03-02 11:38:56.986300",
+=======
+   "creation": "2023-03-12 22:54:53.968335",
+>>>>>>> d7dffa8906c361d38df8071730978c0202a248b9
    "delete": 0,
    "docstatus": 0,
    "email": 0,
@@ -2886,9 +2914,15 @@
    "idx": 0,
    "if_owner": 0,
    "import": 0,
+<<<<<<< HEAD
    "modified": "2023-03-02 11:38:56.986300",
    "modified_by": "Administrator",
    "name": "c3c27e1e26",
+=======
+   "modified": "2023-03-12 22:54:53.968335",
+   "modified_by": "Administrator",
+   "name": "e2729ed164",
+>>>>>>> d7dffa8906c361d38df8071730978c0202a248b9
    "owner": "Administrator",
    "parent": "Item",
    "parentfield": "permissions",
@@ -2912,7 +2946,11 @@
    "amend": 0,
    "cancel": 0,
    "create": 0,
+<<<<<<< HEAD
    "creation": "2023-03-02 11:38:57.015760",
+=======
+   "creation": "2023-03-12 22:54:54.002904",
+>>>>>>> d7dffa8906c361d38df8071730978c0202a248b9
    "delete": 0,
    "docstatus": 0,
    "email": 0,
@@ -2920,9 +2958,15 @@
    "idx": 0,
    "if_owner": 0,
    "import": 0,
+<<<<<<< HEAD
    "modified": "2023-03-02 11:38:57.015760",
    "modified_by": "Administrator",
    "name": "c931cd5e79",
+=======
+   "modified": "2023-03-12 22:54:54.002904",
+   "modified_by": "Administrator",
+   "name": "73bb621dd5",
+>>>>>>> d7dffa8906c361d38df8071730978c0202a248b9
    "owner": "Administrator",
    "parent": "Item",
    "parentfield": "permissions",
@@ -2946,7 +2990,11 @@
    "amend": 0,
    "cancel": 0,
    "create": 0,
+<<<<<<< HEAD
    "creation": "2023-03-02 11:38:57.030616",
+=======
+   "creation": "2023-03-12 22:54:54.021767",
+>>>>>>> d7dffa8906c361d38df8071730978c0202a248b9
    "delete": 1,
    "docstatus": 0,
    "email": 0,
@@ -2954,9 +3002,15 @@
    "idx": 0,
    "if_owner": 0,
    "import": 0,
+<<<<<<< HEAD
    "modified": "2023-03-02 11:38:57.030616",
    "modified_by": "Administrator",
    "name": "dca6a7fdb6",
+=======
+   "modified": "2023-03-12 22:54:54.021767",
+   "modified_by": "Administrator",
+   "name": "e60f1c6f7b",
+>>>>>>> d7dffa8906c361d38df8071730978c0202a248b9
    "owner": "Administrator",
    "parent": "Item",
    "parentfield": "permissions",

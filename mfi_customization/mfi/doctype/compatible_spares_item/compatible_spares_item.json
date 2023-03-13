@@ -1,7 +1,11 @@
 {
  "actions": [],
  "allow_rename": 1,
+<<<<<<< HEAD
  "creation": "2023-03-02 13:53:19.225411",
+=======
+ "creation": "2023-03-13 00:08:02.683893",
+>>>>>>> d7dffa8906c361d38df8071730978c0202a248b9
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
@@ -62,7 +66,11 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
+<<<<<<< HEAD
  "modified": "2023-03-02 13:53:19.225411",
+=======
+ "modified": "2023-03-13 00:08:02.683893",
+>>>>>>> d7dffa8906c361d38df8071730978c0202a248b9
  "modified_by": "Administrator",
  "module": "mfi",
  "name": "Compatible Spares Item",
