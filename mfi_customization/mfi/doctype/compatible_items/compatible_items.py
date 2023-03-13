@@ -16,7 +16,7 @@ def add_item():
 			item = frappe.get_doc('Item',c_item.asset_item)
 			print('checking item to add compatible item')
 			company = "MFI DOCUMENT SOLUTIONS KENYA"
-			added_items = [row.item_code for row in item.items]
+			added_items = [row.item_code for row in item.compatible_spares]
 			added_compatible_toners = [row.item_code for row in item.compatible_toners]
 			item_modified = 0
 			if c_item.item not in added_items and c_item.type == "Accessories":
@@ -71,7 +71,8 @@ def add_item_details():
     for i in comp_it:
         comp_items = frappe.get_doc('Compatible Items',i)
         item = frappe.get_doc('Item',comp_items.asset_item)
-        if comp_items.type == 'Accessories':
+        added_items = [row.item_code for row in item.compatible_spares]
+        if comp_items.item not in added_items and comp_items.type == 'Accessories':
             item.append("compatible_spares",{
                 "item_code": comp_items.item,
                 "company": 'MFI DOCUMENT SOLUTIONS KENYA'
@@ -79,11 +80,12 @@ def add_item_details():
             print(f'\n\n\nitem{item}\n\n\n\n')
             item.save()
 
-        else:
+        if comp_items.item not in added_items and comp_items.type == 'Toner':
             item.append("compatible_toners",{
                 "item_code": comp_items.item,
                 "company": 'MFI DOCUMENT SOLUTIONS KENYA'
                 })
+            print(f'\n\n\nitem{item}\n\n\n\n')
             item.save()
         
 
