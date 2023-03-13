@@ -109,7 +109,7 @@ def add_item_details_access():
         comp_items = frappe.get_doc('Compatible Items',i)
         item = frappe.get_doc('Item',comp_items.asset_item)
         added_items = [row.item_code for row in item.compatible_spares]
-        if comp_items.item not in added_items and comp_items.type == 'Accessories':
+        if comp_items.item not in added_items and comp_items.type == 'Accessories' and comp_items.asset_item != '1102RL3NL0':
             item.append("compatible_spares",{
                 "item_code": comp_items.item,
                 "company": 'MFI DOCUMENT SOLUTIONS KENYA'
