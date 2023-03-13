@@ -88,3 +88,40 @@ def add_item():
         
 
 
+@frappe.whitelist()
+def update_toner_acc_items():
+	# mfi_customization.mfi.doctype.compatible_items.compatible_items.update_toner_acc_items
+	
+	# MFI DOCUMENT SOLUTIONS KENYA
+	try:
+		compatible_items=frappe.get_all('Compatible Items',["type","asset_item","item"])
+		if len(compatible_items)>0:
+			for compatible_item in compatible_items:
+				if compatible_item.get("type")=="Accessories":
+					# if not frappe.db.get_value('Compatible Spares Item',{'parent': compatible_item.get("asset_item"),"item_code": compatible_item.get("item")}):
+					if compatible_item.get("asset_item")=="1102RL3NL0":
+						
+						item_doc=frappe.get_doc("Item",compatible_item.get("asset_item"))
+						print("not found acc",compatible_item.get("asset_item"),item_doc.name)
+						for i in item_doc.get("compatible_spares"):					# if not frappe.db.get_value('Compatible Spares Item',{'parent': compatible_item.get("asset_item"),"item_code": compatible_item.get("item")}):
+
+							if compatible_item.get("item") not in i.item_code:
+								print("not found acc",compatible_item.get("asset_item"),item_doc.name)
+								item =  {'item_code':compatible_item.get("item"),"company":"MFI DOCUMENT SOLUTIONS KENYA"}
+								item_doc.append("compatible_spares", item)
+						item_doc.save(ignore_permissions=True)
+
+				# if compatible_item.get("type")=="Toner":
+				# 	if not frappe.db.get_value('Asset Item Child Table',{'parent': compatible_item.get("asset_item"),"item_code": compatible_item.get("item")}):
+				# 		print("not found toner",compatible_item.get("asset_item"))
+				# 		item_doc=frappe.get_doc("Item",compatible_item.get("asset_item"))
+				# 		item =  {'item_code':compatible_item.get("item"),"company":"MFI DOCUMENT SOLUTIONS KENYA"}
+				# 		item_doc.append("compatible_toners", item)
+				# 		item_doc.save(ignore_permissions=True)
+					
+	except Exception as e:
+		print(e)
+		frappe.log_error(f"traceback: {frappe.get_traceback()}", f"Failed to  update_toner_acc_items")
+
+				
+	
