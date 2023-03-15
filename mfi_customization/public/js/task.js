@@ -545,7 +545,7 @@ function transfer_data_to_issue(frm) {
 
 frappe.ui.form.on('Task', {
 	refresh(frm) {
-
+               hide_btn_make(frm)
 
 		frm.add_custom_button(__('Machine Asset History Report'), function () {
 			var asset = frm.doc.current_reading.map((i)=>{
@@ -691,5 +691,13 @@ function status_option_permision_for_technician(frm){
       }
 }
 
+function hide_btn_make(frm){
+
+if(frm.doc.type_of_call=="Toner"){
+
+frm.remove_custom_button('Material Request', 'Make');
+
+}
+}
 
 
