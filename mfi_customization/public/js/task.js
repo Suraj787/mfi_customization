@@ -593,6 +593,7 @@ function set_permissions_for_symptoms(frm) {
 			frm.set_df_property('action', "read_only", 1);
 			frm.set_df_property('cause', "read_only", 1);
 			frm.set_df_property('priority', "read_only", 1);
+
 		}
 		if (frappe.user.has_role("Call Coordinator") == 1 && frappe.user != "Administrator") {
 			// frm.set_df_property('symptoms', "hidden", 1);
@@ -696,6 +697,7 @@ function hide_btn_make(frm){
 if(frm.doc.type_of_call=="Toner"){
 
 frm.remove_custom_button('Material Request', 'Make');
+frm.set_df_property('requested_material_status',"read_only",1);
 
 }
 }
