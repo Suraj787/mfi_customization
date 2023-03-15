@@ -392,7 +392,7 @@ def item_child_table_filter(doctype, txt, searchfield, start, page_len, filters)
 		data = frappe.db.sql(f"""SELECT aic.item_code,aic.item_name,aic.item_group,aic.company from `tabItem`i LEFT JOIN `tabAsset Item Child Table` aic on aic.parent = i.name where i.item_code='{asset_item}'and aic.company = '{comp}' and aic.item_group='Toner' and aic.{searchfield} like "%{txt}%" """)
 		return data
 	else:
-		data = frappe.db.sql(f"""SELECT aic.item_code,aic.item_name,aic.item_group,aic.company from `tabItem`i LEFT JOIN `tabAsset Item Child Table` aic on aic.parent = i.name where i.item_code='{asset_item}'and aic.company = '{comp}' and aic.item_group!='Toner' and aic.{searchfield} like "%{txt}%" """)
+		data = frappe.db.sql(f"""SELECT ais.item_code,ais.item_name,ais.item_group,ais.company from `tabItem`i LEFT JOIN `tabCompatible Spares Item` ais on ais.parent = i.name where i.item_code='{asset_item}'and ais.company = '{comp}' and ais.item_group!='Toner' and ais.{searchfield} like "%{txt}%" """)
 		return data
 
 @frappe.whitelist()
