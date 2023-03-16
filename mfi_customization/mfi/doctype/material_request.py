@@ -386,7 +386,7 @@ def item_child_table_filter(doctype, txt, searchfield, start, page_len, filters)
 	frappe.log_error(f'task,{task1}')
 	asset_item = frappe.db.get_value('Asset',{'name':AssetName},'item_code')
 	task = frappe.db.get_value('Task',{'name':task1},'type_of_call')
-	frappe.log_error(f'type_of_call,{type_of_call}')
+	frappe.log_error(f'type_of_call,{task}')
 	search_cond = ''
 	if txt:
 		search_cond = f" and u.{searchfield} like '%{txt}%' "
