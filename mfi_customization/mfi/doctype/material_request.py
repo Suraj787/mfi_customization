@@ -382,9 +382,9 @@ def before_save(doc,method):
 def item_child_table_filter(doctype, txt, searchfield, start, page_len, filters):
 	AssetName = filters.get("asset")
 	comp = filters.get("company")
-	print(f'\n\n\n\n\n\n{comp}\n\n\n\n\n\n')
+	task1 = filters.get("task")
 	asset_item = frappe.db.get_value('Asset',{'name':AssetName},'item_code')
-	task = frappe.db.get_value('Task',{'asset':AssetName},'type_of_call')
+	task = frappe.db.get_value('Task',{'name':task1},'type_of_call')
 	search_cond = ''
 	if txt:
 		search_cond = f" and u.{searchfield} like '%{txt}%' "
@@ -392,7 +392,7 @@ def item_child_table_filter(doctype, txt, searchfield, start, page_len, filters)
 		data = frappe.db.sql(f"""SELECT aic.item_code,aic.item_name,aic.item_group,aic.company from `tabItem`i LEFT JOIN `tabAsset Item Child Table` aic on aic.parent = i.name where i.item_code='{asset_item}'and aic.company = '{comp}' and aic.item_group='Toner' and aic.{searchfield} like "%{txt}%" """)
 		return data
 	else:
-		data = frappe.db.sql(f"""SELECT ais.item_code,ais.item_name,ais.item_group,ais.company from `tabItem`i LEFT JOIN `tabCompatible Spares Item` ais on ais.parent = i.name where i.item_code='{asset_item}'and ais.company = '{comp}' and ais.item_group!='Toner' and ais.{searchfield} like "%{txt}%" """)
+		data = frappe.db.sql(f"""SELECT aic.item_code,aic.item_name,aic.item_group,aic.company from `tabItem`i LEFT JOIN `tabCompatible Spares Item` aic on aic.parent = i.name where i.item_code='{asset_item}'and aic.company = '{comp}' and aic.item_group!='Toner' and aic.{searchfield} like "%{txt}%" """)
 		return data
 
 @frappe.whitelist()
