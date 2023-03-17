@@ -175,7 +175,7 @@ def on_change(doc,method):
 			if doc.status == 'Completed':
 				validate_if_material_request_is_not_submitted(doc)
 				validate_current_reading(doc)
-				attachment_validation(doc)
+				# attachment_validation(doc)
 
 				issue.status="Task Completed"
 				issue.set("task_attachments",[])
