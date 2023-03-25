@@ -29,7 +29,7 @@ def validate(doc,method):
 
 	last_reading=today()
 	#last_reading child table row will be less then 2 idx(3 row) then it will insert
-	if doc.asset and  len(doc.get("last_readings"))<=2:
+	if doc.asset and  len(doc.get("last_readings"))<=3:
 		doc.set("last_readings", [])
 		fltr={"project":doc.project,"asset":doc.asset,"reading_date":("<=",last_reading)}
 		# if machine_reading:
@@ -691,7 +691,6 @@ def repetitive_call(doc):
 	mr=mr.replace(".0","")
 
 	frappe.msgprint(mr)
-
 
 @frappe.whitelist()
 def assingn_to_fltr_bassed_on_technician(doctype, txt, searchfield, start, page_len, filters):
