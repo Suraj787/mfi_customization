@@ -415,19 +415,35 @@ def get_asset_on_cust(doctype, txt, searchfield, start, page_len, filters):
 def create_machine_reading(doc):
 	for d in doc.get('current_reading'):
 		if len(frappe.get_all("Machine Reading",{"task":doc.name,"project":doc.project,"asset":d.get('asset'),"reading_date":d.get('date')}))<1:
-			mr=frappe.new_doc("Machine Reading")
-			mr.reading_date=d.get('date')
-			mr.asset=d.get('asset')
-			mr.black_and_white_reading=d.get("reading")
-			mr.colour_reading=d.get("reading_2")
-			mr.machine_type=d.get('type')
-			mr.total=d.get("total")
-			mr.project=doc.project
-			mr.task=doc.name
-			mr.row_id = d.name
-			if doc.type_of_call =="Installation":
-				mr.reading_type = "Installation"
-			mr.save()
+			if doc.type_of_call =="Toner":
+				mr=frappe.new_doc("Machine Reading")
+				mr.reading_date=d.get('date')
+				mr.asset=d.get('asset')
+				mr.black_and_white_reading=d.get("reading")
+				mr.colour_reading=d.get("reading_2")
+				mr.machine_type=d.get('type')
+				mr.total=d.get("total")
+				mr.project=doc.project
+				mr.task=doc.name
+				mr.row_id = d.name
+				mr_doc.append("items",{
+						"item_code":doc.get('toner_type')
+					})
+				mr.save()
+			else:
+				mr=frappe.new_doc("Machine Reading")
+				mr.reading_date=d.get('date')
+				mr.asset=d.get('asset')
+				mr.black_and_white_reading=d.get("reading")
+				mr.colour_reading=d.get("reading_2")
+				mr.machine_type=d.get('type')
+				mr.total=d.get("total")
+				mr.project=doc.project
+				mr.task=doc.name
+				mr.row_id = d.name
+				if doc.type_of_call =="Installation":
+					mr.reading_type = "Installation"
+				mr.save()
 			# d.machine_reading=mr.name
 def update_machine_reading(doc, existed_mr):
 	for d in doc.get('current_reading'):
