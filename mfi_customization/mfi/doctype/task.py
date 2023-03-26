@@ -426,7 +426,7 @@ def create_machine_reading(doc):
 				mr.project=doc.project
 				mr.task=doc.name
 				mr.row_id = d.name
-				mr_doc.append("items",{
+				mr.append("items",{
 						"item_code":doc.get('toner_type')
 					})
 				mr.save()
