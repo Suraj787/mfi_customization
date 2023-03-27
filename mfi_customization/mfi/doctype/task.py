@@ -36,6 +36,11 @@ def validate(doc,method):
 			# fltr.update({"name":("!=",machine_reading)})
 			#limit has been set from 1 to 3 in below fields
 		for d in frappe.get_all("Machine Reading",filters=fltr,fields=["name","reading_date","asset","black_and_white_reading","colour_reading","total","machine_type"],limit=3,order_by="reading_date desc,name desc"):
+			y = []
+			mr = frappe.get_doc('Machine Reading',d.get('name'))
+			for item in mr.items:
+				y.append(item.yeild)
+
 			doc.append("last_readings", {
 				"date" : d.get('reading_date'),
 				"type" : d.get('machine_type'),
@@ -43,6 +48,7 @@ def validate(doc,method):
 				"reading":d.get('black_and_white_reading'),
 				"reading_2":d.get('colour_reading'),
 				"total":( int(d.get('black_and_white_reading') or 0)  + int(d.get('colour_reading') or 0))
+				"yeild":y[0]
 				})
 
 	set_field_values(doc)
