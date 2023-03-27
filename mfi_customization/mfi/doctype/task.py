@@ -41,15 +41,26 @@ def validate(doc,method):
 			for item in mr.items:
 				y.append(item.yeild)
 
-			doc.append("last_readings", {
-				"date" : d.get('reading_date'),
-				"type" : d.get('machine_type'),
-				"asset":d.get('asset'),
-				"reading":d.get('black_and_white_reading'),
-				"reading_2":d.get('colour_reading'),
-				"total":( int(d.get('black_and_white_reading') or 0)  + int(d.get('colour_reading') or 0)),
-				"yeild":y[0]
-				})
+			if len(y)>0:
+				doc.append("last_readings", {
+					"date" : d.get('reading_date'),
+					"type" : d.get('machine_type'),
+					"asset":d.get('asset'),
+					"reading":d.get('black_and_white_reading'),
+					"reading_2":d.get('colour_reading'),
+					"total":( int(d.get('black_and_white_reading') or 0)  + int(d.get('colour_reading') or 0)),
+					"yeild":y[0] or 0
+					})
+
+			else:
+				doc.append("last_readings", {
+					"date" : d.get('reading_date'),
+					"type" : d.get('machine_type'),
+					"asset":d.get('asset'),
+					"reading":d.get('black_and_white_reading'),
+					"reading_2":d.get('colour_reading'),
+					"total":( int(d.get('black_and_white_reading') or 0)  + int(d.get('colour_reading') or 0))
+					})
 
 	set_field_values(doc)
 # 	assign_task_validation(doc)
