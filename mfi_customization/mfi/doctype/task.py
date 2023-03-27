@@ -47,7 +47,7 @@ def validate(doc,method):
 				"asset":d.get('asset'),
 				"reading":d.get('black_and_white_reading'),
 				"reading_2":d.get('colour_reading'),
-				"total":( int(d.get('black_and_white_reading') or 0)  + int(d.get('colour_reading') or 0))
+				"total":( int(d.get('black_and_white_reading') or 0)  + int(d.get('colour_reading') or 0)),
 				"yeild":y[0]
 				})
 
