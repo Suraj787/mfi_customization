@@ -198,6 +198,8 @@ def on_change(doc,method):
 				validate_current_reading(doc)
 				signature_validation(doc)
 				rating_validation(doc)
+				issue.customer_rating = doc.customer_rating
+				issue.customer_signature = doc.customer_signature
 				# attachment_validation(doc)
 
 				issue.status="Task Completed"
