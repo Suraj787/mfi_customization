@@ -192,6 +192,10 @@ def on_change(doc,method):
 			if doc.status == 'Completed':
 				validate_if_material_request_is_not_submitted(doc)
 				validate_current_reading(doc)
+				signature_validation(doc)
+				rating_validation(doc)
+				issue.customer_rating = doc.customer_rating
+				issue.customer_signature = doc.customer_signature
 				# attachment_validation(doc)
 
 				issue.status="Task Completed"
@@ -539,6 +543,15 @@ def validate_if_material_request_is_not_submitted(doc):
 # def attachment_validation(doc):
 # 	if not doc.attachments or  len(doc.attachments)==0:
 # 		frappe.throw("Cann't Completed Task Without Attachment")
+
+def signature_validation(doc):
+	if not doc.customer_signature or doc.customer_signature is None:
+		frappe.throw("Can't Completed Task Without Signature")
+
+def rating_validation(doc):
+	if not doc.customer_rating or doc.customer_rating is None:
+		frappe.throw("Can't Completed Task Without Rating")
+
 
 def create_user_permission(doc):
 	if len(frappe.get_all("User Permission",{"allow":"Task","for_value":doc.name,"user":doc.completed_by}))==0:

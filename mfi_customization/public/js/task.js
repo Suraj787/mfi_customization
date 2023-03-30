@@ -600,6 +600,8 @@ function set_permissions_for_symptoms(frm) {
 			// frm.set_df_property('action', "hidden", 1);
 			// frm.set_df_property('cause', "hidden", 1);
 			// frm.set_df_property('signature', "read_only", 1);
+			frm.set_df_property('customer_rating', "hidden", 1);
+			frm.set_df_property('customer_signature', "hidden", 1);
 			frm.set_df_property('current_reading', 'hidden', 1);
 			// frm.set_df_property('priority', "read_only", 1);
 			// frm.set_df_property('repair_items', 'hidden', 1);
@@ -612,6 +614,8 @@ function set_permissions_for_symptoms(frm) {
 			frm.set_df_property('cause', "reqd", 1);
 			frm.set_df_property('signature', "reqd", 1);
 			frm.set_df_property('priority', "read_only", 1);
+			frm.set_df_property('customer_rating', "reqd", 1);
+			frm.set_df_property('customer_signature', "reqd", 1);
 		}
 		if (frappe.user.has_role("Technicians") == 1 && frappe.user != "Administrator" && frm.doc.status == "Open") {
 			frm.set_df_property('symptoms', "reqd", 0);
@@ -624,6 +628,8 @@ function set_permissions_for_symptoms(frm) {
 			frm.set_df_property('symptoms', "hidden", 1);
 			frm.set_df_property('action', "hidden", 1);
 			frm.set_df_property('cause', "hidden", 1);
+			frm.set_df_property('customer_rating', "hidden", 1);
+			frm.set_df_property('customer_signature', "hidden", 1);
 			frm.set_df_property('signature', "read_only", 1);
 			frm.set_df_property('current_reading', 'hidden', 1);
 			frm.set_df_property('priority', "read_only", 1);
