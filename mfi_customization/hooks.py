@@ -144,6 +144,10 @@ doc_events = {
     "File":{
         "after_insert":"mfi_customization.mfi.doctype.communication.after_insert_file"
     },
+    "Employee":{
+        "after_save":"mfi_customization.mfi.doctype.employee.employee.get_company",
+        "validate":"mfi_customization.mfi.doctype.employee.employee.get_territory"
+    },
     # "Item":{
     #     "after_insert":"mfi_customization.mfi.doctype.item.validate"
     # },
