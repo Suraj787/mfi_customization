@@ -12,6 +12,7 @@
   "asset",
   "task",
   "project",
+  "item",
   "column_break_4",
   "billing_status",
   "machine_type",
@@ -40,6 +41,7 @@
    "fieldname": "asset",
    "fieldtype": "Link",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Asset",
    "options": "Asset"
   },
@@ -50,6 +52,8 @@
   {
    "fieldname": "machine_type",
    "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Machine Type",
    "options": "\nBlack & White\nColour"
   },
@@ -77,6 +81,7 @@
   {
    "fieldname": "task",
    "fieldtype": "Link",
+   "in_standard_filter": 1,
    "label": "task",
    "options": "Task"
   },
@@ -107,10 +112,16 @@
   {
    "fieldname": "section_break_14",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "item",
+   "fieldtype": "Link",
+   "label": "Item",
+   "options": "Item"
   }
  ],
  "links": [],
- "modified": "2022-11-08 14:49:28.019099",
+ "modified": "2023-03-31 12:44:41.934038",
  "modified_by": "Administrator",
  "module": "mfi",
  "name": "Machine Reading",
