@@ -79,7 +79,7 @@ def validate(doc,method):
 					"reading":mr_all[d]['black_and_white_reading'],
 					"reading_2":mr_all[d]['colour_reading'],
 					"total":( int(mr_all[d]['black_and_white_reading'] or 0)  + int(mr_all[d]['colour_reading'] or 0)),
-					"yeild": int(mr_all[d]['total']) - int(mr_all[d+1]['total']) if (int(mr_all[d+1]['total'])) is not None else 0
+					"yeild": int(mr_all[d]['total']) - int(mr_all[d+1]['total']) or 0
 					})
 
 			else:
@@ -813,6 +813,24 @@ def yeild_in_last_reading(doc):
           yields3=float(total[2]) - float(total[1])
           frappe.db.sql(f"""UPDATE `tabPast Reading` SET `yeild`='%s' where idx=1 and `parent`="%s" """%(yields3,doc.name),as_list=1)
           frappe.db.commit()
+
+def yeild_in_last_reading1(doc,method):
+	d = []
+    # total=[i.total for i in frappe.db.sql(""" select total from `tabPast Reading` where parent="{doc.name}" ORDER BY idx DESC """,as_dict=1)]
+	if doc.name is not None:
+		mr = frappe.get_doc('Machine Reading',{'task':doc.name})
+		if frappe.db.exists("Version", {"docname": mr.name}):
+			version = frappe.get_doc('Version',{'ref_doctype':'Machine Reading', 'docname':mr.name})
+			t = json.loads(version.data)
+			for i in t['changed']:
+				for j in i:
+					d.append(j)
+
+	for total in doc.last_readings:
+		if len(d)>0:
+			if total.total == d[1]:
+				total.yeild = int(d[1]) - d[2]   
+				doc.save()		
 
 
      
