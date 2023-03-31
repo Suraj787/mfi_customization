@@ -20,7 +20,7 @@ def validate(doc,method):
 	set_actual_time(doc)
 	send_task_completion_email(doc)
 	send_task_escalation_email(doc)
-	# yeild_in_last_reading1(doc)
+	yeild_in_last_reading(doc)
 	# machine_reading=""
 	for d in doc.get("current_reading"):
 		# machine_reading=d.machine_reading
@@ -31,67 +31,35 @@ def validate(doc,method):
 	#last_reading child table row will be less then 2 idx(3 row) then it will insert
 	if doc.asset and  len(doc.get("last_readings"))<=3:
 		doc.set("last_readings", [])
-		fltr={"project":doc.project,"asset":doc.asset,"reading_date":("<=",last_reading),"item":doc.toner_type}
+		fltr={"project":doc.project,"asset":doc.asset,"reading_date":("<=",last_reading)}
 		# if machine_reading:
 			# fltr.update({"name":("!=",machine_reading)})
 			#limit has been set from 1 to 3 in below fields
-		print(f'\n\n\n\n\nMMMMRRRRRRR,{frappe.get_all("Machine Reading",filters=fltr,fields=["name","reading_date","asset","black_and_white_reading","colour_reading","total","machine_type"],limit=3,order_by="reading_date desc,name desc")}\n\n\n\n\n')
-		y = []
+		for d in frappe.get_all("Machine Reading",filters=fltr,fields=["name","reading_date","asset","black_and_white_reading","colour_reading","total","machine_type"],limit=3,order_by="reading_date desc,name desc"):
+			y = []
+			mr = frappe.get_doc('Machine Reading',d.get('name'))
+			for item in mr.items:
+				y.append(item.yeild)
 
-		mr_all = frappe.get_all("Machine Reading",filters=fltr,fields=["name","reading_date","asset","black_and_white_reading","colour_reading","total","machine_type"],limit=3,order_by="reading_date desc,name desc")
-		for i in mr_all:
-			y.append(i['total'])
-
-		
-		for d in range(len(mr_all)-1):
-			# y = []
-			# mr = frappe.get_doc('Machine Reading',d.get('name'))
-			# for item in mr.items:
-			# 	y.append(item.yeild)
-
-			data1 = []
-			x = []
-			# mr = frappe.get_doc('Machine Reading',d.get('name'))
-			# if frappe.db.exists("Version", {"docname": mr.name}):
-			# 	version = frappe.get_doc('Version',{'ref_doctype':'Machine Reading', 'docname':mr.name})
-			# 	t = json.loads(version.data)
-			# 	if 'total' in t['changed'][-3:]:
-			# 		for i in t['changed'][-3:]:
-			# 			for j in i:
-			# 				data1.append(j)
-
-			# for total in doc.last_readings:
-			# 	if len(data1)>0:
-			# 		if total.total == data1[1]:
-			# 			total.yeild = int(data1[1]) - data1[2]   
-			# 			x.append(total.yeild)
-			# print(f'\n\n\n\n\ndata1,{data1}\n\n\n\n\n')
-			print(f'\n\n\n\n\nx,{y}\n\n\n\n\n')
-		
-
-			if len(mr_all)>0:
-				print(f'\n\n\n\n\nxxxxxxx\n\n\n\n\n')
-				# for i in range(len(y)-1):
+			if len(y)>0:
 				doc.append("last_readings", {
-					"date" : mr_all[d]['reading_date'],
-					"type" : mr_all[d]['machine_type'],
-					"asset":mr_all[d]['asset'],
-					"reading":mr_all[d]['black_and_white_reading'],
-					"reading_2":mr_all[d]['colour_reading'],
-					"total":( int(mr_all[d]['black_and_white_reading'] or 0)  + int(mr_all[d]['colour_reading'] or 0)),
-					"yeild": int(mr_all[d]['total']) - int(mr_all[d+1]['total']) or 0
+					"date" : d.get('reading_date'),
+					"type" : d.get('machine_type'),
+					"asset":d.get('asset'),
+					"reading":d.get('black_and_white_reading'),
+					"reading_2":d.get('colour_reading'),
+					"total":( int(d.get('black_and_white_reading') or 0)  + int(d.get('colour_reading') or 0)),
+					"yeild":y[0] or 0
 					})
 
 			else:
-				print(f'\n\n\n\n\nNOTTTTTTxxxxxxx\n\n\n\n\n')
 				doc.append("last_readings", {
-					"date" : mr_all[d]['reading_date'],
-					"type" : mr_all[d]['machine_type'],
-					"asset":mr_all[d]['asset'],
-					"reading":mr_all[d]['black_and_white_reading'],
-					"reading_2":mr_all[d]['colour_reading'],
-					"total":( int(mr_all[d]['black_and_white_reading'] or 0)  + int(mr_all[d]['colour_reading'] or 0)),
-					"yeild": 0
+					"date" : d.get('reading_date'),
+					"type" : d.get('machine_type'),
+					"asset":d.get('asset'),
+					"reading":d.get('black_and_white_reading'),
+					"reading_2":d.get('colour_reading'),
+					"total":( int(d.get('black_and_white_reading') or 0)  + int(d.get('colour_reading') or 0))
 					})
 
 	set_field_values(doc)
@@ -475,7 +443,6 @@ def create_machine_reading(doc):
 				mr.project=doc.project
 				mr.task=doc.name
 				mr.row_id = d.name
-				mr.item = doc.get('toner_type')
 				mr.append("items",{
 						"item_code":doc.get('toner_type')
 					})
@@ -795,26 +762,6 @@ def yeild_in_last_reading(doc):
        if total[2] and total[1]:
           yields3=float(total[2]) - float(total[1])
           frappe.db.sql(f"""UPDATE `tabPast Reading` SET `yeild`='%s' where idx=1 and `parent`="%s" """%(yields3,doc.name),as_list=1)
-          frappe.db.commit()
-
-def yeild_in_last_reading1(doc,method):
-	d = []
-    # total=[i.total for i in frappe.db.sql(""" select total from `tabPast Reading` where parent="{doc.name}" ORDER BY idx DESC """,as_dict=1)]
-	if doc.name is not None:
-		mr = frappe.get_doc('Machine Reading',{'task':doc.name})
-		if frappe.db.exists("Version", {"docname": mr.name}):
-			version = frappe.get_doc('Version',{'ref_doctype':'Machine Reading', 'docname':mr.name})
-			t = json.loads(version.data)
-			for i in t['changed']:
-				for j in i:
-					d.append(j)
-
-	for total in doc.last_readings:
-		if len(d)>0:
-			if total.total == d[1]:
-				total.yeild = int(d[1]) - d[2]   
-				doc.save()		
-
-
+          frappe.db.commit()z
      
 
