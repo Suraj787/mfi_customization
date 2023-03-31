@@ -762,6 +762,6 @@ def yeild_in_last_reading(doc):
        if total[2] and total[1]:
           yields3=float(total[2]) - float(total[1])
           frappe.db.sql(f"""UPDATE `tabPast Reading` SET `yeild`='%s' where idx=1 and `parent`="%s" """%(yields3,doc.name),as_list=1)
-          frappe.db.commit()z
+          frappe.db.commit()
      
 
