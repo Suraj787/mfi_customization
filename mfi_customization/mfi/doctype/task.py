@@ -31,35 +31,29 @@ def validate(doc,method):
 	#last_reading child table row will be less then 2 idx(3 row) then it will insert
 	if doc.asset and  len(doc.get("last_readings"))<=3:
 		doc.set("last_readings", [])
-		fltr={"project":doc.project,"asset":doc.asset,"reading_date":("<=",last_reading)}
-		# if machine_reading:
-			# fltr.update({"name":("!=",machine_reading)})
-			#limit has been set from 1 to 3 in below fields
-		for d in frappe.get_all("Machine Reading",filters=fltr,fields=["name","reading_date","asset","black_and_white_reading","colour_reading","total","machine_type"],limit=3,order_by="reading_date desc,name desc"):
-			y = []
-			mr = frappe.get_doc('Machine Reading',d.get('name'))
-			for item in mr.items:
-				y.append(item.yeild)
-
-			if len(y)>0:
+		fltr={"project":doc.project,"asset":doc.asset,"reading_date":("<=",last_reading),"item":doc.toner_type}
+		mr_all = frappe.get_all("Machine Reading",filters=fltr,fields=["name","reading_date","asset","black_and_white_reading","colour_reading","total","machine_type"],limit=3,order_by="reading_date desc,name desc")
+		for d in range(len(mr_all)-1):
+			if len(mr_all)>0:
 				doc.append("last_readings", {
-					"date" : d.get('reading_date'),
-					"type" : d.get('machine_type'),
-					"asset":d.get('asset'),
-					"reading":d.get('black_and_white_reading'),
-					"reading_2":d.get('colour_reading'),
-					"total":( int(d.get('black_and_white_reading') or 0)  + int(d.get('colour_reading') or 0)),
-					"yeild":y[0] or 0
+					"date" : mr_all[d]['reading_date'],
+					"type" : mr_all[d]['machine_type'],
+					"asset":mr_all[d]['asset'],
+					"reading":mr_all[d]['black_and_white_reading'],
+					"reading_2":mr_all[d]['colour_reading'],
+					"total":( int(mr_all[d]['black_and_white_reading'] or 0)  + int(mr_all[d]['colour_reading'] or 0)),
+					"yeild": int(mr_all[d]['total']) - int(mr_all[d+1]['total']) or 0
 					})
 
 			else:
 				doc.append("last_readings", {
-					"date" : d.get('reading_date'),
-					"type" : d.get('machine_type'),
-					"asset":d.get('asset'),
-					"reading":d.get('black_and_white_reading'),
-					"reading_2":d.get('colour_reading'),
-					"total":( int(d.get('black_and_white_reading') or 0)  + int(d.get('colour_reading') or 0))
+					"date" : mr_all[d]['reading_date'],
+					"type" : mr_all[d]['machine_type'],
+					"asset":mr_all[d]['asset'],
+					"reading":mr_all[d]['black_and_white_reading'],
+					"reading_2":mr_all[d]['colour_reading'],
+					"total":( int(mr_all[d]['black_and_white_reading'] or 0)  + int(mr_all[d]['colour_reading'] or 0)),
+					"yeild": 0
 					})
 
 	set_field_values(doc)
@@ -447,6 +441,7 @@ def create_machine_reading(doc):
 				mr.project=doc.project
 				mr.task=doc.name
 				mr.row_id = d.name
+				mr.item = doc.get('toner_type')
 				mr.append("items",{
 						"item_code":doc.get('toner_type')
 					})
