@@ -29,12 +29,14 @@ def validate(doc,method):
 
 	last_reading=today()
 	#last_reading child table row will be less then 2 idx(3 row) then it will insert
-	if doc.asset and  len(doc.get("last_readings"))<=3:
+	if doc.asset and  len(doc.get("last_readings"))<=4:
 		doc.set("last_readings", [])
 		fltr={"project":doc.project,"asset":doc.asset,"reading_date":("<=",last_reading),"item":doc.toner_type}
-		mr_all = frappe.get_all("Machine Reading",filters=fltr,fields=["name","reading_date","asset","black_and_white_reading","colour_reading","total","machine_type"],limit=3,order_by="reading_date desc,name desc")
+		mr_all = frappe.get_all("Machine Reading",filters=fltr,fields=["name","reading_date","asset","black_and_white_reading","colour_reading","total","machine_type"],limit=4,order_by="reading_date desc,name desc")
 		for d in range(len(mr_all)-1):
 			if len(mr_all)>0:
+				print(f"\n\n\n\n\nttttt,{int(mr_all[d]['total'])}\n\n\n\n\n")
+				print(f"\n\n\n\n\nttttt+++++++++11111111,{int(mr_all[d+1]['total'])}\n\n\n\n\n")
 				doc.append("last_readings", {
 					"date" : mr_all[d]['reading_date'],
 					"type" : mr_all[d]['machine_type'],
@@ -442,7 +444,7 @@ def create_machine_reading(doc):
 				mr.black_and_white_reading=d.get("reading")
 				mr.colour_reading=d.get("reading_2")
 				mr.machine_type=d.get('type')
-				mr.total=d.get("total")
+				mr.total=d.get("total") or 0
 				mr.project=doc.project
 				mr.task=doc.name
 				mr.row_id = d.name
