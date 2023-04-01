@@ -28,37 +28,33 @@ def validate(doc,method):
 
 	last_reading=today()
 	#last_reading child table row will be less then 2 idx(3 row) then it will insert
-	if doc.asset and  len(doc.get("last_readings"))<=3:
+	if doc.asset and  len(doc.get("last_readings"))<=4:
 		doc.set("last_readings", [])
-		fltr={"project":doc.project,"asset":doc.asset,"reading_date":("<=",last_reading)}
-		# if machine_reading:
-			# fltr.update({"name":("!=",machine_reading)})
-			#limit has been set from 1 to 3 in below fields
-		for d in frappe.get_all("Machine Reading",filters=fltr,fields=["name","reading_date","asset","black_and_white_reading","colour_reading","total","machine_type"],limit=3,order_by="reading_date desc,name desc"):
-			y = []
-			mr = frappe.get_doc('Machine Reading',d.get('name'))
-			for item in mr.items:
-				y.append(item.yeild)
-
-			if len(y)>0:
+		fltr={"project":doc.project,"asset":doc.asset,"reading_date":("<=",last_reading),"item":doc.toner_type}
+		mr_all = frappe.get_all("Machine Reading",filters=fltr,fields=["name","reading_date","asset","black_and_white_reading","colour_reading","total","machine_type"],limit=4,order_by="reading_date desc,name desc")
+		for d in range(len(mr_all)-1):
+			if len(mr_all)>0:
+				print(f"\n\n\n\n\nttttt,{int(mr_all[d]['total'])}\n\n\n\n\n")
+				print(f"\n\n\n\n\nttttt+++++++++11111111,{int(mr_all[d+1]['total'])}\n\n\n\n\n")
 				doc.append("last_readings", {
-					"date" : d.get('reading_date'),
-					"type" : d.get('machine_type'),
-					"asset":d.get('asset'),
-					"reading":d.get('black_and_white_reading'),
-					"reading_2":d.get('colour_reading'),
-					"total":( int(d.get('black_and_white_reading') or 0)  + int(d.get('colour_reading') or 0)),
-					"yeild":y[0] or 0
+					"date" : mr_all[d]['reading_date'],
+					"type" : mr_all[d]['machine_type'],
+					"asset":mr_all[d]['asset'],
+					"reading":mr_all[d]['black_and_white_reading'],
+					"reading_2":mr_all[d]['colour_reading'],
+					"total":( int(mr_all[d]['black_and_white_reading'] or 0)  + int(mr_all[d]['colour_reading'] or 0)),
+					"yeild": int(mr_all[d]['total']) - int(mr_all[d+1]['total']) or 0
 					})
 
 			else:
 				doc.append("last_readings", {
-					"date" : d.get('reading_date'),
-					"type" : d.get('machine_type'),
-					"asset":d.get('asset'),
-					"reading":d.get('black_and_white_reading'),
-					"reading_2":d.get('colour_reading'),
-					"total":( int(d.get('black_and_white_reading') or 0)  + int(d.get('colour_reading') or 0))
+					"date" : mr_all[d]['reading_date'],
+					"type" : mr_all[d]['machine_type'],
+					"asset":mr_all[d]['asset'],
+					"reading":mr_all[d]['black_and_white_reading'],
+					"reading_2":mr_all[d]['colour_reading'],
+					"total":( int(mr_all[d]['black_and_white_reading'] or 0)  + int(mr_all[d]['colour_reading'] or 0)),
+					"yeild": 0
 					})
 
 	set_field_values(doc)
@@ -312,9 +308,14 @@ def get_tech(doctype, txt, searchfield, start, page_len, filters):
 @frappe.validate_and_sanitize_search_inputs
 def get_assign_user(doctype, txt, searchfield, start, page_len, filters):
 	territory = frappe.db.get_value("User Permission", {'user':filters.get('user'), 'allow':'Territory'}, 'for_value')
-	user_list = [u.user for u in  frappe.db.get_all("User Permission",{'allow':'Territory', 'for_value':territory}, 'user') if "Technicians" in frappe.get_roles(u.user)]
-	query = f""" select u.name, u.full_name from `tabUser` u where u.name in {tuple(user_list)} and u.{searchfield} like "%{txt}%" """
-	return frappe.db.sql(query)
+	if filters.get("type_of_call") == 'Toner':
+		user_list = [u.user for u in  frappe.db.get_all("User Permission",{'allow':'Territory', 'for_value':territory}, 'user') if "Toner Approval 1" in frappe.get_roles(u.user)]
+		query = f""" select u.name, u.full_name from `tabUser` u where u.name in {tuple(user_list)} and u.{searchfield} like "%{txt}%" """
+		return frappe.db.sql(query)
+	else:
+		user_list = [u.user for u in  frappe.db.get_all("User Permission",{'allow':'Territory', 'for_value':territory}, 'user') if "Technicians" in frappe.get_roles(u.user)]
+		query = f""" select u.name, u.full_name from `tabUser` u where u.name in {tuple(user_list)} and u.{searchfield} like "%{txt}%" """
+		return frappe.db.sql(query)
 
 
 @frappe.whitelist()
@@ -438,10 +439,11 @@ def create_machine_reading(doc):
 				mr.black_and_white_reading=d.get("reading")
 				mr.colour_reading=d.get("reading_2")
 				mr.machine_type=d.get('type')
-				mr.total=d.get("total")
+				mr.total=d.get("total") or 0
 				mr.project=doc.project
 				mr.task=doc.name
 				mr.row_id = d.name
+				mr.item = doc.get('toner_type')
 				mr.append("items",{
 						"item_code":doc.get('toner_type')
 					})
