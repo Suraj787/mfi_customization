@@ -86,7 +86,26 @@ def get_columns(filters):
             "fieldname": "mrt.percentage_yeild",
             "width": 100
         },
-
+        {
+        "label":("Rated Yeild"),
+        "fieldname":"mr.rated_yeild",
+        "width":100
+        },
+        {
+        "label":("RatedCoverage%"),
+        "fieldname":"mr.ratedcoverage",
+        "width":100
+        },
+        {
+        "label":("Actual Yeild"),
+        "fieldname":"mr.actual_yeild",
+        "width":100
+        },
+        {
+        "label":("Actual Coverage"),
+        "fieldname":"mr.actual_coverage",
+        "width":100
+        },
 
 
     ]
@@ -96,9 +115,9 @@ def get_columns(filters):
 def prepare_data(filters):
     data=[]
     fltr={}
-   
+    
     conditions = get_conditions(filters)
-    item = frappe.db.sql("""select mr.name,mr.reading_date,mr.asset,mr.project,mr.machine_type,mr.colour_reading,mr.black_and_white_reading,
+    item = frappe.db.sql("""select mr.name,mr.task,mr.reading_date,mr.asset,mr.project,mr.machine_type,mr.colour_reading,mr.black_and_white_reading,
     mr.total,mrt.item_code,mrt.item_name,mrt.item_group,mrt.total_reading,mrt.percentage_yeild,mrt.yeild as yld
                         from `tabMachine Reading` mr
                         LEFT Join `tabAsset Item Child Table` mrt on mrt.parent = mr.name
@@ -107,13 +126,33 @@ def prepare_data(filters):
     for i in item:             
         row={}
         row.update(i)
-
+        
         row.update({"mr.name":i.name,"mr.reading_date":i.reading_date,"mr.asset":i.asset,"mr.project":i.project,
         "mr.machine_type":i.machine_type,"mr.colour_reading":i.colour_reading,
         "mr.black_and_white_reading":i.black_and_white_reading,"mr.total":i.total,"mrt.item_code":i.item_code,
       "mrt.item_name":i.item_name,"mrt.item_group":i.item_group,"mrt.yeild":i.yld,
       "mrt.total_reading":i.total_reading,"mrt.percentage_yeild":i.percentage_yeild})
-
+       #-------------------#
+        toner_type=frappe.db.get_value("Task", {"name":i.task},["toner_type"])
+        if toner_type:
+           rated_yeild=5000
+           rated_cvrg=5
+           last_rdng_tbl=[i.total for i in frappe.db.get_all('Past Reading',filters={"parent":i.task},fields=["total"])if i.total is not None]
+           curnt_rdng_tbl=[i.total for i in frappe.db.get_all('Asset Readings',filters={"parent":i.task},fields=["total"])if i.total is not None]
+           if last_rdng_tbl and curnt_rdng_tbl:
+              print("ctrrrrrrrrrrr",curnt_rdng_tbl)
+              Actual_Yeild=int(curnt_rdng_tbl[0]) - int(last_rdng_tbl[-1])
+              if Actual_Yeild:
+                 Actual_coverage=rated_yeild/Actual_Yeild*rated_cvrg
+                 row.update({"mr.name":i.name,"mr.reading_date":i.reading_date,"mr.asset":i.asset,"mr.project":i.project,
+        "mr.machine_type":i.machine_type,"mr.colour_reading":i.colour_reading,
+        "mr.black_and_white_reading":i.black_and_white_reading,"mr.total":i.total,"mrt.item_code":i.item_code,
+      "mrt.item_name":i.item_name,"mrt.item_group":i.item_group,"mrt.yeild":i.yld,
+      "mrt.total_reading":i.total_reading,"mrt.percentage_yeild":i.percentage_yeild,
+       "mr.rated_yeild":rated_yeild,"mr.ratedcoverage":rated_cvrg,"mr.actual_yeild":Actual_Yeild,
+       "mr.actual_coverage":Actual_coverage})
+                     
+       #-------------------#
         data.append(row)
     return data
  

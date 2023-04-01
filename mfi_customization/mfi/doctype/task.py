@@ -20,7 +20,6 @@ def validate(doc,method):
 	set_actual_time(doc)
 	send_task_completion_email(doc)
 	send_task_escalation_email(doc)
-	yeild_in_last_reading(doc)
 	# machine_reading=""
 	for d in doc.get("current_reading"):
 		# machine_reading=d.machine_reading
@@ -768,19 +767,7 @@ def assingn_to_fltr_bassed_on_technician(doctype, txt, searchfield, start, page_
                list_user.append(usr)
     return  [[d] for d in list_user]
 
-
-def yeild_in_last_reading(doc):
-    total=[i.total for i in frappe.db.sql(""" select total from `tabPast Reading` where parent="{doc.name}" ORDER BY idx DESC """,as_dict=1)]
-    if doc.toner_type and total:
-       if total[1]:
-           yields2 = float(total[1]) - float(total[0])
-           frappe.db.sql("""SET SQL_SAFE_UPDATES = 0""")
-           frappe.db.commit()
-           frappe.db.sql(f"""UPDATE `tabPast Reading` SET `yeild`='%s' where idx=1 and `parent`="%s" """%(yields2,doc.name),as_list=1)
-           frappe.db.commit()
-       if total[2] and total[1]:
-          yields3=float(total[2]) - float(total[1])
-          frappe.db.sql(f"""UPDATE `tabPast Reading` SET `yeild`='%s' where idx=1 and `parent`="%s" """%(yields3,doc.name),as_list=1)
-          frappe.db.commit()
-     
+      
+             
+    
 
