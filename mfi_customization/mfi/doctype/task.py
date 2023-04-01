@@ -311,9 +311,14 @@ def get_tech(doctype, txt, searchfield, start, page_len, filters):
 @frappe.validate_and_sanitize_search_inputs
 def get_assign_user(doctype, txt, searchfield, start, page_len, filters):
 	territory = frappe.db.get_value("User Permission", {'user':filters.get('user'), 'allow':'Territory'}, 'for_value')
-	user_list = [u.user for u in  frappe.db.get_all("User Permission",{'allow':'Territory', 'for_value':territory}, 'user') if "Technicians" in frappe.get_roles(u.user)]
-	query = f""" select u.name, u.full_name from `tabUser` u where u.name in {tuple(user_list)} and u.{searchfield} like "%{txt}%" """
-	return frappe.db.sql(query)
+	if filters.type_of_call == 'Toner':
+		user_list = [u.user for u in  frappe.db.get_all("User Permission",{'allow':'Territory', 'for_value':territory}, 'user') if "Toner Approval 1" in frappe.get_roles(u.user)]
+		query = f""" select u.name, u.full_name from `tabUser` u where u.name in {tuple(user_list)} and u.{searchfield} like "%{txt}%" """
+		return frappe.db.sql(query)
+	else:
+		user_list = [u.user for u in  frappe.db.get_all("User Permission",{'allow':'Territory', 'for_value':territory}, 'user') if "Technicians" in frappe.get_roles(u.user)]
+		query = f""" select u.name, u.full_name from `tabUser` u where u.name in {tuple(user_list)} and u.{searchfield} like "%{txt}%" """
+		return frappe.db.sql(query)
 
 
 @frappe.whitelist()
