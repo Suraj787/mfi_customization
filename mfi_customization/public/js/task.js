@@ -185,7 +185,8 @@ frappe.ui.form.on('Task', {
 				// query: 'mfi_customization.mfi.doctype.task.get_tech',
 				query: 'mfi_customization.mfi.doctype.task.get_assign_user',
 				filters: {
-					"user": frappe.session.user
+					"user": frappe.session.user,
+					"type_of_call": frm.doc.type_of_call
 				},
 				searchfield: "full_name"
 			};
