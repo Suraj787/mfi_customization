@@ -20,7 +20,7 @@ frappe.ui.form.on('Task', {
 		}
 		if (frm.doc.status == "Completed") {
 			// frm.set_df_property('status','read_only',1);
-			if (frm.doc.type_of_call && frappe.user.has_role("Call Coordinator") != 1 && frappe.user == "Administrator") {
+			if (frm.doc.type_of_call && (frappe.user.has_role("Call Coordinator") != 1 || frappe.user.has_role("Toner Coordinator") != 1) && frappe.user == "Administrator") {
 				frappe.db.get_value('Type of Call', { 'name': frm.doc.type_of_call }, 'ignore_reading', (r) => {
 					if (r.ignore_reading == 1) {
 						frm.set_df_property('current_reading', 'hidden', 1);
@@ -111,7 +111,7 @@ frappe.ui.form.on('Task', {
 	});
 	*/
 
-		if (frm.doc.type_of_call && frappe.user.has_role("Call Coordinator") != 1 && frappe.user == "Administrator") {
+		if (frm.doc.type_of_call && (frappe.user.has_role("Call Coordinator") != 1 || frappe.user.has_role("Toner Coordinator") != 1) && frappe.user == "Administrator") {
 			frappe.db.get_value('Type of Call', { 'name': frm.doc.type_of_call }, 'ignore_reading', (r) => {
 				if (r.ignore_reading == 1) {
 					frm.set_df_property('current_reading', 'hidden', 1);
@@ -585,7 +585,7 @@ frappe.ui.form.on('Task', {
 
 function set_permissions_for_symptoms(frm) {
 	if (frm.doc.type_of_call == "Toner") {
-		if (frappe.user.has_role("Technicians") == 1 && frappe.user != "Administrator") {
+		if ((frappe.user.has_role("Technicians") == 1 || frappe.user.has_role("Toner Approval 1") == 1) && frappe.user != "Administrator") {
 			frm.set_df_property('symptoms', "reqd", 0);
 			frm.set_df_property('action', "reqd", 0);
 			frm.set_df_property('cause', "reqd", 0);
@@ -596,7 +596,7 @@ function set_permissions_for_symptoms(frm) {
 			frm.set_df_property('priority', "read_only", 1);
 
 		}
-		if (frappe.user.has_role("Call Coordinator") == 1 && frappe.user != "Administrator") {
+		if ((frappe.user.has_role("Call Coordinator") == 1 || frappe.user.has_role("Toner Coordinator") == 1) && frappe.user != "Administrator") {
 			// frm.set_df_property('symptoms', "hidden", 1);
 			// frm.set_df_property('action', "hidden", 1);
 			// frm.set_df_property('cause', "hidden", 1);
@@ -609,7 +609,7 @@ function set_permissions_for_symptoms(frm) {
 
 		}
 	} else {
-		if (frappe.user.has_role("Technicians") == 1 && frappe.user != "Administrator" && frm.doc.status == "Working") {
+		if ((frappe.user.has_role("Technicians") == 1 || frappe.user.has_role("Toner Approval 1") == 1) && frappe.user != "Administrator" && frm.doc.status == "Working") {
 			frm.set_df_property('symptoms', "reqd", 1);
 			frm.set_df_property('action', "reqd", 1);
 			frm.set_df_property('cause', "reqd", 1);
@@ -618,14 +618,14 @@ function set_permissions_for_symptoms(frm) {
 			frm.set_df_property('customer_rating', "reqd", 1);
 			frm.set_df_property('customer_signature', "reqd", 1);
 		}
-		if (frappe.user.has_role("Technicians") == 1 && frappe.user != "Administrator" && frm.doc.status == "Open") {
+		if ((frappe.user.has_role("Technicians") == 1 || frappe.user.has_role("Toner Approval 1") == 1) && frappe.user != "Administrator" && frm.doc.status == "Open") {
 			frm.set_df_property('symptoms', "reqd", 0);
 			frm.set_df_property('action', "reqd", 0);
 			frm.set_df_property('cause', "reqd", 0);
 			frm.set_df_property('signature', "reqd", 1);
 			frm.set_df_property('priority', "read_only", 1);
 		}
-		if (frappe.user.has_role("Call Coordinator") == 1 && frappe.user != "Administrator") {
+		if ((frappe.user.has_role("Call Coordinator") == 1 || frappe.user.has_role("Toner Coordinator") == 1) && frappe.user != "Administrator") {
 			frm.set_df_property('symptoms', "hidden", 1);
 			frm.set_df_property('action', "hidden", 1);
 			frm.set_df_property('cause', "hidden", 1);
@@ -642,7 +642,7 @@ function set_permissions_for_symptoms(frm) {
 }
 
 function read_onl_for_call_codinator_status_complete(frm){
-         if (frappe.user.has_role("Call Coordinator")==1 && frm.doc.status == "Completed"){
+         if ((frappe.user.has_role("Call Coordinator") == 1 || frappe.user.has_role("Toner Coordinator") == 1) && frm.doc.status == "Completed"){
 	            frm.set_df_property('status',"read_only",1);
 	          }
 }
@@ -650,7 +650,7 @@ function read_onl_for_call_codinator_status_complete(frm){
 
 function permision_fr_call_co_and_tech(frm){
 if (frm.doc.type_of_call == "Toner") {
-		if (frappe.user.has_role("Technicians")== 1 || frappe.user.has_role("Call Coordinator")==1) {
+		if (frappe.user.has_role("Technicians")== 1 || frappe.user.has_role("Call Coordinator")==1 || frappe.user.has_role("Toner Coordinator")==1 || frappe.user.has_role("Toner Approval 1")==1) {
 			frm.set_df_property('symptoms', "hidden", 1);
 			frm.set_df_property('action', "hidden", 1);
 			frm.set_df_property('cause', "hidden", 1);
@@ -678,7 +678,7 @@ function filter_bassed_on_role(frm){
 
 
 function status_option_permision_for_technician(frm){
-      if(frappe.user.has_role("Technicians")==1 && frappe.user != "Administrator"){
+      if((frappe.user.has_role("Technicians") == 1 || frappe.user.has_role("Toner Approval 1") == 1) && frappe.user != "Administrator"){
          if(frm.doc.status=="Working"){
           frm.set_df_property('status', 'options', ['Working','Completed'])
 
@@ -692,7 +692,7 @@ function status_option_permision_for_technician(frm){
          }
        }
       else{
-          if(frappe.user.has_role("Call Coordinator")==1){
+          if(frappe.user.has_role("Call Coordinator") == 1 || frappe.user.has_role("Toner Coordinator") == 1){
            frm.set_df_property('status',"read_only",1);
           }
 

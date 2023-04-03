@@ -1,6 +1,6 @@
 frappe.ui.form.on('Issue', {
 	onload:function(frm){
-	    if(frappe.user.has_role("Technicians")==1 && frappe.user!="Administrator"){
+	    if((frappe.user.has_role("Technicians") == 1 || frappe.user.has_role("Toner Approval 1") == 1) && frappe.user!="Administrator"){
 	        frm.set_df_property('symptoms',"reqd",1);
 	        frm.set_df_property('action',"reqd",1);
 	        frm.set_df_property('cause',"reqd",1);
@@ -9,7 +9,7 @@ frappe.ui.form.on('Issue', {
 	        frm.remove_custom_button('Close');
 
 	    }
-	    if(frappe.user.has_role("Call Coordinator")==1 && frappe.user!="Administrator"){
+	    if((frappe.user.has_role("Call Coordinator") == 1 || frappe.user.has_role("Toner Coordinator") == 1) && frappe.user!="Administrator"){
 	        frm.set_df_property('symptoms',"read_only",1);
 	        frm.set_df_property('action',"read_only",1);
 	        frm.set_df_property('cause',"read_only",1);
@@ -68,7 +68,7 @@ frappe.ui.form.on('Issue', {
 	}
    },
    type_of_call: function (frm) {
-		if(frm.doc.type_of_call && frappe.user.has_role("Call Coordinator") !=1 && frappe.user=="Administrator" && frappe.user.has_role("Customer")!=1){
+		if(frm.doc.type_of_call && (frappe.user.has_role("Call Coordinator") != 1 || frappe.user.has_role("Toner Coordinator") != 1) && frappe.user=="Administrator" && frappe.user.has_role("Customer")!=1){
 			frappe.db.get_value('Type of Call',{'name':frm.doc.type_of_call},'ignore_reading', (r) => {
 				if(r.ignore_reading == 1){
 					frm.set_df_property('current_reading','hidden',1);
@@ -161,7 +161,7 @@ frappe.ui.form.on('Issue', {
 	},
 	status:function(frm){
 		if(frm.doc.status == 'Closed'){
-			if(frm.doc.type_of_call && frappe.user.has_role("Call Coordinator") !=1 && frappe.user=="Administrator" && frappe.user.has_role("Customer")!=1){
+			if(frm.doc.type_of_call && (frappe.user.has_role("Call Coordinator") != 1 || frappe.user.has_role("Toner Coordinator") != 1) && frappe.user=="Administrator" && frappe.user.has_role("Customer")!=1){
                 frappe.db.get_value('Type of Call',{'name':frm.doc.type_of_call},'ignore_reading', (r) => {
                     if(r.ignore_reading == 1){
                         frm.set_df_property('current_reading','hidden',1);
@@ -583,7 +583,7 @@ frappe.ui.form.on('Issue', {
 // });
 
 function status_read_oly_fr_call_cordinator(frm){
-         if(frappe.user.has_role("Call Coordinator")==1){
+         if((frappe.user.has_role("Call Coordinator") == 1 || frappe.user.has_role("Toner Coordinator") == 1)){
            frm.set_df_property('status',"read_only",1);
          }
 
@@ -591,7 +591,7 @@ function status_read_oly_fr_call_cordinator(frm){
 
 
 function hide_request_mtrl_stus(frm){
-     if(frappe.user.has_role("Call Coordinator")!=1){
+     if((frappe.user.has_role("Call Coordinator") != 1 || frappe.user.has_role("Toner Coordinator") != 1)){
            frm.set_df_property('requested_material_status',"hidden",1);
      }
 }
