@@ -49,10 +49,10 @@ frappe.ui.form.on('Issue', {
 			frm.set_df_property('toner_type', "reqd", 0);
             frm.set_df_property('toner_type', "hidden", 1);
 
-
         }
-
-
+		if(frappe.user.has_role("Toner Coordinator")==1){
+			frm.set_df_property('toner_type', "hidden", 0);
+		}
 	},
 
 	before_save:function(frm){
