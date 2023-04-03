@@ -28,7 +28,7 @@ def validate(doc,method):
 
 	last_reading=today()
 	#last_reading child table row will be less then 2 idx(3 row) then it will insert
-	if doc.asset and  len(doc.get("last_readings"))<=4:
+	if doc.asset and  len(doc.get("last_readings"))<=4 and doc.status!="Completed":
 		doc.set("last_readings", [])
 		fltr={"project":doc.project,"asset":doc.asset,"reading_date":("<=",last_reading),"item":doc.toner_type}
 		mr_all = frappe.get_all("Machine Reading",filters=fltr,fields=["name","reading_date","asset","black_and_white_reading","colour_reading","total","machine_type"],limit=4,order_by="reading_date desc,name desc")
