@@ -132,7 +132,7 @@ def prepare_data(filters):
         "mr.black_and_white_reading":i.black_and_white_reading,"mr.total":i.total,"mrt.item_code":i.item_code,
       "mrt.item_name":i.item_name,"mrt.item_group":i.item_group,"mrt.yeild":i.yld,
       "mrt.total_reading":i.total_reading,"mrt.percentage_yeild":i.percentage_yeild})
-       #-------------------#
+
         toner_type=frappe.db.get_value("Task", {"name":i.task},["toner_type"])
         if toner_type:
            rated_yeild=5000
@@ -152,7 +152,7 @@ def prepare_data(filters):
        "mr.rated_yeild":rated_yeild,"mr.ratedcoverage":rated_cvrg,"mr.actual_yeild":Actual_Yeild,
        "mr.actual_coverage":Actual_coverage})
                      
-       #-------------------#
+
         data.append(row)
     return data
  
