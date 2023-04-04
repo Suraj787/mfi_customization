@@ -45,10 +45,24 @@ def validate(doc,method):
 					"asset":mr_all[d]['asset'],
 					"reading":mr_all[d]['black_and_white_reading'],
 					"reading_2":mr_all[d]['colour_reading'],
-					"total":( int(mr_all[d]['black_and_white_reading'] or 0)  + int(mr_all[d]['colour_reading'] or 0)),
+					"total":( int(mr_all[d]['black_and_white_reading'] or 0)  + int(mr_all[d]['colour_reading'] or 0)),      
 					"yeild": int(mr_all[d]['total']) - int(mr_all[d+1]['total']) or 0
 					})
-
+				if doc.toner_type: 
+                                  Actual_Yeild= int(mr_all[d]['total']) - int(mr_all[d+1]['total'])
+                                  if Actual_Yeild:
+                                     Actual_coverage=5000/(Actual_Yeild*5)
+                                     print("aaaaaaaaaaaadf",Actual_coverage)
+                                     doc.append("last_readings", {
+		   	                  "date" : mr_all[d]['reading_date'],
+		   	                  "type" : mr_all[d]['machine_type'],
+		   	                  "asset":mr_all[d]['asset'],
+		    	                  "reading":mr_all[d]['black_and_white_reading'],
+		   	                  "reading_2":mr_all[d]['colour_reading'],
+		    	                   "total":( int(mr_all[d]['black_and_white_reading'] or 0)  + int(mr_all[d]['colour_reading'] or 0)),         
+				            "yeild": int(mr_all[d]['total']) - int(mr_all[d+1]['total']) or 0,
+				            "actual_coverage":Actual_coverage
+			 	}) 
 			else:
 				doc.append("last_readings", {
 					"date" : mr_all[d]['reading_date'],
@@ -526,7 +540,7 @@ def validate_reading(doc):
     if len(curr)>0 and len(last)>0:
         print(f'\n\n\n\n\n122{curr},{last}\n\n\n\n\n')
         # if doc.issue_type != 'Error message':
-        if int(last[-1])>=int(curr[0]) and int(last[-1])>0 and int(curr[0])>0:
+        if int(last[0])>=int(curr[0]) and int(last[-1])>0 and int(curr[0])>0:
             frappe.throw("Current Reading Must be Greater than Last Reading")
 
     if len(curr_date)>0 and len(last_date)>0:
@@ -770,7 +784,4 @@ def assingn_to_fltr_bassed_on_technician(doctype, txt, searchfield, start, page_
                list_user.append(usr)
     return  [[d] for d in list_user]
 
-      
-             
-    
-
+		   
