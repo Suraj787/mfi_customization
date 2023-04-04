@@ -28,7 +28,7 @@ def validate(doc,method):
 
 	last_reading=today()
 	#last_reading child table row will be less then 2 idx(3 row) then it will insert
-	if doc.asset and  len(doc.get("last_readings"))<=3:
+	if doc.asset and len(doc.get("last_readings"))<=3 and doc.status == 'Open':
 		doc.set("last_readings", [])
 		l = []
 		for c_r in doc.current_reading:
