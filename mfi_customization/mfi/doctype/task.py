@@ -45,10 +45,24 @@ def validate(doc,method):
 					"asset":mr_all[d]['asset'],
 					"reading":mr_all[d]['black_and_white_reading'],
 					"reading_2":mr_all[d]['colour_reading'],
-					"total":( int(mr_all[d]['black_and_white_reading'] or 0)  + int(mr_all[d]['colour_reading'] or 0)),
+					"total":( int(mr_all[d]['black_and_white_reading'] or 0)  + int(mr_all[d]['colour_reading'] or 0)),      
 					"yeild": int(mr_all[d]['total']) - int(mr_all[d+1]['total']) or 0
 					})
-
+				if doc.toner_type: 
+                                  Actual_Yeild= int(mr_all[d]['total']) - int(mr_all[d+1]['total'])
+                                  if Actual_Yeild:
+                                     Actual_coverage=5000/(Actual_Yeild*5)
+                                     print("aaaaaaaaaaaadf",Actual_coverage)
+                                     doc.append("last_readings", {
+		   	                  "date" : mr_all[d]['reading_date'],
+		   	                  "type" : mr_all[d]['machine_type'],
+		   	                  "asset":mr_all[d]['asset'],
+		    	                  "reading":mr_all[d]['black_and_white_reading'],
+		   	                  "reading_2":mr_all[d]['colour_reading'],
+		    	                   "total":( int(mr_all[d]['black_and_white_reading'] or 0)  + int(mr_all[d]['colour_reading'] or 0)),         
+				            "yeild": int(mr_all[d]['total']) - int(mr_all[d+1]['total']) or 0,
+				            "actual_coverage":Actual_coverage
+			 	}) 
 			else:
 				doc.append("last_readings", {
 					"date" : mr_all[d]['reading_date'],
@@ -770,7 +784,4 @@ def assingn_to_fltr_bassed_on_technician(doctype, txt, searchfield, start, page_
                list_user.append(usr)
     return  [[d] for d in list_user]
 
-      
-             
-    
-
+		   
