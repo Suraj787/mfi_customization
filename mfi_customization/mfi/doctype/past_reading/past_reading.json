@@ -78,17 +78,19 @@
    "default": "5000",
    "fieldname": "rated_yield",
    "fieldtype": "Int",
+   "in_list_view": 1,
    "label": "Rated Yield"
   },
   {
    "fieldname": "actual_coverage",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Actual Coverage"
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2023-04-04 16:14:44.998527",
+ "modified": "2023-04-04 21:30:01.591697",
  "modified_by": "Administrator",
  "module": "mfi",
  "name": "Past Reading",
