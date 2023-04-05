@@ -46,7 +46,8 @@ def validate(doc,method):
 					"reading":mr_all[d]['black_and_white_reading'],
 					"reading_2":mr_all[d]['colour_reading'],
 					"total":( int(mr_all[d]['black_and_white_reading'] or 0)  + int(mr_all[d]['colour_reading'] or 0)),
-					"yeild": int(mr_all[d]['total']) - int(mr_all[d+1]['total']) or 0
+					"yeild": int(mr_all[d]['total']) - int(mr_all[d+1]['total']) or 0,
+					"actual_coverage": 5000/(int(mr_all[d]['total']) - int(mr_all[d+1]['total']))*5
 					})
 
 			else:
