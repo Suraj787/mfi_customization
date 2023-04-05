@@ -92,7 +92,7 @@ def get_columns(filters):
         "width":100
         },
         {
-        "label":("RatedCoverage%"),
+        "label":("RatedCoverage %"),
         "fieldname":"mr.ratedcoverage",
         "width":100
         },
@@ -102,7 +102,7 @@ def get_columns(filters):
         "width":100
         },
         {
-        "label":("Actual Coverage"),
+        "label":("Actual Coverage %"),
         "fieldname":"mr.actual_coverage",
         "width":100
         },
@@ -140,6 +140,7 @@ def prepare_data(filters):
            last_rdng_tbl=[i.total for i in frappe.db.get_all('Past Reading',filters={"parent":i.task},fields=["total"])if i.total is not None]
            curnt_rdng_tbl=[i.total for i in frappe.db.get_all('Asset Readings',filters={"parent":i.task},fields=["total"])if i.total is not None]
            if last_rdng_tbl and curnt_rdng_tbl:
+              
               print("ctrrrrrrrrrrr",curnt_rdng_tbl)
               Actual_Yeild=int(curnt_rdng_tbl[0]) - int(last_rdng_tbl[-1])
               if Actual_Yeild:
@@ -149,12 +150,14 @@ def prepare_data(filters):
         "mr.black_and_white_reading":i.black_and_white_reading,"mr.total":i.total,"mrt.item_code":i.item_code,
       "mrt.item_name":i.item_name,"mrt.item_group":i.item_group,"mrt.yeild":i.yld,
       "mrt.total_reading":i.total_reading,"mrt.percentage_yeild":i.percentage_yeild,
-       "mr.rated_yeild":rated_yeild,"mr.ratedcoverage":rated_cvrg,"mr.actual_yeild":Actual_Yeild,
-       "mr.actual_coverage":Actual_coverage})
-                     
-
+       "mr.rated_yeild":rated_yeild,"mr.ratedcoverage":f"{rated_cvrg}%","mr.actual_yeild":Actual_Yeild,
+       "mr.actual_coverage":f"{Actual_coverage}%"})
+                   
+        
         data.append(row)
     return data
+ 
+ 
  
  
  
@@ -165,8 +168,3 @@ def get_conditions(filters):
     if filters.get("project"): conditions += "and mr.project = %(project)s"
     if filters.get("task"): conditions += "and mr.task = %(task)s"
     return conditions
-
-
-
-
-

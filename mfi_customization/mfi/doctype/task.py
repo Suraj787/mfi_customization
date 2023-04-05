@@ -49,7 +49,7 @@ def validate(doc,method):
 					"yeild": int(mr_all[d]['total']) - int(mr_all[d+1]['total']) or 0,
 					"actual_coverage": 5000/(int(mr_all[d]['total']) - int(mr_all[d+1]['total']))*5
 					})
-
+				
 			else:
 				doc.append("last_readings", {
 					"date" : mr_all[d]['reading_date'],
@@ -60,7 +60,8 @@ def validate(doc,method):
 					"total":( int(mr_all[d]['black_and_white_reading'] or 0)  + int(mr_all[d]['colour_reading'] or 0)),
 					"yeild": 0
 					})
-
+			
+                        
 	set_field_values(doc)
 # 	assign_task_validation(doc)
 
@@ -771,7 +772,4 @@ def assingn_to_fltr_bassed_on_technician(doctype, txt, searchfield, start, page_
                list_user.append(usr)
     return  [[d] for d in list_user]
 
-      
-             
-    
-
+		   
