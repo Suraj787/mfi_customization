@@ -373,7 +373,7 @@ def before_save(doc,method):
 def item_child_table_filters(doctype, txt, searchfield, start, page_len, filters):
      AssetName = filters.get("asset")
      data = frappe.db.sql(f"""
-     SELECT item_code,item_name,item_group from `tabAsset Item Child Table` where parent= '{AssetName}'
+     SELECT item_code,item_name,item_group from `tabCompatible Spares Item` where parent= '{AssetName}'
   """, as_dict=0)
      return data
 
