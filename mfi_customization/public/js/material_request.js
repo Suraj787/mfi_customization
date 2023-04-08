@@ -528,7 +528,7 @@ frappe.ui.form.on("Material Request", 'onload_post_render', function(frm,cdt,cdn
  		function() {
  		return {
 
- 		query: "mfi_customization.mfi.doctype.material_request.item_child_table_filter",
+ 		query: "mfi_customization.mfi.doctype.material_request.item_child_table_filters",
  		filters:{
 
  				"asset":frm.doc.asset,
@@ -546,7 +546,7 @@ frappe.ui.form.on("Material Request", 'onload_post_render', function(frm,cdt,cdn
 		cur_frm.fields_dict['items'].grid.get_field('item_code').get_query =
 		 function() {
 		 return {
-		 query: "mfi_customization.mfi.doctype.material_request.item_child_table_filters",
+		 query: "mfi_customization.mfi.doctype.material_request.item_child_table_filter",
 		 filters:{
 			"asset":frm.doc.asset,
 			"task":frm.doc.task,
