@@ -370,35 +370,42 @@ def before_save(doc,method):
 
 
 @frappe.whitelist()
-def item_child_table_filters(doctype, txt, searchfield, start, page_len, filters):
-     AssetName = filters.get("asset")
-     data = frappe.db.sql(f"""
-     SELECT item_code,item_name,item_group from `tabCompatible Spares Item` where parent= '{AssetName}'
-  """, as_dict=0)
-     return data
-
-@frappe.whitelist()
 @frappe.validate_and_sanitize_search_inputs
-def item_child_table_filter(doctype, txt, searchfield, start, page_len, filters):
-	AssetName = filters.get("asset")
-	comp = filters.get("company")
-	task1 = filters.get("task")
-	frappe.log_error(f'task,{task1}')
-	asset_item = frappe.db.get_value('Asset',{'name':AssetName},'item_code')
-	task = frappe.db.get_value('Task',{'name':task1},'type_of_call')
-	frappe.log_error(f'type_of_call,{task}')
-	search_cond = ''
-	if txt:
-		search_cond = f" and u.{searchfield} like '%{txt}%' "
-	if task =="Toner":
-		frappe.log_error('Toner')
-		data = frappe.db.sql(f"""SELECT aic.item_code,aic.item_name,aic.item_group,aic.company from `tabItem`i LEFT JOIN `tabAsset Item Child Table` aic on aic.parent = i.name where i.item_code='{asset_item}'and aic.company = '{comp}' and aic.item_group='Toner' and aic.{searchfield} like "%{txt}%" """)
-		return data
-	else:
-		frappe.log_error('NOT Toner')
-		data = frappe.db.sql(f"""SELECT aic.item_code,aic.item_name,aic.item_group,aic.company from `tabItem`i LEFT JOIN `tabCompatible Spares Item` aic on aic.parent = i.name where i.item_code='{asset_item}'and aic.company = '{comp}' and aic.item_group!='Toner' and aic.{searchfield} like "%{txt}%" """)
-		frappe.log_error(f'data,{data}')
-		return data
+def item_child_table_filters(asset,company,task):
+	l = []
+	frappe.log_error(f'task,{task}')
+	asset_item = frappe.db.get_value('Asset',{'name':asset},'item_code')
+	task = frappe.db.get_value('Task',{'name':task},'type_of_call')
+	it = frappe.get_doc('Item',asset_item)
+	for i in it.compatible_spares:
+		l.append(i.item_code)
+		
+	return l
+
+
+# @frappe.whitelist()
+# @frappe.validate_and_sanitize_search_inputs
+# def item_child_table_filter(doctype, txt, searchfield, start, page_len, filters):
+# 	AssetName = filters.get("asset")
+# 	comp = filters.get("company")
+# 	task1 = filters.get("task")
+# 	frappe.log_error(f'task,{task1}')
+# 	asset_item = frappe.db.get_value('Asset',{'name':AssetName},'item_code')
+# 	task = frappe.db.get_value('Task',{'name':task1},'type_of_call')
+# 	frappe.log_error(f'type_of_call,{task}')
+# 	search_cond = ''
+# 	if txt:
+# 		search_cond = f" and u.{searchfield} like '%{txt}%' "
+# 	if task =="Toner":
+# 		frappe.log_error('Toner')
+# 		data = frappe.db.sql(f"""SELECT aic.item_code,aic.item_name,aic.item_group,aic.company from `tabItem`i LEFT JOIN `tabAsset Item Child Table` aic on aic.parent = i.name where i.item_code='{asset_item}'and aic.company = '{comp}' and aic.item_group='Toner' and aic.{searchfield} like "%{txt}%" """)
+# 		return data
+# 	else:
+# 		frappe.log_error('NOT Toner')
+# 		data = frappe.db.sql(f"""SELECT aic.item_code,aic.item_name,aic.item_group,aic.company from `tabItem`i LEFT JOIN `tabCompatible Spares Item` aic on aic.parent = i.name where i.item_code='{asset_item}'and aic.company = '{comp}' and aic.item_group!='Toner' and aic.{searchfield} like "%{txt}%" """)
+# 		frappe.log_error(f'data,{data}')
+# 		frappe.log_error(f'length,{len(data)}')
+# 		return data
 
 @frappe.whitelist()
 @frappe.validate_and_sanitize_search_inputs
