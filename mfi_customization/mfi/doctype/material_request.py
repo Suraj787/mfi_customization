@@ -369,13 +369,13 @@ def before_save(doc,method):
 #     return ""
 
 
-@frappe.whitelist()
-def item_child_table_filters(doctype, txt, searchfield, start, page_len, filters):
-     AssetName = filters.get("asset")
-     data = frappe.db.sql(f"""
-     SELECT item_code,item_name,item_group from `tabCompatible Spares Item` where parent= '{AssetName}'
-  """, as_dict=0)
-     return data
+# @frappe.whitelist()
+# def item_child_table_filters(doctype, txt, searchfield, start, page_len, filters):
+#      AssetName = filters.get("asset")
+#      data = frappe.db.sql(f"""
+#      SELECT item_code,item_name,item_group from `tabCompatible Spares Item` where parent= '{AssetName}'
+#   """, as_dict=0)
+#      return data
 
 @frappe.whitelist()
 @frappe.validate_and_sanitize_search_inputs
