@@ -370,7 +370,7 @@ def before_save(doc,method):
 
 
 @frappe.whitelist()
-@frappe.validate_and_sanitize_search_inputs
+# @frappe.validate_and_sanitize_search_inputs
 def item_child_table_filters(asset,company,task):
 	l = []
 	frappe.log_error(f'task,{task}')
@@ -381,9 +381,45 @@ def item_child_table_filters(asset,company,task):
 		l.append(i.item_code)
 		
 	return l
-
 @frappe.whitelist()
 @frappe.validate_and_sanitize_search_inputs
+def item_code_filteration(doctype, txt, searchfield, start, page_len, filters):
+	
+	if frappe.db.get_value('Task',{'name':filters.get("task")},'type_of_call')=="Toner":
+		query="""
+        SELECT item_code,item_name 
+        FROM `tabAsset Item Child Table` 
+        WHERE
+		parentfield="compatible_toners" 
+		and 
+       company='{0}'
+       and parent='{1}'
+        """.format(filters.get("company"),frappe.db.get_value('Asset',filters.get("asset"),'item_code'))
+		if txt:
+			query+=' AND (name like "%{0}%" OR item_name like "%{0}%")'.format(txt)
+		return frappe.db.sql(query,as_list=True)
+		
+		# return frappe.db.get_all('Asset Item Child Table',{'company':filters.get("company"),'parent': frappe.db.get_value('Asset',filters.get("asset"),'item_code'),'parentfield':"compatible_toners"},['item_code'],as_list=1)
+	else:
+		query="""
+        SELECT item_code,item_name 
+        FROM `tabCompatible Spares Item` 
+        WHERE
+		parentfield="compatible_spares" 
+		and 
+       company='{0}'
+       and parent='{1}'
+        """.format(filters.get("company"),frappe.db.get_value('Asset',filters.get("asset"),'item_code'))
+		if txt:
+			query+=' AND (name like "%{0}%" OR item_name like "%{0}%")'.format(txt)
+		return frappe.db.sql(query,as_list=True)
+		# return frappe.db.get_all('Compatible Spares Item',{'company':filters.get("company"),'parent':frappe.db.get_value('Asset',filters.get("asset"),'item_code'),'parentfield':"compatible_spares"},['item_code'],as_list=1)
+		
+		
+	
+
+@frappe.whitelist()
+# @frappe.validate_and_sanitize_search_inputs
 def get_atm_users(doctype, txt, searchfield, start, page_len, filters):
 	user_list = []
 	user_list.extend(get_users_with_role("Area Technical Manager"))
