@@ -556,11 +556,11 @@ def validate_if_material_request_is_not_submitted(doc):
 # 		frappe.throw("Cann't Completed Task Without Attachment")
 
 def signature_validation(doc):
-	if not doc.customer_signature or doc.customer_signature is None and doc.type_of_call != 'Toner':
+	if (not doc.customer_signature or doc.customer_signature is None) and doc.type_of_call != 'Toner':
 		frappe.throw("Can't Completed Task Without Signature")
 
 def rating_validation(doc):
-	if not doc.customer_rating or doc.customer_rating is None and doc.type_of_call != 'Toner':
+	if (not doc.customer_rating or doc.customer_rating is None) and doc.type_of_call != 'Toner':
 		frappe.throw("Can't Completed Task Without Rating")
 
 
