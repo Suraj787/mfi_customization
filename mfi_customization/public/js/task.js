@@ -338,9 +338,14 @@ frappe.ui.form.on('Task', {
 		}
 	},
 	completed_by: function (frm) {
-		if (frm.doc.completed_by) {
+		if (frm.doc.completed_by && frm.doc.type_of_call != 'Toner') {
 			frappe.db.get_value('User', { 'name': frm.doc.completed_by }, ['full_name'], (val) => {
 				frm.set_value('technician_name', val.full_name);
+			});
+		}
+		if (frm.doc.completed_by && frm.doc.type_of_call == 'Toner') {
+			frappe.db.get_value('User', { 'name': frm.doc.completed_by }, ['full_name'], (val) => {
+				frm.set_value('toner_supervisor', val.full_name);
 			});
 		}
 	},
@@ -609,7 +614,7 @@ function set_permissions_for_symptoms(frm) {
 
 		}
 	} else {
-		if ((frappe.user.has_role("Technicians") == 1 || frappe.user.has_role("Toner Approval 1") == 1) && frappe.user != "Administrator" && frm.doc.status == "Working") {
+		if (frappe.user.has_role("Technicians") == 1 && frappe.user != "Administrator" && frm.doc.status == "Working") {
 			frm.set_df_property('symptoms', "reqd", 1);
 			frm.set_df_property('action', "reqd", 1);
 			frm.set_df_property('cause', "reqd", 1);
