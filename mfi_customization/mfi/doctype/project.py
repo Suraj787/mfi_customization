@@ -26,8 +26,9 @@ def get_company(doc,method):
                 usr_perm.user = i.user
                 usr_perm.save()
         else:
-            us_per = frappe.get_doc('User Permission',{'reference':doc.name})
-            frappe.delete_doc('User Permission', us_per.name)
+            if doc.name in frappe.db.get_all('User Permission','reference',pluck='reference'):
+                us_per = frappe.get_doc('User Permission',{'reference':doc.name})
+                frappe.delete_doc('User Permission', us_per.name)
             
 
 def get_customer(doc,method):
@@ -54,14 +55,18 @@ def get_customer(doc,method):
             us_per = frappe.get_doc('User Permission',{'reference':doc.name})
             frappe.delete_doc('User Permission', us_per.name)
             user = frappe.get_doc("User", us_per.user)
+            print(f'\n\n\n{user.get("roles")}\n\n\n')
+            l=[]
+            # for i in user.get("roles"):
+            #     l.append(i.role)
+            # if "Customer" in l:
+            #      # Remove the role from the user's roles property
+            #     user.get("roles").remove({
+            #         "role": "Customer"
+            #     })
 
-            # # Remove the role from the user's roles property
-            # user.get("roles").remove({
-            #     "role": "Customer"
-            # })
-
-            # # Save the user document
-            # user.save()
+            #     # Save the user document
+            #     user.save()
 
 
 def get_project(doc,method):
