@@ -52,11 +52,12 @@ def get_customer(doc,method):
                 # Save the user document
                 user.save()
         else:
-            us_per = frappe.get_doc('User Permission',{'reference':doc.name})
-            frappe.delete_doc('User Permission', us_per.name)
-            user = frappe.get_doc("User", us_per.user)
-            print(f'\n\n\n{user.get("roles")}\n\n\n')
-            l=[]
+            if doc.name in frappe.db.get_all('User Permission','reference',pluck='reference'):
+                us_per = frappe.get_doc('User Permission',{'reference':doc.name})
+                frappe.delete_doc('User Permission', us_per.name)
+            # user = frappe.get_doc("User", us_per.user)
+            # print(f'\n\n\n{user.get("roles")}\n\n\n')
+            # l=[]
             # for i in user.get("roles"):
             #     l.append(i.role)
             # if "Customer" in l:
@@ -81,8 +82,9 @@ def get_project(doc,method):
                 usr_perm.user = i.user
                 usr_perm.save()
         else:
-            us_per = frappe.get_doc('User Permission',{'reference':doc.name})
-            frappe.delete_doc('User Permission', us_per.name)
+            if doc.name in frappe.db.get_all('User Permission','reference',pluck='reference'):
+                us_per = frappe.get_doc('User Permission',{'reference':doc.name})
+                frappe.delete_doc('User Permission', us_per.name)
 
 
 def make_issues_on_PM_call_interval():
