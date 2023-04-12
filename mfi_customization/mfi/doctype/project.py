@@ -35,6 +35,16 @@ def get_customer(doc,method):
         for i in doc.users:
             usr_perm.user = i.user
             usr_perm.save()
+            user = frappe.get_doc("User", i.user)
+
+            # Add the role to the user's roles property
+            user.append("roles", {
+                "role": "Customer"
+            })
+
+            # Save the user document
+            user.save()
+
 
 def get_project(doc,method):
     if doc.project_name:
