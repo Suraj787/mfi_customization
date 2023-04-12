@@ -20,10 +20,15 @@ def get_company(doc,method):
         usr_perm.allow = 'Company'
         usr_perm.for_value = doc.company
         usr_perm.apply_to_all_doctypes = 1
+        usr_perm.reference = doc.name
         if doc.users:
             for i in doc.users:
                 usr_perm.user = i.user
                 usr_perm.save()
+        else:
+            us_per = frappe.get_doc('User Permission',{'reference':doc.name})
+            frappe.delete_doc('User Permission', us_per.name)
+            
 
 def get_customer(doc,method):
     if doc.customer:
@@ -31,19 +36,32 @@ def get_customer(doc,method):
         usr_perm.allow = 'Customer'
         usr_perm.for_value = doc.customer
         usr_perm.apply_to_all_doctypes = 1
-        # if doc.users:
-        for i in doc.users:
-            usr_perm.user = i.user
-            usr_perm.save()
-            user = frappe.get_doc("User", i.user)
+        usr_perm.reference = doc.name
+        if doc.users:
+            for i in doc.users:
+                usr_perm.user = i.user
+                usr_perm.save()
+                user = frappe.get_doc("User", i.user)
 
-            # Add the role to the user's roles property
-            user.append("roles", {
-                "role": "Customer"
-            })
+                # Add the role to the user's roles property
+                user.append("roles", {
+                    "role": "Customer"
+                })
 
-            # Save the user document
-            user.save()
+                # Save the user document
+                user.save()
+        else:
+            us_per = frappe.get_doc('User Permission',{'reference':doc.name})
+            frappe.delete_doc('User Permission', us_per.name)
+            user = frappe.get_doc("User", us_per.user)
+
+            # # Remove the role from the user's roles property
+            # user.get("roles").remove({
+            #     "role": "Customer"
+            # })
+
+            # # Save the user document
+            # user.save()
 
 
 def get_project(doc,method):
@@ -52,10 +70,15 @@ def get_project(doc,method):
         usr_perm.allow = 'Project'
         usr_perm.for_value = doc.name
         usr_perm.apply_to_all_doctypes = 1
-        # if doc.users:
-        for i in doc.users:
-            usr_perm.user = i.user
-            usr_perm.save()
+        usr_perm.reference = doc.name
+        if len(doc.users)>0:
+            for i in doc.users:
+                usr_perm.user = i.user
+                usr_perm.save()
+        else:
+            us_per = frappe.get_doc('User Permission',{'reference':doc.name})
+            frappe.delete_doc('User Permission', us_per.name)
+
 
 def make_issues_on_PM_call_interval():
    project_list = [p.get('name') for p in frappe.db.get_all('Project', 'name')]
