@@ -12,6 +12,40 @@ from frappe.model.mapper import get_mapped_doc
 import json
 import datetime
 from datetime import datetime, timedelta
+from frappe.model.document import Document
+
+def get_company(doc,method):
+    if doc.company:
+        usr_perm = frappe.new_doc('User Permission')
+        usr_perm.allow = 'Company'
+        usr_perm.for_value = doc.company
+        usr_perm.apply_to_all_doctypes = 1
+        if doc.users:
+            for i in doc.users:
+                usr_perm.user = i.user
+                usr_perm.save()
+
+def get_customer(doc,method):
+    if doc.customer:
+        usr_perm = frappe.new_doc('User Permission')
+        usr_perm.allow = 'Customer'
+        usr_perm.for_value = doc.customer
+        usr_perm.apply_to_all_doctypes = 1
+        # if doc.users:
+        for i in doc.users:
+            usr_perm.user = i.user
+            usr_perm.save()
+
+def get_project(doc,method):
+    if doc.project_name:
+        usr_perm = frappe.new_doc('User Permission')
+        usr_perm.allow = 'Project'
+        usr_perm.for_value = doc.name
+        usr_perm.apply_to_all_doctypes = 1
+        # if doc.users:
+        for i in doc.users:
+            usr_perm.user = i.user
+            usr_perm.save()
 
 def make_issues_on_PM_call_interval():
    project_list = [p.get('name') for p in frappe.db.get_all('Project', 'name')]

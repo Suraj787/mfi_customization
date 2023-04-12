@@ -148,14 +148,16 @@ doc_events = {
         "after_save":"mfi_customization.mfi.doctype.employee.employee.get_company",
         "validate":"mfi_customization.mfi.doctype.employee.employee.get_territory"
     },
+    "Project":{
+        "after_save":"mfi_customization.mfi.doctype.project.get_company",
+        "validate":"mfi_customization.mfi.doctype.project.get_customer",
+        "after_insert":"mfi_customization.mfi.doctype.project.get_project"
+    },
     # "Item":{
     #     "after_insert":"mfi_customization.mfi.doctype.item.validate"
     # },
     "Quotation":{
         "validate":"mfi_customization.mfi.doctype.quotation.validate"
-    },
-    "Project":{
-        # "validate":"mfi_customization.mfi.doctype.project.validate"
     },
     "Purchase Order":{
         "after_insert":"mfi_customization.mfi.doctype.purchase_order.on_submit"
