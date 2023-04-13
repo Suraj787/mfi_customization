@@ -28,6 +28,7 @@ def get_territory(doc,method):
         usr_perm.for_value = doc.territory
         usr_perm.apply_to_all_doctypes = 1
         usr_perm.save()
+        user_roles= frappe.get_roles(frappe.session.user)
         if "Technician" in user_roles:
             user = frappe.get_doc("User", doc.user_id)
 
