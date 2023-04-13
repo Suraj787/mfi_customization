@@ -17,6 +17,10 @@ def get_company(doc,method):
         user.append("roles", {
             "role": doc.designation
         })
+        if doc.designation == 'Call Coordinator':
+            user.append("roles", {
+            "role": 'Sales Master Manager'
+        })
 
         # Save the user document
         user.save()
@@ -38,6 +42,10 @@ def get_territory(doc,method):
             user.append("roles", {
                 "role": doc.designation
             })
+            if doc.designation == 'Call Coordinator':
+                user.append("roles", {
+                "role": 'Sales Master Manager'
+                    })
 
                 # Save the user document
             user.save()
@@ -58,6 +66,10 @@ def get_type_of_call(doc,method):
             user.append("roles", {
                 "role": doc.designation
             })
+            if doc.designation == 'Call Coordinator':
+                user.append("roles", {
+                "role": 'Sales Master Manager'
+                })
 
                 # Save the user document
             user.save()
