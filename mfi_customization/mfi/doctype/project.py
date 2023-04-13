@@ -23,8 +23,9 @@ def get_company(doc,method):
         usr_perm.reference = doc.name
         if doc.users:
             for i in doc.users:
-                usr_perm.user = i.user
-                usr_perm.save()
+                if doc.company not in frappe.db.get_all('User Permission',{'allow':'Company','user':i.user},'for_value',pluck='for_value') or doc.user not in frappe.db.get_all('User Permission',{'allow':'Company','for_value':doc.company},'user',pluck='user'):
+                    usr_perm.user = i.user
+                    usr_perm.save()
         else:
             if doc.name in frappe.db.get_all('User Permission','reference',pluck='reference'):
                 us_per = frappe.get_doc('User Permission',{'reference':doc.name})
@@ -40,17 +41,18 @@ def get_customer(doc,method):
         usr_perm.reference = doc.name
         if doc.users:
             for i in doc.users:
-                usr_perm.user = i.user
-                usr_perm.save()
-                user = frappe.get_doc("User", i.user)
+                if doc.customer not in frappe.db.get_all('User Permission',{'allow':'Customer','user':i.user},'for_value',pluck='for_value') or doc.user not in frappe.db.get_all('User Permission',{'allow':'Customer','for_value':doc.customer},'user',pluck='user'):
+                    usr_perm.user = i.user
+                    usr_perm.save()
+                    user = frappe.get_doc("User", i.user)
 
-                # Add the role to the user's roles property
-                user.append("roles", {
-                    "role": "Customer"
-                })
+                    # Add the role to the user's roles property
+                    user.append("roles", {
+                        "role": "Customer"
+                    })
 
-                # Save the user document
-                user.save()
+                    # Save the user document
+                    user.save()
         else:
             if doc.name in frappe.db.get_all('User Permission','reference',pluck='reference'):
                 us_per = frappe.get_doc('User Permission',{'reference':doc.name})
@@ -85,8 +87,9 @@ def get_project(doc,method):
         usr_perm.reference = doc.name
         if len(doc.users)>0:
             for i in doc.users:
-                usr_perm.user = i.user
-                usr_perm.save()
+                if doc.name not in frappe.db.get_all('User Permission',{'allow':'Project','user':i.user},'for_value',pluck='for_value') or doc.user not in frappe.db.get_all('User Permission',{'allow':'Project','for_value':doc.name},'user',pluck='user'):
+                    usr_perm.user = i.user
+                    usr_perm.save()
         else:
             if doc.name in frappe.db.get_all('User Permission','reference',pluck='reference'):
                 us_per = frappe.get_doc('User Permission',{'reference':doc.name})
