@@ -117,7 +117,8 @@ doc_events = {
         "after_insert":"mfi_customization.mfi.doctype.Asset.after_insert",
         "on_cancel":"mfi_customization.mfi.doctype.Asset.on_cancel",
         "on_update":"mfi_customization.mfi.doctype.Asset.on_update",
-        "after_save":"mfi_customization.mfi.doctype.Asset.get_asset_up"
+        "after_save":"mfi_customization.mfi.doctype.Asset.get_asset_up",
+        "on_change":"mfi_customization.mfi.doctype.Asset.get_asset_up"
     },
     "Issue":{
         "validate":"mfi_customization.mfi.doctype.issue.validate",

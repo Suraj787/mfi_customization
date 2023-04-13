@@ -23,6 +23,7 @@ def after_insert(doc, method):
         asn.save()
 
 def get_asset_up(doc, method):
+    print('ASSSSETTTT')
     if doc.technician:
         if doc.technician in frappe.db.get_all('Employee','user_id',pluck='user_id'):
             emp = frappe.get_doc('Employee',{'user_id':doc.technician})
