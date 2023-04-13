@@ -22,6 +22,18 @@ def after_insert(doc, method):
         asn.location = doc.location
         asn.save()
 
+def get_asset_up(doc, method):
+    if doc.technician:
+        if doc.technician in frappe.db.get_all('Employee','user_id',pluck='user_id'):
+            emp = frappe.get_doc('Employee',{'user_id':doc.technician})
+            if emp.company == doc.company:
+                usr_perm = frappe.new_doc('User Permission')
+                usr_perm.user = doc.technician
+                usr_perm.allow = 'Asset'
+                usr_perm.for_value = doc.name
+                usr_perm.apply_to_all_doctypes = 1
+                usr_perm.save()
+
 
 def on_cancel(doc, method):
     # removing serial number on serial number

@@ -8,17 +8,17 @@ def get_company(doc,method):
     usr_perm.for_value = doc.company
     usr_perm.apply_to_all_doctypes = 1
     usr_perm.save()
-    user_roles= frappe.get_roles(frappe.session.user)
-    if "Technician" in user_roles:
-        user = frappe.get_doc("User", doc.user_id)
+    # user_roles= frappe.get_roles(frappe.session.user)
+    # if "Technician" in user_roles:
+    user = frappe.get_doc("User", doc.user_id)
 
-        # Add the role to the user's roles property
-        user.append("roles", {
-            "role": "Technicians"
-        })
+    # Add the role to the user's roles property
+    user.append("roles", {
+        "role": doc.designation
+    })
 
-        # Save the user document
-        user.save()
+    # Save the user document
+    user.save()
 
 def get_territory(doc,method):
     if doc.territory:
@@ -28,17 +28,17 @@ def get_territory(doc,method):
         usr_perm.for_value = doc.territory
         usr_perm.apply_to_all_doctypes = 1
         usr_perm.save()
-        user_roles= frappe.get_roles(frappe.session.user)
-        if "Technician" in user_roles:
-            user = frappe.get_doc("User", doc.user_id)
+        # user_roles= frappe.get_roles(frappe.session.user)
+        # if "Technician" in user_roles:
+        user = frappe.get_doc("User", doc.user_id)
 
-            # Add the role to the user's roles property
-            user.append("roles", {
-                "role": "Technicians"
-            })
+        # Add the role to the user's roles property
+        user.append("roles", {
+            "role": doc.designation
+        })
 
             # Save the user document
-            user.save()
+        user.save()
 
 def get_type_of_call(doc,method):
     if doc.type_of_call:
@@ -48,13 +48,14 @@ def get_type_of_call(doc,method):
         usr_perm.for_value = doc.type_of_call
         usr_perm.apply_to_all_doctypes = 1
         usr_perm.save()
-        # if "Technician" in user_roles:
-        #     user = frappe.get_doc("User", doc.user_id)
 
-        #     # Add the role to the user's roles property
-        #     user.append("roles", {
-        #         "role": "Technicians"
-        #     })
+        user = frappe.get_doc("User", doc.user_id)
 
-        #     # Save the user document
-        #     user.save()
+        # Add the role to the user's roles property
+        user.append("roles", {
+            "role": doc.designation
+        })
+
+            # Save the user document
+        user.save()
+      

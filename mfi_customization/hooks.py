@@ -116,7 +116,8 @@ doc_events = {
     "Asset":{
         "after_insert":"mfi_customization.mfi.doctype.Asset.after_insert",
         "on_cancel":"mfi_customization.mfi.doctype.Asset.on_cancel",
-        "on_update":"mfi_customization.mfi.doctype.Asset.on_update"
+        "on_update":"mfi_customization.mfi.doctype.Asset.on_update",
+        "after_save":"mfi_customization.mfi.doctype.Asset.get_asset_up"
     },
     "Issue":{
         "validate":"mfi_customization.mfi.doctype.issue.validate",
@@ -146,7 +147,7 @@ doc_events = {
     },
     "Employee":{
         "after_save":"mfi_customization.mfi.doctype.employee.employee.get_company",
-        "validate":"mfi_customization.mfi.doctype.employee.employee.get_territory"
+        "validate":["mfi_customization.mfi.doctype.employee.employee.get_territory","mfi_customization.mfi.doctype.employee.employee.get_type_of_call"]
     },
     "Project":{
         "after_save":"mfi_customization.mfi.doctype.project.get_company",
