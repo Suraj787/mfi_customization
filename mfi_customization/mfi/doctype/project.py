@@ -55,19 +55,25 @@ def get_customer(doc,method):
             if doc.name in frappe.db.get_all('User Permission','reference',pluck='reference'):
                 us_per = frappe.get_doc('User Permission',{'reference':doc.name})
                 frappe.delete_doc('User Permission', us_per.name)
-            # user = frappe.get_doc("User", us_per.user)
-            # print(f'\n\n\n{user.get("roles")}\n\n\n')
-            # l=[]
-            # for i in user.get("roles"):
-            #     l.append(i.role)
-            # if "Customer" in l:
-            #      # Remove the role from the user's roles property
-            #     user.get("roles").remove({
-            #         "role": "Customer"
-            #     })
+                user = frappe.get_doc("User", us_per.user)
+                print(f'\n\n\n{user.get("roles")}\n\n\n')
+                role='Customer'
+                for i in user.get("roles"):
+                    if i.role == role:
+                        user.remove_roles(role)
+                        user.save()
+                        print("\n\n\n\nRole '{}' removed from user '{}'\n\n\n".format(role, user.name))
+                    else:
+                        print("\n\n\nUser '{}' does not have the role '{}'\n\n\n".format(user.roles, role))
+                # for i in user.get("roles"):
+                #     if i.role == 'Customer':
+                #         l.append(i.role)
+                # if len(l)>0:
+                #     user.set("roles", [role for role in user.roles if role.role not in l])
+                #     user.save()
 
-            #     # Save the user document
-            #     user.save()
+                # Save the user document
+                # user.save()
 
 
 def get_project(doc,method):
