@@ -121,4 +121,15 @@ def get_type_of_call(doc,method):
 
                 # Save the user document
             user.save()
-      
+
+
+def get_roles_checked(doc,method):  
+    if doc.designation == 'Regional Technical Manager':
+        user = frappe.get_doc("User", doc.user_id)
+        user.append("roles", {
+                "role": 'Projects Manager'
+        })
+        user.append("roles", {
+        "role": 'Stock Manager'
+        })
+

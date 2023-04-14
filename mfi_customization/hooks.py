@@ -148,7 +148,7 @@ doc_events = {
     },
     "Employee":{
         "after_save":"mfi_customization.mfi.doctype.employee.employee.get_company",
-        "validate":["mfi_customization.mfi.doctype.employee.employee.get_territory","mfi_customization.mfi.doctype.employee.employee.get_type_of_call"]
+        "validate":["mfi_customization.mfi.doctype.employee.employee.get_territory","mfi_customization.mfi.doctype.employee.employee.get_type_of_call","mfi_customization.mfi.doctype.employee.employee.get_roles_checked"]
     },
     "Project":{
         "after_save":"mfi_customization.mfi.doctype.project.get_company",
