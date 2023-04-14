@@ -2,7 +2,7 @@ import frappe
 from frappe.model.document import Document
 
 def get_company(doc,method):
-    if doc.company not in frappe.db.get_all('User Permission',{'allow':'Company','user':doc.user_id},'for_value',pluck='for_value') or doc.user_id not in frappe.db.get_all('User Permission',{'allow':'Company','for_value':doc.company},'user',pluck='user'):
+    if (doc.company not in frappe.db.get_all('User Permission',{'allow':'Company','user':doc.user_id},'for_value',pluck='for_value') or doc.user_id not in frappe.db.get_all('User Permission',{'allow':'Company','for_value':doc.company},'user',pluck='user')) and doc.designation != 'Regional Technical Manager':
         usr_perm = frappe.new_doc('User Permission')
         usr_perm.user = doc.user_id
         usr_perm.allow = 'Company'
@@ -25,6 +25,14 @@ def get_company(doc,method):
             "role": 'System Manager'
             })
 
+        if doc.designation == 'Technical Manager':
+            user.append("roles", {
+            "role": 'Purchase User'
+            })
+            user.append("roles", {
+            "role": 'Stock User'
+            })
+
         if doc.designation == 'Toner Coordinator':
             user.append("roles", {
             "role": 'System Manager'
@@ -35,7 +43,7 @@ def get_company(doc,method):
 
 def get_territory(doc,method):
     if doc.territory:
-        if doc.territory not in frappe.db.get_all('User Permission',{'allow':'Territory','user':doc.user_id},'for_value',pluck='for_value') or doc.user_id not in frappe.db.get_all('User Permission',{'allow':'Territory','for_value':doc.territory},'user',pluck='user'):
+        if (doc.territory not in frappe.db.get_all('User Permission',{'allow':'Territory','user':doc.user_id},'for_value',pluck='for_value') or doc.user_id not in frappe.db.get_all('User Permission',{'allow':'Territory','for_value':doc.territory},'user',pluck='user')) and doc.designation != 'Regional Technical Manager':
             usr_perm = frappe.new_doc('User Permission')
             usr_perm.user = doc.user_id
             usr_perm.allow = 'Territory'
@@ -56,6 +64,14 @@ def get_territory(doc,method):
                     })
                 user.append("roles", {
                 "role": 'System Manager'
+                })
+
+            if doc.designation == 'Technical Manager':
+                user.append("roles", {
+                "role": 'Purchase User'
+                })
+                user.append("roles", {
+                "role": 'Stock User'
                 })
 
             if doc.designation == 'Toner Coordinator':
@@ -88,6 +104,14 @@ def get_type_of_call(doc,method):
                 })
                 user.append("roles", {
                 "role": 'System Manager'
+                })
+
+            if doc.designation == 'Technical Manager':
+                user.append("roles", {
+                "role": 'Purchase User'
+                })
+                user.append("roles", {
+                "role": 'Stock User'
                 })
 
             if doc.designation == 'Toner Coordinator':
