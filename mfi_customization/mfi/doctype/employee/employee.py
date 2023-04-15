@@ -4,6 +4,7 @@ from frappe.model.document import Document
 def get_company(doc,method):
     if doc.company not in frappe.db.get_all('User Permission',{'allow':'Company','user':doc.user_id},'for_value',pluck='for_value') or doc.user_id not in frappe.db.get_all('User Permission',{'allow':'Company','for_value':doc.company},'user',pluck='user'):
         if doc.designation != 'Regional Technical Manager':
+            print('\n\n\ncompjklkkllk\n\n\n\n')
             usr_perm = frappe.new_doc('User Permission')
             usr_perm.user = doc.user_id
             usr_perm.allow = 'Company'
@@ -125,7 +126,9 @@ def get_type_of_call(doc,method):
 
 
 def get_roles_checked(doc,method):  
+    print('\n\n\nroles checkefd\n\n\n\n')
     if doc.designation == 'Regional Technical Manager':
+        print('\n\n\ncompjklkkllk\n\n\n\n')
         user = frappe.get_doc("User", doc.user_id)
         user.append("roles", {
                 "role": 'Projects Manager'
@@ -133,4 +136,5 @@ def get_roles_checked(doc,method):
         user.append("roles", {
         "role": 'Stock Manager'
         })
+        user.save()
 
