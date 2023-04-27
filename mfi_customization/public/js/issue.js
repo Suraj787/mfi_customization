@@ -130,7 +130,7 @@ frappe.ui.form.on('Issue', {
         frm.set_value('asset','');
         frm.set_value('location','');
         frm.set_value('serial_no','');
-		frm.set_value('customer','');
+		// frm.set_value('customer','');
 		frm.set_value('name_of_the_customer','');
 
 
