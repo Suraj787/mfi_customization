@@ -33,7 +33,7 @@ def validate(doc,method):
 		l = []
 		for c_r in doc.current_reading:
 			l.append(c_r.total)
-		fltr={"project":doc.project,"asset":doc.asset,"reading_date":("<=",last_reading),"item":doc.toner_type}
+		fltr={"project":doc.project,"asset":doc.asset,"reading_date":("<=",last_reading)}
 		mr_all = frappe.get_all("Machine Reading",filters=fltr,fields=["name","reading_date","asset","black_and_white_reading","colour_reading","total","machine_type"],limit=4,order_by="reading_date desc,name desc")
 		for d in range(len(mr_all)-1):
 			if len(mr_all)>0 and mr_all[d]['total']!= l[0]:
