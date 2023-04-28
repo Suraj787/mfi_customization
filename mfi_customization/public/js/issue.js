@@ -44,7 +44,7 @@ frappe.ui.form.on('Issue', {
 	        $(".next-doc").hide();
             $(".menu-btn-group").hide();
 
-            frm.set_df_property('customer',"read_only",1);
+            //frm.set_df_property('customer',"read_only",1);
             frm.set_df_property('current_reading',"hidden",1);
 			frm.set_df_property('toner_type', "reqd", 0);
             frm.set_df_property('toner_type', "hidden", 1);
