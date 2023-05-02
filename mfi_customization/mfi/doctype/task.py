@@ -36,7 +36,7 @@ def validate(doc,method):
 		fltr={"project":doc.project,"asset":doc.asset,"reading_date":("<=",last_reading)}
 		mr_all = frappe.get_all("Machine Reading",filters=fltr,fields=["name","reading_date","asset","black_and_white_reading","colour_reading","total","machine_type"],limit=4,order_by="reading_date desc,name desc")
 		for d in range(len(mr_all)-1):
-			if len(mr_all)>0 and mr_all[d]['total']!= l[0] and int(mr_all[d]['total'])>0:
+			if len(mr_all)>0 and mr_all[d]['total']!= l[0] and int(mr_all[d]['total'])>0 and doc.type_of_call == "Toner":
 				print(f"\n\n\n\n\nttttt,{int(mr_all[d]['total'])}\n\n\n\n\n")
 				print(f"\n\n\n\n\nttttt+++++++++11111111,{int(mr_all[d+1]['total'])}\n\n\n\n\n")
 				doc.append("last_readings", {
@@ -49,7 +49,7 @@ def validate(doc,method):
 					"yeild": int(mr_all[d]['total']) - int(mr_all[d+1]['total']) or 0,
 					"actual_coverage": str(round(5000/(int(mr_all[d]['total']) - int(mr_all[d+1]['total']))*5, 2)) + '%',
 					"rated_yield": 5000
-					})
+				 	})
 				
 			else:
 				doc.append("last_readings", {
