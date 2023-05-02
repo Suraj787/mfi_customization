@@ -95,6 +95,23 @@ def get_project(doc,method):
                 us_per = frappe.get_doc('User Permission',{'reference':doc.name})
                 frappe.delete_doc('User Permission', us_per.name)
 
+def get_tech_team(doc,method):
+    # if doc.project_name:
+    usr_perm = frappe.new_doc('User Permission')
+    usr_perm.allow = 'Project'
+    usr_perm.for_value = doc.name
+    usr_perm.apply_to_all_doctypes = 1
+    usr_perm.reference = doc.name
+    if len(doc.technician_team)>0:
+        for i in doc.technician_team:
+            if doc.name not in frappe.db.get_all('User Permission',{'allow':'Project','user':i.technician},'for_value',pluck='for_value') or doc.user not in frappe.db.get_all('User Permission',{'allow':'Project','for_value':doc.name},'user',pluck='user'):
+                usr_perm.user = i.technician
+                usr_perm.save()
+    # else:
+    #     if doc.name in frappe.db.get_all('User Permission','reference',pluck='reference'):
+    #         us_per = frappe.get_doc('User Permission',{'reference':doc.name})
+    #         frappe.delete_doc('User Permission', us_per.name)
+
 
 def make_issues_on_PM_call_interval():
    project_list = [p.get('name') for p in frappe.db.get_all('Project', 'name')]
