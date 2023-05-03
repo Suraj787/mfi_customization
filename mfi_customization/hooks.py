@@ -154,7 +154,7 @@ doc_events = {
         "after_save":"mfi_customization.mfi.doctype.project.get_company",
         "validate":["mfi_customization.mfi.doctype.project.get_customer","mfi_customization.mfi.doctype.project.get_tech_team"],
         "after_insert":"mfi_customization.mfi.doctype.project.get_tech_team",
-        "on_change":["mfi_customization.mfi.doctype.project.get_project","mfi_customization.mfi.doctype.project.get_company"]
+        "on_change":["mfi_customization.mfi.doctype.project.get_project","mfi_customization.mfi.doctype.project.get_company","mfi_customization.mfi.doctype.project.get_tech_team"]
     },
     # "Item":{
     #     "after_insert":"mfi_customization.mfi.doctype.item.validate"
