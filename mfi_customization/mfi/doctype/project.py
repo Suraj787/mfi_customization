@@ -83,7 +83,8 @@ def get_project(doc,method):
         usr_perm = frappe.new_doc('User Permission')
         usr_perm.allow = 'Project'
         usr_perm.for_value = doc.name
-        usr_perm.apply_to_all_doctypes = 1
+        usr_perm.apply_to_all_doctypes = 0
+        usr_perm.applicable_for = 'Project'
         usr_perm.reference = doc.name
         if len(doc.users)>0:
             for i in doc.users:
@@ -105,7 +106,8 @@ def get_tech_team(doc,method):
         usr_perm = frappe.new_doc('User Permission')
         usr_perm.allow = 'Project'
         usr_perm.for_value = doc.name
-        usr_perm.apply_to_all_doctypes = 1
+        usr_perm.apply_to_all_doctypes = 0
+        usr_perm.applicable_for = 'Project'
         usr_perm.reference = doc.name
         if len(doc.technician_team)>0:
             for i in doc.technician_team:
