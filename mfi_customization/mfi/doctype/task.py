@@ -87,29 +87,29 @@ def send_task_completion_email(doc):
 	"""
 	Send email notification to helpdesk and client when task status is set to 'Completed'
 	"""
-	# if doc.status == "Completed" and doc.completed_sent == 0:
-	subject = f"""Issue {doc.issue} has been resolved"""
+	if doc.status == "Completed" and doc.completed_sent == 0:
+		subject = f"""Issue {doc.issue} has been resolved"""
 
-	# send email notification to helpdesk
-	helpdesk_email_body = f"""Task ticket number {doc.name} has been successfully completed."""
-	recipients = frappe.db.get_value("Company", doc.company, "support_email")
+		# send email notification to helpdesk
+		helpdesk_email_body = f"""Task ticket number {doc.name} has been successfully completed."""
+		recipients = frappe.db.get_value("Company", doc.company, "support_email")
 
-	if doc.type_of_call == "Toner":
-		recipients = frappe.db.get_value("Company", doc.company, "toner_support_email")
-	make(subject = subject, content=helpdesk_email_body, recipients=recipients,
-			send_email=True, sender="erp@groupmfi.com")
+		if doc.type_of_call == "Toner":
+			recipients = frappe.db.get_value("Company", doc.company, "toner_support_email")
+		make(subject = subject, content=helpdesk_email_body, recipients=recipients,
+				send_email=True, sender="erp@groupmfi.com")
 
-	#send email notification to client
-	attachments = get_attachment(doc)
-	print("attachments", attachments)
-	client_email_body = f"""Your Ticket number {doc.issue} has been successfully closed"""
-	recipients = get_customer_emails(doc.project)
-	make(subject = subject, content=client_email_body, recipients=recipients,
-		attachments= attachments,
-			send_email=True, sender="erp@groupmfi.com")
+		#send email notification to client
+		attachments = get_attachment(doc)
+		print("attachments", attachments)
+		client_email_body = f"""Your Ticket number {doc.issue} has been successfully closed"""
+		recipients = get_customer_emails(doc.project)
+		make(subject = subject, content=client_email_body, recipients=recipients,
+			attachments= attachments,
+				send_email=True, sender="erp@groupmfi.com")
 
-	doc.completed_sent=1
-	frappe.msgprint("Task completion email has been sent")
+		doc.completed_sent=1
+		frappe.msgprint("Task completion email has been sent")
 
 def get_attachment(doc):
 	"""check print settings are attach the pdf"""
