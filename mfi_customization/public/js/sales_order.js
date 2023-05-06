@@ -3,6 +3,12 @@
 //     cur_frm.remove_custom_button("Delivery Note",'Create');
 // };
 frappe.ui.form.on('Sales Order', {
+	onload(frm) {
+        if(frappe.user.has_role("Customer")==1 || frappe.user.has_role("Technicians")==1 || frappe.user.has_role("Area Technical Manager")==1 && frappe.user!="Administrator"){
+            $(".form-control").hide();
+            $(".search-icon").hide();
+        }
+    },
     refresh:function(frm){
         let allow_delivery = false;
         if(frm.doc.status !== 'Closed') {

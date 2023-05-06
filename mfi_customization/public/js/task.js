@@ -95,6 +95,10 @@ frappe.ui.form.on('Task', {
 		}
 	},
 	onload: function (frm) {
+		if(frappe.user.has_role("Customer")==1 || frappe.user.has_role("Technicians")==1 || frappe.user.has_role("Area Technical Manager")==1 && frappe.user!="Administrator"){
+            $(".form-control").hide();
+            $(".search-icon").hide();
+        }
 		if (frm.doc.status == "Working") {
 		set_permissions_for_symptoms(frm);
 		}
