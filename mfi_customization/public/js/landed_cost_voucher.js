@@ -1,4 +1,10 @@
 frappe.ui.form.on('Landed Cost Voucher', {
+    onload(frm) {
+        if(frappe.user.has_role("Customer")==1 || frappe.user.has_role("Technicians")==1 || frappe.user.has_role("Area Technical Manager")==1 && frappe.user!="Administrator"){
+            $(".form-control").hide();
+            $(".search-icon").hide();
+        }
+    },
     setup:function(frm){
         frm.set_query("landed_cost_component_template", function() {
 			return {

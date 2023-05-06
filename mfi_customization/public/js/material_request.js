@@ -2,6 +2,12 @@
 // {% include 'erpnext/public/js/controllers/buying.js' %};
 
 frappe.ui.form.on('Material Request', {
+	onload(frm) {
+        if(frappe.user.has_role("Customer")==1 || frappe.user.has_role("Technicians")==1 || frappe.user.has_role("Area Technical Manager")==1 && frappe.user!="Administrator"){
+            $(".form-control").hide();
+            $(".search-icon").hide();
+        }
+    },
 	setup: function (frm) {
 		
 		assigned_to_filters(frm);

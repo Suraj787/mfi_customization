@@ -1,6 +1,11 @@
 frappe.ui.form.on('Sales Invoice', {
-	get_assets
-    :function(frm){
+    onload(frm) {
+        if(frappe.user.has_role("Customer")==1 || frappe.user.has_role("Technicians")==1 || frappe.user.has_role("Area Technical Manager")==1 && frappe.user!="Administrator"){
+            $(".form-control").hide();
+            $(".search-icon").hide();
+        }
+    },
+	get_assets:function(frm){
         if (frm.doc.project){
                 frappe.call({
                     method: "mfi_customization.mfi.doctype.sales_invoice.get_assets",
