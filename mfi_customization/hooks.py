@@ -18,6 +18,7 @@ app_license = "MIT"
 # app_include_css = "/assets/mfi_customization/css/mfi_customization.css"
 app_include_js = [
 	"/assets/js/mfi_customization.min.js",
+    "/assets/mfi_customization/desk_js/common.js",
 ]
 # include js, css files in header of web template
 # web_include_css = "/assets/mfi_customization/css/mfi_customization.css"
