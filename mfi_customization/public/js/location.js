@@ -1,10 +1,10 @@
 frappe.ui.form.on('Location', {
-    onload(frm) {
-        if(frappe.user.has_role("Customer")==1 || frappe.user.has_role("Technicians")==1 || frappe.user.has_role("Area Technical Manager")==1 && frappe.user!="Administrator"){
-            $(".form-control").hide();
-            $(".search-icon").hide();
-        }
-    },
+    // onload(frm) {
+    //     if(frappe.user.has_role("Customer")==1 || frappe.user.has_role("Technicians")==1 || frappe.user.has_role("Area Technical Manager")==1 && frappe.user!="Administrator"){
+    //         $(".form-control").hide();
+    //         $(".search-icon").hide();
+    //     }
+    // },
     refresh:function(frm){
         frm.set_query("customer", function() {
           

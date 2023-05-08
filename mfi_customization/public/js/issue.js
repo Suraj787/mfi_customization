@@ -33,10 +33,10 @@ frappe.ui.form.on('Issue', {
 
 	      });
 		*/
-        if(frappe.user.has_role("Customer")==1 || frappe.user.has_role("Technicians")==1 || frappe.user.has_role("Area Technical Manager")==1 && frappe.user!="Administrator"){
-			$(".form-control").hide();
-	        $(".search-icon").hide();
-	    }
+        // if(frappe.user.has_role("Customer")==1 || frappe.user.has_role("Technicians")==1 || frappe.user.has_role("Area Technical Manager")==1 && frappe.user!="Administrator"){
+		// 	$(".form-control").hide();
+	    //     $(".search-icon").hide();
+	    // }
 		if(frappe.user.has_role("Customer")==1 && frappe.user!="Administrator"){
             $(".form-assignments").hide();
 		    $(".form-attachments").hide();

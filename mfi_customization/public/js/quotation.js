@@ -1,10 +1,10 @@
 frappe.ui.form.on('Quotation', {
-    onload(frm) {
-        if(frappe.user.has_role("Customer")==1 || frappe.user.has_role("Technicians")==1 || frappe.user.has_role("Area Technical Manager")==1 && frappe.user!="Administrator"){
-            $(".form-control").hide();
-            $(".search-icon").hide();
-        }
-    },
+    // onload(frm) {
+    //     if(frappe.user.has_role("Customer")==1 || frappe.user.has_role("Technicians")==1 || frappe.user.has_role("Area Technical Manager")==1 && frappe.user!="Administrator"){
+    //         $(".form-control").hide();
+    //         $(".search-icon").hide();
+    //     }
+    // },
     refresh:function(frm){
         if(frm.doc.asset_quotation_selection){
 			let parent = '';
