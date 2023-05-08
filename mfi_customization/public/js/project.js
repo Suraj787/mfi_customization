@@ -18,6 +18,12 @@ cur_frm.dashboard.add_transactions([{
 ]);
 
 frappe.ui.form.on('Project', {
+    // onload(frm) {
+    //     if(frappe.user.has_role("Customer")==1 || frappe.user.has_role("Technicians")==1 || frappe.user.has_role("Area Technical Manager")==1 && frappe.user!="Administrator"){
+    //         $(".form-control").hide();
+    //         $(".search-icon").hide();
+    //     }
+    // },
     refresh: function(frm) {
         frm.set_df_property("expected_end_date", "read_only", 1);
         // frm.add_custom_button(__('Asset Delivery Note'), function() {
