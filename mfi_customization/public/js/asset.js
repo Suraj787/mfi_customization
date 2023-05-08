@@ -1,11 +1,4 @@
 frappe.ui.form.on('Asset', {
-    // onload(frm) {
-    //     if(frappe.user.has_role("Customer")==1 || frappe.user.has_role("Technicians")==1 || frappe.user.has_role("Area Technical Manager")==1 && frappe.user!="Administrator"){
-    //         $(".form-control").hide();
-    //         $(".search-icon").hide();
-    //     }
-    // },
-
     item_code(frm) {
         frappe.model.with_doc("Item", frm.doc.item_code, function() {
             var itemschild_data = frappe.model.get_doc("Item", frm.doc.item_code)
