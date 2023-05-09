@@ -1,4 +1,9 @@
 frappe.ui.form.on('Task', {
+	escalation(frm){
+		if (frm.doc.escalation){
+			frm.set_value("working_end_time", frappe.datetime.now_datetime());
+		}
+	},
 	type_of_call: function (frm) {
 		if (frm.doc.type_of_call == "Installation") {
 			frm.set_df_property('failure_date_and_time', 'reqd', 0);
@@ -9,6 +14,7 @@ frappe.ui.form.on('Task', {
 	status: function (frm) {
 	       status_option_permision_for_technician(frm)
 		if (frm.doc.status == "Working") {
+			frm.set_value("working_start_time", frappe.datetime.now_datetime());
 			frm.save()
 			// set_permissions_for_symptoms(frm);
 		}
@@ -17,8 +23,10 @@ frappe.ui.form.on('Task', {
 		if (frm.doc.status == 'Working') {
 			let today = new Date()
 			frappe.model.set_value("Issue", frm.doc.issue, 'first_responded_on', today);
+			
 		}
 		if (frm.doc.status == "Completed") {
+			frm.set_value("working_end_time", frappe.datetime.now_datetime());
 			// frm.set_df_property('status','read_only',1);
 			if (frm.doc.type_of_call && (frappe.user.has_role("Call Coordinator") != 1 || frappe.user.has_role("Toner Coordinator") != 1) && frappe.user == "Administrator") {
 				frappe.db.get_value('Type of Call', { 'name': frm.doc.type_of_call }, 'ignore_reading', (r) => {
@@ -166,12 +174,14 @@ frappe.ui.form.on('Task', {
 		frm.trigger('customer');
 
 		frm.add_custom_button('Material Request', () => {
+			frm.set_value("working_end_time", frappe.datetime.now_datetime());
 			var check_machine_reading = frappe.db.get_value("Machine Reading", { 'task': frm.doc.name }, 'name', (r) => {
 				if (r.name != null) {
 					frappe.model.open_mapped_doc({
 						method: "mfi_customization.mfi.doctype.task.make_material_req",
 						frm: me.frm
 					})
+
 
 				} else {
 
@@ -398,7 +408,7 @@ frappe.ui.form.on("Asset Readings", "type", function (frm, cdt, cdn) {
 		bl_and_wht.read_only = 0;
 		clr.reqd = 0;
 		clr.read_only = 1;
-		d.set_df_property('reading_2', 'read_only', 1);
+		// d.set_df_property('reading_2', 'read_only', 1);
 		// frm.refresh_fields("current_reading");
 		// refresh_field("reading", d.name, d.parentfield);
 		// refresh_field("reading_2", d.name, d.parentfield);
@@ -408,7 +418,7 @@ frappe.ui.form.on("Asset Readings", "type", function (frm, cdt, cdn) {
 		bl_and_wht.read_only = 1;
 		// clr.reqd = 1;
 		clr.read_only = 0;
-		d.set_df_property('reading', 'read_only', 1);
+		// d.set_df_property('reading', 'read_only', 1);
 		// frm.refresh_fields("current_reading");
 		// refresh_field("reading", d.name, d.parentfield);
 		// refresh_field("reading_2", d.name, d.parentfield);
