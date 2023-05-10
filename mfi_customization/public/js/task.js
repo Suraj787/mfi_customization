@@ -1,7 +1,7 @@
 frappe.ui.form.on('Task', {
 	escalation(frm){
 		if (frm.doc.escalation){
-			frm.set_value("working_end_time", frappe.datetime.now_datetime());
+			frappe.model.set_value("Task", frm.doc.name ,"working_end_time", frappe.datetime.now_datetime());
 		}
 	},
 	type_of_call: function (frm) {
@@ -14,7 +14,7 @@ frappe.ui.form.on('Task', {
 	status: function (frm) {
 	       status_option_permision_for_technician(frm)
 		if (frm.doc.status == "Working") {
-			frm.set_value("working_start_time", frappe.datetime.now_datetime());
+			frappe.model.set_value("Task", frm.doc.name ,"working_start_time", frappe.datetime.now_datetime());
 			frm.save()
 			// set_permissions_for_symptoms(frm);
 		}
@@ -26,7 +26,7 @@ frappe.ui.form.on('Task', {
 			
 		}
 		if (frm.doc.status == "Completed") {
-			frm.set_value("working_end_time", frappe.datetime.now_datetime());
+			frappe.model.set_value("Task", frm.doc.name ,"working_end_time", frappe.datetime.now_datetime());
 			// frm.set_df_property('status','read_only',1);
 			if (frm.doc.type_of_call && (frappe.user.has_role("Call Coordinator") != 1 || frappe.user.has_role("Toner Coordinator") != 1) && frappe.user == "Administrator") {
 				frappe.db.get_value('Type of Call', { 'name': frm.doc.type_of_call }, 'ignore_reading', (r) => {
@@ -174,9 +174,11 @@ frappe.ui.form.on('Task', {
 		frm.trigger('customer');
 
 		frm.add_custom_button('Material Request', () => {
-			frm.set_value("working_end_time", frappe.datetime.now_datetime());
+			
 			var check_machine_reading = frappe.db.get_value("Machine Reading", { 'task': frm.doc.name }, 'name', (r) => {
 				if (r.name != null) {
+					frappe.model.set_value("Task", frm.doc.name ,"working_end_time", frappe.datetime.now_datetime());
+					frm.save()
 					frappe.model.open_mapped_doc({
 						method: "mfi_customization.mfi.doctype.task.make_material_req",
 						frm: me.frm

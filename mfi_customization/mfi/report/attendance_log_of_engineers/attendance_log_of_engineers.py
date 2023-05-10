@@ -59,12 +59,24 @@ def get_data(filters):
 	fltr = {}
 	if filters.get("technician_name"):
 		fltr.update({"technician_name":filters.get("technician_name")})
-	if filters.get("assign_date"):
-		
-		date_object = datetime.strptime(filters.get("assign_date"), '%Y-%m-%d').date()
-		fltr.update({"assign_date":date_object})
-	for t in frappe.get_all('Task', ['name','assign_date','technician_name','asset','working_start_time','working_end_time']):
-		if fltr['assign_date'] and fltr['assign_date'] == (t.assign_date).date():
+	for t in frappe.get_all('Task',fltr, ['name','assign_date','technician_name','asset','working_start_time','working_end_time']):
+		if filters.get("assign_date"):
+			date_object = datetime.strptime(filters.get("assign_date"), '%Y-%m-%d').date()
+			if date_object == (t.assign_date).date():
+				row = {
+						"task":t.name,
+						"assign_date":t.assign_date,
+						"technician_name":t.technician_name,
+						"asset":t.asset,
+						"start_time":t.working_start_time,
+						"end_time":t.working_end_time
+				}
+				if t.working_end_time and t.working_start_time :
+					time_taken_to_travel = t.working_end_time - t.working_start_time
+					if time_taken_to_travel:
+						row.update({"time_taken_to_travel":time_taken_to_travel})
+				data.append(row)
+		else:
 			row = {
 					"task":t.name,
 					"assign_date":t.assign_date,
@@ -78,6 +90,7 @@ def get_data(filters):
 				if time_taken_to_travel:
 					row.update({"time_taken_to_travel":time_taken_to_travel})
 			data.append(row)
+		
 		
 	return data
 		

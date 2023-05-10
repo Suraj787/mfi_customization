@@ -13,7 +13,6 @@ frappe.query_reports["Attendance Log of Engineers"] = {
 		{
 		   "fieldname": "assign_date",
 			"label": __("Assign Date"),
-			"default": frappe.datetime.get_today(),
 			"fieldtype": "Date",
 			"reqd": 0
 		}
