@@ -12,7 +12,7 @@ from mfi_customization.mfi.doctype.issue import set_company
 from datetime import datetime
 from frappe.utils import time_diff_in_hours
 from frappe.core.doctype.communication.email import make
-# from mfi_customization.mfi.doctype.project import get_customer_emails
+from mfi_customization.mfi.doctype.project import get_customer_emails
 
 
 def validate(doc,method):
@@ -93,19 +93,52 @@ def send_task_completion_email(doc):
 		# send email notification to helpdesk
 		helpdesk_email_body = f"""Task ticket number {doc.name} has been successfully completed."""
 		recipients = frappe.db.get_value("Company", doc.company, "support_email")
+
 		if doc.type_of_call == "Toner":
 			recipients = frappe.db.get_value("Company", doc.company, "toner_support_email")
 		make(subject = subject, content=helpdesk_email_body, recipients=recipients,
 				send_email=True, sender="erp@groupmfi.com")
 
-		# send email notification to client
-		# client_email_body = f"""Your Ticket number {doc.issue} has been successfully closed"""
-		# recipients = get_customer_emails(doc.project)
-		# make(subject = subject, content=client_email_body, recipients=recipients,
-		# 		send_email=True, sender="erp@groupmfi.com")
+		#send email notification to client
+		attachments = get_attachment(doc)
+		print("attachments", attachments)
+		client_email_body = f"""Your Ticket number {doc.issue} has been successfully closed"""
+		recipients = get_customer_emails(doc.project)
+		make(subject = subject, content=client_email_body, recipients=recipients,
+			attachments= attachments,
+				send_email=True, sender="erp@groupmfi.com")
 
 		doc.completed_sent=1
 		frappe.msgprint("Task completion email has been sent")
+
+def get_attachment(doc):
+	"""check print settings are attach the pdf"""
+
+	print_settings = frappe.get_doc("Print Settings", "Print Settings")
+	if (doc.docstatus == 0 and not print_settings.allow_print_for_draft) or (
+		doc.docstatus == 2 and not print_settings.allow_print_for_cancelled
+	):
+
+		# ignoring attachment as draft and cancelled documents are not allowed to print
+		status = "Draft" if doc.docstatus == 0 else "Cancelled"
+		frappe.throw(
+			_(
+				"""Not allowed to attach {0} document, please enable Allow Print For {0} in Print Settings"""
+			).format(status),
+			title=_("Error in Notification"),
+		)
+	else:
+		return [
+			{
+				"print_format_attachment": 1,
+				"doctype": doc.doctype,
+				"name": doc.name,
+				"print_format": "Tracking Sheet",
+				"print_letterhead": print_settings.with_letterhead,
+				"lang": frappe.db.get_value("Print Format", "Tracking Sheet", "default_print_language")
+			}
+		]
+
 
 def send_task_escalation_email(doc):
 	if not frappe.db.get_value("Task", doc.name, "escalation"):

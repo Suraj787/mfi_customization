@@ -1,5 +1,4 @@
 frappe.ui.form.on('Asset', {
-
     item_code(frm) {
         frappe.model.with_doc("Item", frm.doc.item_code, function() {
             var itemschild_data = frappe.model.get_doc("Item", frm.doc.item_code)

@@ -2,6 +2,8 @@ import frappe
 from datetime import datetime, timedelta, date
 from dateutil import rrule
 from dateutil.relativedelta import relativedelta
+from frappe.core.doctype.user_permission.user_permission import user_permission_exists
+
 
 def after_insert(doc, method):
     if len(frappe.get_all('Asset Serial No', {"serial_no": doc.serial_no}, ['name', 'asset'])) > 0:
@@ -23,8 +25,11 @@ def after_insert(doc, method):
         asn.save()
 
 def get_asset_up(doc, method):
-    print('ASSSSETTTT')
     if doc.technician:
+        user_perm = frappe.db.get_all('User Permission', {'allow':'Asset', 'for_value':doc.name}, ['user', 'name'])
+        if user_perm and user_perm[0]['user'] != doc.technician:
+            frappe.delete_doc("User Permission", user_perm[0]['name'] )
+            
         if doc.technician in frappe.db.get_all('Employee','user_id',pluck='user_id'):
             emp = frappe.get_doc('Employee',{'user_id':doc.technician})
             if emp.company == doc.company:

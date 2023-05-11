@@ -194,9 +194,6 @@ def get_type_of_call(doc,method):
             usr_perm.for_value = 'Service Request'
             usr_perm.apply_to_all_doctypes = 1
             usr_perm.save()
-        
-        
-
 
 def get_roles_checked(doc,method):  
     print('\n\n\nroles checkefd\n\n\n\n')

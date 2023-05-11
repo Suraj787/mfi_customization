@@ -427,9 +427,9 @@ def send_issue_closed_email(issue):
 		client_emails = get_customer_emails(issue.project)
 		email_body = f"Issue ticket number {issue.name} has been closed"
 
-		make(subject = subject,content=email_body,
-			recipients=client_emails,
-			send_email=True, sender="erp@groupmfi.com")
+		# make(subject = subject,content=email_body,
+		# 	recipients=client_emails,
+		# 	send_email=True, sender="erp@groupmfi.com")
 
 		make(subject = subject,content=email_body,
 			recipients=helpdesk_email,

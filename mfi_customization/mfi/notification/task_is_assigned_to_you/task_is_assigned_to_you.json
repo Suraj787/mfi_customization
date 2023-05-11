@@ -12,11 +12,12 @@
  "idx": 0,
  "is_standard": 1,
  "message": "Task Ticket Number:{{doc.issue}} has assigned to you",
- "modified": "2022-11-21 09:53:27.593216",
+ "modified": "2023-04-29 16:28:41.805923",
  "modified_by": "Administrator",
  "module": "mfi",
  "name": "Task is Assigned to you",
  "owner": "Administrator",
+ "print_format": "",
  "recipients": [
   {
    "receiver_by_document_field": "completed_by"
@@ -24,7 +25,7 @@
  ],
  "send_system_notification": 0,
  "send_to_all_assignees": 0,
- "sender": "Ajit2356",
+ "sender": "Helpdesk email",
  "sender_email": "erp@groupmfi.com",
  "subject": "Task is Assigned to you"
 }

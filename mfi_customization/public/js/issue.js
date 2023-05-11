@@ -108,7 +108,6 @@ frappe.ui.form.on('Issue', {
 				"asset":frm.doc.asset
 			},
 			callback: function(r) {
-
 					frm.set_value('customer',r.message);
 				}
 			});
@@ -154,6 +153,18 @@ frappe.ui.form.on('Issue', {
 					}
 				}
 			});
+		if (frm.doc.serial_no && frm.doc.asset){
+			frappe.call({
+			method: "mfi_customization.mfi.doctype.issue.get_customer",
+			args: {
+				"serial_no":frm.doc.serial_no,
+				"asset":frm.doc.asset
+			},
+			callback: function(r) {
+					frm.set_value('customer',r.message);
+				}
+			});
+		}
 	}
 		if (!frm.doc.asset){
 			frm.set_value('asset_name','');
@@ -595,3 +606,4 @@ function hide_request_mtrl_stus(frm){
            frm.set_df_property('requested_material_status',"hidden",1);
      }
 }
+
