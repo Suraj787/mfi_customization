@@ -499,8 +499,8 @@ def set_yeild_details(doc):
 						"3rd_reading":int(asset_reading) - int(mchn_reading_installation[2]['total'])
 
 						})
-				else:
-					frappe.msgprint("Machine reading not found for any item or for type installation.")
+				# else:
+				# 	frappe.msgprint("Machine reading not found for any item or for type installation.")
 
 
 

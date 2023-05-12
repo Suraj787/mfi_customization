@@ -18,6 +18,7 @@ app_license = "MIT"
 # app_include_css = "/assets/mfi_customization/css/mfi_customization.css"
 app_include_js = [
 	"/assets/js/mfi_customization.min.js",
+    "/assets/mfi_customization/desk_js/common.js",
 ]
 # include js, css files in header of web template
 # web_include_css = "/assets/mfi_customization/css/mfi_customization.css"
@@ -148,13 +149,13 @@ doc_events = {
     },
     "Employee":{
         "after_save":"mfi_customization.mfi.doctype.employee.employee.get_company",
-        "validate":["mfi_customization.mfi.doctype.employee.employee.get_territory","mfi_customization.mfi.doctype.employee.employee.get_type_of_call","mfi_customization.mfi.doctype.employee.employee.get_roles_checked"],
+        "validate":["mfi_customization.mfi.doctype.employee.employee.get_territory","mfi_customization.mfi.doctype.employee.employee.get_type_of_call","mfi_customization.mfi.doctype.employee.employee.get_roles_checked","mfi_customization.mfi.doctype.employee.employee.get_type_of_call"],
     },
     "Project":{
         "after_save":"mfi_customization.mfi.doctype.project.get_company",
-        "validate":"mfi_customization.mfi.doctype.project.get_customer",
-        "after_insert":"mfi_customization.mfi.doctype.project.get_project",
-        "on_change":["mfi_customization.mfi.doctype.project.get_project","mfi_customization.mfi.doctype.project.get_company"]
+        "validate":["mfi_customization.mfi.doctype.project.get_customer","mfi_customization.mfi.doctype.project.get_tech_team"],
+        "after_insert":"mfi_customization.mfi.doctype.project.get_tech_team",
+        "on_change":["mfi_customization.mfi.doctype.project.get_project","mfi_customization.mfi.doctype.project.get_company","mfi_customization.mfi.doctype.project.get_tech_team"]
     },
     # "Item":{
     #     "after_insert":"mfi_customization.mfi.doctype.item.validate"

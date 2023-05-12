@@ -12,7 +12,7 @@ from mfi_customization.mfi.doctype.issue import set_company
 from datetime import datetime
 from frappe.utils import time_diff_in_hours
 from frappe.core.doctype.communication.email import make
-# from mfi_customization.mfi.doctype.project import get_customer_emails
+from mfi_customization.mfi.doctype.project import get_customer_emails
 
 
 def validate(doc,method):
@@ -33,10 +33,10 @@ def validate(doc,method):
 		l = []
 		for c_r in doc.current_reading:
 			l.append(c_r.total)
-		fltr={"project":doc.project,"asset":doc.asset,"reading_date":("<=",last_reading),"item":doc.toner_type}
+		fltr={"project":doc.project,"asset":doc.asset,"reading_date":("<=",last_reading)}
 		mr_all = frappe.get_all("Machine Reading",filters=fltr,fields=["name","reading_date","asset","black_and_white_reading","colour_reading","total","machine_type"],limit=4,order_by="reading_date desc,name desc")
 		for d in range(len(mr_all)-1):
-			if len(mr_all)>0 and mr_all[d]['total']!= l[0]:
+			if len(mr_all)>0 and mr_all[d]['total']!= l[0] and int(mr_all[d]['total'])>0 and doc.type_of_call == "Toner":
 				print(f"\n\n\n\n\nttttt,{int(mr_all[d]['total'])}\n\n\n\n\n")
 				print(f"\n\n\n\n\nttttt+++++++++11111111,{int(mr_all[d+1]['total'])}\n\n\n\n\n")
 				doc.append("last_readings", {
@@ -49,7 +49,7 @@ def validate(doc,method):
 					"yeild": int(mr_all[d]['total']) - int(mr_all[d+1]['total']) or 0,
 					"actual_coverage": str(round(5000/(int(mr_all[d]['total']) - int(mr_all[d+1]['total']))*5, 2)) + '%',
 					"rated_yield": 5000
-					})
+				 	})
 				
 			else:
 				doc.append("last_readings", {
@@ -93,19 +93,52 @@ def send_task_completion_email(doc):
 		# send email notification to helpdesk
 		helpdesk_email_body = f"""Task ticket number {doc.name} has been successfully completed."""
 		recipients = frappe.db.get_value("Company", doc.company, "support_email")
+
 		if doc.type_of_call == "Toner":
 			recipients = frappe.db.get_value("Company", doc.company, "toner_support_email")
 		make(subject = subject, content=helpdesk_email_body, recipients=recipients,
 				send_email=True, sender="erp@groupmfi.com")
 
-		# send email notification to client
-		# client_email_body = f"""Your Ticket number {doc.issue} has been successfully closed"""
-		# recipients = get_customer_emails(doc.project)
-		# make(subject = subject, content=client_email_body, recipients=recipients,
-		# 		send_email=True, sender="erp@groupmfi.com")
+		#send email notification to client
+		attachments = get_attachment(doc)
+		print("attachments", attachments)
+		client_email_body = f"""Your Ticket number {doc.issue} has been successfully closed"""
+		recipients = get_customer_emails(doc.project)
+		make(subject = subject, content=client_email_body, recipients=recipients,
+			attachments= attachments,
+				send_email=True, sender="erp@groupmfi.com")
 
 		doc.completed_sent=1
 		frappe.msgprint("Task completion email has been sent")
+
+def get_attachment(doc):
+	"""check print settings are attach the pdf"""
+
+	print_settings = frappe.get_doc("Print Settings", "Print Settings")
+	if (doc.docstatus == 0 and not print_settings.allow_print_for_draft) or (
+		doc.docstatus == 2 and not print_settings.allow_print_for_cancelled
+	):
+
+		# ignoring attachment as draft and cancelled documents are not allowed to print
+		status = "Draft" if doc.docstatus == 0 else "Cancelled"
+		frappe.throw(
+			_(
+				"""Not allowed to attach {0} document, please enable Allow Print For {0} in Print Settings"""
+			).format(status),
+			title=_("Error in Notification"),
+		)
+	else:
+		return [
+			{
+				"print_format_attachment": 1,
+				"doctype": doc.doctype,
+				"name": doc.name,
+				"print_format": "Tracking Sheet",
+				"print_letterhead": print_settings.with_letterhead,
+				"lang": frappe.db.get_value("Print Format", "Tracking Sheet", "default_print_language")
+			}
+		]
+
 
 def send_task_escalation_email(doc):
 	if not frappe.db.get_value("Task", doc.name, "escalation"):
@@ -528,8 +561,9 @@ def validate_reading(doc):
                 last_date.append(lst.date)
     if len(curr)>0 and len(last)>0:
         print(f'\n\n\n\n\n122{curr},{last}\n\n\n\n\n')
+        frappe.log_error(f'\n\n\n\n\n122{curr},{last}\n\n\n\n\n')
         # if doc.issue_type != 'Error message':
-        if int(last[0])>=int(curr[0]) and int(last[-1])>0 and int(curr[0])>0:
+        if int(last[0])>=int(curr[0]) and int(last[0])>0 and int(curr[0])>0:
             frappe.throw("Current Reading Must be Greater than Last Reading")
 
     if len(curr_date)>0 and len(last_date)>0:
