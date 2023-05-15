@@ -809,39 +809,42 @@ def assingn_to_fltr_bassed_on_technician(doctype, txt, searchfield, start, page_
 
 
 def update_technician_productivity_matrix(doc):
-	task = frappe.get_doc("Task", doc.name)
+	if frappe.db.exists('Task', doc.name):
 
-	# when task is escalated
-	if not frappe.db.get_value("Task", doc.name, "escalation") and doc.escalation and doc.escalation_:
-		paused_datetime = {row.technician: row.paused for row in task.technician_productivity_matrix}
-		if task.completed_by in paused_datetime and not paused_datetime[task.completed_by]:
-			for i in doc.technician_productivity_matrix:
-				if i.technician == task.completed_by and not i.paused:
-					i.paused = now_datetime()
-		else:
-			row = doc.append("technician_productivity_matrix", {})
-			row.technician = doc.completed_by
-			row.paused = now_datetime()
+		task = frappe.get_doc("Task", doc.name)
+		if task:
+			# when task is escalated
+			if not frappe.db.get_value("Task", doc.name, "escalation") and doc.escalation and doc.escalation_:
+				paused_datetime = {row.technician: row.paused for row in task.technician_productivity_matrix}
+				if task.completed_by in paused_datetime and not paused_datetime[task.completed_by]:
+					for i in doc.technician_productivity_matrix:
+						if i.technician == task.completed_by and not i.paused:
+							i.paused = now_datetime()
+				else:
+					print('*************else***************')
+					row = doc.append("technician_productivity_matrix", {})
+					row.technician = doc.completed_by
+					row.paused = now_datetime()
 
 
-	elif frappe.db.get_value("Task", doc.name, "status") != "Working" and doc.status == "Working":  # working
-		working_datetime = {row.technician: row.working for row in task.technician_productivity_matrix}
-		if task.completed_by in working_datetime and not working_datetime[task.completed_by]:
-			for i in task.technician_productivity_matrix:
-				if i.technician == task.completed_by and not i.working:
-					i.working = now_datetime()
-		else:
-			row = doc.append("technician_productivity_matrix", {})
-			row.technician = doc.completed_by
-			row.working = now_datetime()
+			elif frappe.db.get_value("Task", doc.name, "status") != "Working" and doc.status == "Working":  # working
+				working_datetime = {row.technician: row.working for row in task.technician_productivity_matrix}
+				if task.completed_by in working_datetime and not working_datetime[task.completed_by]:
+					for i in task.technician_productivity_matrix:
+						if i.technician == task.completed_by and not i.working:
+							i.working = now_datetime()
+				else:
+					row = doc.append("technician_productivity_matrix", {})
+					row.technician = doc.completed_by
+					row.working = now_datetime()
 
-	elif frappe.db.get_value("Task", doc.name, "status") != "Completed" and doc.status == "Completed":  # working
-		closed_datetime = {row.technician: row.closed for row in task.technician_productivity_matrix}
-		if task.completed_by in closed_datetime and not closed_datetime[task.completed_by]:
-			for i in doc.technician_productivity_matrix:
-				if i.technician == task.completed_by and not i.closed:
-					i.closed = now_datetime()
-		else:
-			row = doc.append("technician_productivity_matrix", {})
-			row.technician = doc.completed_by
-			row.closed = now_datetime()
+			elif frappe.db.get_value("Task", doc.name, "status") != "Completed" and doc.status == "Completed":  # working
+				closed_datetime = {row.technician: row.closed for row in task.technician_productivity_matrix}
+				if task.completed_by in closed_datetime and not closed_datetime[task.completed_by]:
+					for i in doc.technician_productivity_matrix:
+						if i.technician == task.completed_by and not i.closed:
+							i.closed = now_datetime()
+				else:
+					row = doc.append("technician_productivity_matrix", {})
+					row.technician = doc.completed_by
+					row.closed = now_datetime()
