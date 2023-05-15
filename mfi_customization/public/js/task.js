@@ -23,7 +23,7 @@ frappe.ui.form.on('Task', {
 		if (frm.doc.status == 'Working') {
 			let today = new Date()
 			frappe.model.set_value("Issue", frm.doc.issue, 'first_responded_on', today);
-			
+
 		}
 		if (frm.doc.status == "Completed") {
 			frappe.model.set_value("Task", frm.doc.name ,"working_end_time", frappe.datetime.now_datetime());
@@ -174,7 +174,7 @@ frappe.ui.form.on('Task', {
 		frm.trigger('customer');
 
 		frm.add_custom_button('Material Request', () => {
-			
+
 			var check_machine_reading = frappe.db.get_value("Machine Reading", { 'task': frm.doc.name }, 'name', (r) => {
 				if (r.name != null) {
 					frappe.model.set_value("Task", frm.doc.name ,"working_end_time", frappe.datetime.now_datetime());
@@ -585,6 +585,46 @@ frappe.ui.form.on('Task', {
 		//	frappe.set_route(["query-report", "Machine Asset History"]);
 		//});
 
+		frm.add_custom_button(__('Escalate'), function () {
+			const dialog = new frappe.ui.Dialog({
+				title: __('Escalate'),
+				fields: [
+					{
+						fieldname: 'technician',
+						label: __('Escalated Technician'),
+						fieldtype: 'Data',
+						read_only: 1,
+						default: frm.doc.completed_by
+					},
+					{
+						fieldname: 'description',
+						label: __('Description'),
+						fieldtype: 'Text'
+					},
+					{
+						fieldname: 'escalated_on',
+						label: __('Escalated On'),
+						fieldtype: 'Datetime',
+						default: frappe.datetime.now_datetime(),
+						read_only: 1,
+					}
+				],
+				primary_action_label: __('Escalate'),
+				primary_action: (values) => {
+					console.log('values', values);
+					var esc = frm.add_child("task_escalation_list");
+					esc.escalated_technician = values.technician;
+					esc.description = values.description;
+					esc.escalated_on = values.escalated_on;
+					dialog.hide();
+					frm.refresh_field("task_escalation_list");
+					frm.set_value("escalation", 1);
+				}
+			});
+
+			dialog.show();
+
+		});
 	}
 });
 

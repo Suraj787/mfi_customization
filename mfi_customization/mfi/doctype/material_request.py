@@ -655,7 +655,7 @@ def itm_child_data_into_issue(doc):
               get_issue.save()
 
 def pause_task(doc, event):
-	if doc.task and doc.purpose == "Material Issue":
+	if doc.task and doc.material_request_type == "Material Issue":
 		task = frappe.get_doc("Task", doc.task)
 		paused_datetime = {row.technician: row.paused for row in task.technician_productivity_matrix}
 		if task.completed_by in paused_datetime and not paused_datetime[task.completed_by]:
