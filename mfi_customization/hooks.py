@@ -133,7 +133,11 @@ doc_events = {
        # "after_save":"mfi_customization.mfi.doctype.material_request.after_save",
         # "onload":"mfi_customization.mfi.doctype.material_request.onload",
         "before_save":"mfi_customization.mfi.doctype.material_request.before_save",
-        "before_insert": "mfi_customization.mfi.doctype.material_request.notify_client_about_material_requested",
+        "before_insert": [
+            "mfi_customization.mfi.doctype.material_request.notify_client_about_material_requested",
+            "mfi_customization.mfi.doctype.material_request.pause_task"
+            ],
+        "validate": "mfi_customization.mfi.doctype.material_request.set_material_issued_on_task"
     },
     # "Machine Reading":{
     #  "validate":"mfi_customization.mfi.doctype.machine_reading.machine_reading.validate"
