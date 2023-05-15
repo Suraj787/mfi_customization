@@ -5,14 +5,13 @@
 from __future__ import unicode_literals
 import frappe
 import json
-from frappe.utils.data import getdate,today
+from frappe.utils import time_diff_in_hours, now_datetime
+from frappe.utils.data import today
 from frappe.model.mapper import get_mapped_doc
 from frappe.permissions import add_user_permission
-from mfi_customization.mfi.doctype.issue import set_company
-from datetime import datetime
-from frappe.utils import time_diff_in_hours
 from frappe.core.doctype.communication.email import make
 from mfi_customization.mfi.doctype.project import get_customer_emails
+from mfi_customization.mfi.doctype.issue import set_company
 
 
 def validate(doc,method):
@@ -50,7 +49,7 @@ def validate(doc,method):
 					"actual_coverage": str(round(5000/(int(mr_all[d]['total']) - int(mr_all[d+1]['total']))*5, 2)) + '%',
 					"rated_yield": 5000
 				 	})
-				
+
 			else:
 				doc.append("last_readings", {
 					"date" : mr_all[d]['reading_date'],
@@ -61,8 +60,8 @@ def validate(doc,method):
 					"total":( int(mr_all[d]['black_and_white_reading'] or 0)  + int(mr_all[d]['colour_reading'] or 0)),
 					"yeild": 0
 					})
-			
-                        
+
+
 	set_field_values(doc)
 # 	assign_task_validation(doc)
 
@@ -74,6 +73,7 @@ def validate(doc,method):
 		create_user_issue_permission(doc)
 
 	validate_link_fileds(doc)
+	update_technician_productivity_matrix(doc)
 
 def before_insert(doc,method):
 	send_task_assignment_email(doc)
@@ -178,7 +178,7 @@ def after_insert(doc,method):
 	create_user_permission(doc)
 	create_user_issue_permission(doc)
 
-	
+
 
 	# docperm = frappe.new_doc("DocShare")
 	# docperm.update({
@@ -621,7 +621,7 @@ def create_user_issue_permission(doc):
 			if emp.material_request_approver:
 				for emp2 in frappe.get_all("Employee",{"name":emp.material_request_approver},['user_id']):
 					if emp2.user_id:
-						add_user_permission("Issue",doc.issue,emp2.user_id)	
+						add_user_permission("Issue",doc.issue,emp2.user_id)
 # def assign_task_validation(doc):
 # 	if doc.status=="Working":
 # 		for d in frappe.get_all("Task",{"status":"Working","completed_by":doc.completed_by,"name":("!=",doc.name)}):
@@ -807,4 +807,41 @@ def assingn_to_fltr_bassed_on_technician(doctype, txt, searchfield, start, page_
                list_user.append(usr)
     return  [[d] for d in list_user]
 
-		   
+
+def update_technician_productivity_matrix(doc):
+	task = frappe.get_doc("Task", doc.name)
+
+	# when task is escalated
+	if not frappe.db.get_value("Task", doc.name, "escalation") and doc.escalation and doc.escalation_:
+		paused_datetime = {row.technician: row.paused for row in task.technician_productivity_matrix}
+		if task.completed_by in paused_datetime and not paused_datetime[task.completed_by]:
+			for i in doc.technician_productivity_matrix:
+				if i.technician == task.completed_by and not i.paused:
+					i.paused = now_datetime()
+		else:
+			row = doc.append("technician_productivity_matrix", {})
+			row.technician = doc.completed_by
+			row.paused = now_datetime()
+
+
+	elif frappe.db.get_value("Task", doc.name, "status") != "Working" and doc.status == "Working":  # working
+		working_datetime = {row.technician: row.working for row in task.technician_productivity_matrix}
+		if task.completed_by in working_datetime and not working_datetime[task.completed_by]:
+			for i in task.technician_productivity_matrix:
+				if i.technician == task.completed_by and not i.working:
+					i.working = now_datetime()
+		else:
+			row = doc.append("technician_productivity_matrix", {})
+			row.technician = doc.completed_by
+			row.working = now_datetime()
+
+	elif frappe.db.get_value("Task", doc.name, "status") != "Completed" and doc.status == "Completed":  # working
+		closed_datetime = {row.technician: row.closed for row in task.technician_productivity_matrix}
+		if task.completed_by in closed_datetime and not closed_datetime[task.completed_by]:
+			for i in doc.technician_productivity_matrix:
+				if i.technician == task.completed_by and not i.closed:
+					i.closed = now_datetime()
+		else:
+			row = doc.append("technician_productivity_matrix", {})
+			row.technician = doc.completed_by
+			row.closed = now_datetime()
