@@ -177,6 +177,7 @@ def after_insert(doc,method):
 
 	create_user_permission(doc)
 	create_user_issue_permission(doc)
+	set_assigned_on_task(doc)
 
 
 
@@ -821,7 +822,6 @@ def update_technician_productivity_matrix(doc):
 						if i.technician == task.completed_by and not i.paused:
 							i.paused = now_datetime()
 				else:
-					print('*************else***************')
 					row = doc.append("technician_productivity_matrix", {})
 					row.technician = doc.completed_by
 					row.paused = now_datetime()
@@ -848,3 +848,16 @@ def update_technician_productivity_matrix(doc):
 					row = doc.append("technician_productivity_matrix", {})
 					row.technician = doc.completed_by
 					row.closed = now_datetime()
+
+def set_assigned_on_task(doc):
+	if doc.completed_by:
+		assigned_datetime = {row.technician: row.assigned for row in doc.technician_productivity_matrix}
+		if doc.completed_by in assigned_datetime and not assigned_datetime.get(doc.completed_by):
+			for i in doc.technician_productivity_matrix:
+				if i.technician == doc.completed_by and not i.assigned:
+					i.assigned = now_datetime()
+		else:
+			row = doc.append("technician_productivity_matrix", {})
+			row.technician = doc.completed_by
+			row.assigned = now_datetime()
+	doc.save()

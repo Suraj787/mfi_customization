@@ -47,7 +47,6 @@ def validate(doc,method):
 
 	send_call_resolved_email(doc)
 	send_issue_closed_email(doc)
-	set_assigned_on_task(doc)
 
 
 def on_change(doc,method):
@@ -449,21 +448,3 @@ def asset_name_item(item_code):
 # def user_customer(user):
 #     user = frappe.db.sql(f"""select for_value from `tabUser Permission` where user='{user}' and allow='Customer'""")
 #     return user
-
-def set_assigned_on_task(doc):
-	if frappe.db.get_value("Issue", doc.name, "status") != "Assigned" and doc.status == "Assigned":
-		tasks = frappe.get_all("Task", {"issue": doc.name}, order_by="modified desc")
-		if tasks:
-			task = frappe.get_doc("Task", tasks[0].name)
-			assigned_datetime = {row.technician: row.assigned for row in task.technician_productivity_matrix}
-			if task.completed_by in assigned_datetime and not assigned_datetime[task.completed_by]:
-				for i in task.technician_productivity_matrix:
-					if i.technician == task.completed_by and not i.assigned:
-						i.assigned = now_datetime()
-
-			else:
-				row = task.append("technician_productivity_matrix", {})
-				row.technician = task.completed_by
-				row.assigned = now_datetime()
-
-			task.save()

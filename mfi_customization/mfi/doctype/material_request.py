@@ -660,7 +660,7 @@ def pause_task(doc, event):
 		paused_datetime = {row.technician: row.paused for row in task.technician_productivity_matrix}
 		if task.completed_by in paused_datetime and not paused_datetime[task.completed_by]:
 			for i in task.technician_productivity_matrix:
-				if i.technician == task.completed_by and not i.paused and not i.material_request:
+				if i.technician == task.completed_by and not i.material_request:
 					i.paused = now_datetime()
 					i.material_request = now_datetime()
 
@@ -673,12 +673,12 @@ def pause_task(doc, event):
 		task.save()
 
 def set_material_issued_on_task(doc, event):
-	if frappe.db.get_value("Material Request", doc.name, "status")!= "Issued" and doc.status=="Issued":
+	if frappe.db.get_value("Material Request", doc.name, "workflow_state")!= "Approved" and doc.workflow_state=="Approved":
 		task = frappe.get_doc("Task", doc.task)
-		paused_datetime = {row.technician: row.paused for row in task.technician_productivity_matrix}
+		paused_datetime = {row.technician: row.material_issued for row in task.technician_productivity_matrix}
 		if task.completed_by in paused_datetime and not paused_datetime[task.completed_by]:
 			for i in task.technician_productivity_matrix:
-				if i.technician == task.completed_by and not i.paused and not i.material_issued:
+				if i.technician == task.completed_by and not i.material_issued:
 					i.paused = now_datetime()
 					i.material_issued = now_datetime()
 
