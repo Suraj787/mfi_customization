@@ -89,7 +89,7 @@ def get_data(filters):
         GROUP BY name) AS x ) as repetitive_call
 
 	    FROM (SELECT DISTINCT completed_by FROM `tabTask`) t
-	    WHERE completed_by = '{0}'""".format(tech), as_dict=1, debug=1)
+	    WHERE completed_by = '{0}'""".format(tech), as_dict=1)
 		
 		data.append(row[0])
 	return data
