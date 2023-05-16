@@ -1,0 +1,73 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2023-05-12 15:23:34.562658",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "technician",
+  "assigned",
+  "working",
+  "material_request",
+  "material_issued",
+  "closed",
+  "paused"
+ ],
+ "fields": [
+  {
+   "fieldname": "technician",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Technician",
+   "options": "User"
+  },
+  {
+   "fieldname": "assigned",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Assigned"
+  },
+  {
+   "fieldname": "working",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Working"
+  },
+  {
+   "fieldname": "material_request",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Material Request"
+  },
+  {
+   "fieldname": "material_issued",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Material Issued"
+  },
+  {
+   "fieldname": "closed",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Closed"
+  },
+  {
+   "fieldname": "paused",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Paused"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2023-05-12 15:23:39.325713",
+ "modified_by": "Administrator",
+ "module": "mfi",
+ "name": "Technician Productivity Matrix",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

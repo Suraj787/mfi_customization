@@ -1,6 +1,6 @@
 import frappe,json
 # from frappe.desk.reportview import get_match_cond, get_filters_cond
-from frappe.utils import nowdate, getdate,today,add_months, flt
+from frappe.utils import nowdate, getdate,today,add_months, flt, now_datetime
 # from six import string_types, iteritems
 # from frappe.desk.query_report import run
 from frappe import _
@@ -379,34 +379,34 @@ def item_child_table_filters(asset,company,task):
 	it = frappe.get_doc('Item',asset_item)
 	for i in it.compatible_spares:
 		l.append(i.item_code)
-		
+
 	return l
 @frappe.whitelist()
 @frappe.validate_and_sanitize_search_inputs
 def item_code_filteration(doctype, txt, searchfield, start, page_len, filters):
-	
+
 	if frappe.db.get_value('Task',{'name':filters.get("task")},'type_of_call')=="Toner":
 		query="""
-        SELECT item_code,item_name 
-        FROM `tabAsset Item Child Table` 
+        SELECT item_code,item_name
+        FROM `tabAsset Item Child Table`
         WHERE
-		parentfield="compatible_toners" 
-		and 
+		parentfield="compatible_toners"
+		and
        company='{0}'
        and parent='{1}'
         """.format(filters.get("company"),frappe.db.get_value('Asset',filters.get("asset"),'item_code'))
 		if txt:
 			query+=' AND (name like "%{0}%" OR item_name like "%{0}%")'.format(txt)
 		return frappe.db.sql(query,as_list=True)
-		
+
 		# return frappe.db.get_all('Asset Item Child Table',{'company':filters.get("company"),'parent': frappe.db.get_value('Asset',filters.get("asset"),'item_code'),'parentfield':"compatible_toners"},['item_code'],as_list=1)
 	else:
 		query="""
-        SELECT item_code,item_name 
-        FROM `tabCompatible Spares Item` 
+        SELECT item_code,item_name
+        FROM `tabCompatible Spares Item`
         WHERE
-		parentfield="compatible_spares" 
-		and 
+		parentfield="compatible_spares"
+		and
        company='{0}'
        and parent='{1}'
         """.format(filters.get("company"),frappe.db.get_value('Asset',filters.get("asset"),'item_code'))
@@ -414,9 +414,9 @@ def item_code_filteration(doctype, txt, searchfield, start, page_len, filters):
 			query+=' AND (name like "%{0}%" OR item_name like "%{0}%")'.format(txt)
 		return frappe.db.sql(query,as_list=True)
 		# return frappe.db.get_all('Compatible Spares Item',{'company':filters.get("company"),'parent':frappe.db.get_value('Asset',filters.get("asset"),'item_code'),'parentfield':"compatible_spares"},['item_code'],as_list=1)
-		
-		
-	
+
+
+
 
 @frappe.whitelist()
 # @frappe.validate_and_sanitize_search_inputs
@@ -654,8 +654,38 @@ def itm_child_data_into_issue(doc):
               issue_itm.conversion_factor=i.conversion_factor
               get_issue.save()
 
+def pause_task(doc, event):
+	if doc.task and doc.material_request_type == "Material Issue":
+		task = frappe.get_doc("Task", doc.task)
+		paused_datetime = {row.technician: row.paused for row in task.technician_productivity_matrix}
+		if task.completed_by in paused_datetime and not paused_datetime[task.completed_by]:
+			for i in task.technician_productivity_matrix:
+				if i.technician == task.completed_by and not i.paused and not i.material_request:
+					i.paused = now_datetime()
+					i.material_request = now_datetime()
 
+		else:
+			row = task.append("technician_productivity_matrix", {})
+			row.technician = task.completed_by
+			row.paused = now_datetime()
+			row.material_request = now_datetime()
 
+		task.save()
 
+def set_material_issued_on_task(doc, event):
+	if frappe.db.get_value("Material Request", doc.name, "status")!= "Issued" and doc.status=="Issued":
+		task = frappe.get_doc("Task", doc.task)
+		paused_datetime = {row.technician: row.paused for row in task.technician_productivity_matrix}
+		if task.completed_by in paused_datetime and not paused_datetime[task.completed_by]:
+			for i in task.technician_productivity_matrix:
+				if i.technician == task.completed_by and not i.paused and not i.material_issued:
+					i.paused = now_datetime()
+					i.material_issued = now_datetime()
 
+		else:
+			row = task.append("technician_productivity_matrix", {})
+			row.technician = task.completed_by
+			row.paused = now_datetime()
+			row.material_issued = now_datetime()
 
+		task.save()

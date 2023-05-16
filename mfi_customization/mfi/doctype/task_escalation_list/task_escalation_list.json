@@ -1,0 +1,45 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2023-05-12 15:25:16.862640",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "escalated_technician",
+  "description",
+  "escalated_on"
+ ],
+ "fields": [
+  {
+   "fieldname": "escalated_technician",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Escalated Technician",
+   "options": "User"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": "Description"
+  },
+  {
+   "fieldname": "escalated_on",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Escalated On"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2023-05-12 15:25:16.862640",
+ "modified_by": "Administrator",
+ "module": "mfi",
+ "name": "Task Escalation List",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}
