@@ -862,3 +862,8 @@ def set_assigned_on_task(doc):
 				row = doc.append("technician_productivity_matrix", {})
 				row.technician = doc.completed_by
 				row.assigned = now_datetime()
+	else:
+		row = doc.append("technician_productivity_matrix", {})
+		row.technician = doc.completed_by
+		row.assigned = now_datetime()
+
