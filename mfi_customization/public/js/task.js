@@ -599,7 +599,7 @@ frappe.ui.form.on('Task', {
 						{
 							fieldname: 'description',
 							label: __('Description'),
-							fieldtype: 'Text',
+							fieldtype: 'Small Text',
 							reqd: 1
 						},
 						{
@@ -612,7 +612,6 @@ frappe.ui.form.on('Task', {
 					],
 					primary_action_label: __('Escalate'),
 					primary_action: (values) => {
-						console.log('values', values);
 						var esc = frm.add_child("task_escalation_list");
 						esc.escalated_technician = values.technician;
 						esc.description = values.description;
