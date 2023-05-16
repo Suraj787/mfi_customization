@@ -74,6 +74,8 @@ def validate(doc,method):
 
 	validate_link_fileds(doc)
 	update_technician_productivity_matrix(doc)
+	set_assigned_on_task(doc)
+
 
 def before_insert(doc,method):
 	send_task_assignment_email(doc)
@@ -177,7 +179,6 @@ def after_insert(doc,method):
 
 	create_user_permission(doc)
 	create_user_issue_permission(doc)
-	set_assigned_on_task(doc)
 
 
 
@@ -830,7 +831,7 @@ def update_technician_productivity_matrix(doc):
 			elif frappe.db.get_value("Task", doc.name, "status") != "Working" and doc.status == "Working":  # working
 				working_datetime = {row.technician: row.working for row in task.technician_productivity_matrix}
 				if task.completed_by in working_datetime and not working_datetime[task.completed_by]:
-					for i in task.technician_productivity_matrix:
+					for i in doc.technician_productivity_matrix:
 						if i.technician == task.completed_by and not i.working:
 							i.working = now_datetime()
 				else:
@@ -850,14 +851,14 @@ def update_technician_productivity_matrix(doc):
 					row.closed = now_datetime()
 
 def set_assigned_on_task(doc):
-	if doc.completed_by:
-		assigned_datetime = {row.technician: row.assigned for row in doc.technician_productivity_matrix}
-		if doc.completed_by in assigned_datetime and not assigned_datetime.get(doc.completed_by):
-			for i in doc.technician_productivity_matrix:
-				if i.technician == doc.completed_by and not i.assigned:
-					i.assigned = now_datetime()
-		else:
-			row = doc.append("technician_productivity_matrix", {})
-			row.technician = doc.completed_by
-			row.assigned = now_datetime()
-	doc.save()
+	if frappe.db.exists('Task', doc.name):
+		if frappe.db.get_value("Task", doc.name, "completed_by") != doc.completed_by:
+			assigned_datetime = {row.technician: row.assigned for row in doc.technician_productivity_matrix}
+			if doc.completed_by in assigned_datetime and not assigned_datetime.get(doc.completed_by):
+				for i in doc.technician_productivity_matrix:
+					if i.technician == doc.completed_by and not i.assigned:
+						i.assigned = now_datetime()
+			else:
+				row = doc.append("technician_productivity_matrix", {})
+				row.technician = doc.completed_by
+				row.assigned = now_datetime()
