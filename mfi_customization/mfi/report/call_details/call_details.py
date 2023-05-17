@@ -28,8 +28,8 @@ def get_columns(filters = None):
 			"fieldtype":"Data"	
 		},
 		{
-			"label":"No. of Call Closed",
-			"fieldname":"no_of_call_closed",
+			"label":"No. of Call Completed",
+			"fieldname":"no_of_call_completed",
 			"fieldtype":"Data"	
 		},
 		{
@@ -59,7 +59,7 @@ def get_data(filters):
 		(SELECT COUNT(*) FROM `tabTask` WHERE assign_date between '{0}' and '{1}') as no_of_calls,
 		(SELECT COUNT(*) FROM `tabTask` WHERE type_of_call='PM' and assign_date between '{0}' and '{1}') as no_of_pm,
 		(SELECT COUNT(*) FROM `tabTask` WHERE type_of_call ='Ins' and assign_date between '{0}' and '{1}') as no_of_installations,
-		(SELECT COUNT(*) FROM `tabTask` WHERE status ='Closed' and assign_date between '{0}' and '{1}') as no_of_call_closed,
+		(SELECT COUNT(*) FROM `tabTask` WHERE status ='Completed' and assign_date between '{0}' and '{1}') as no_of_call_completed,
 		(SELECT COUNT(*) FROM `tabTask` WHERE status in ('Open','Pending Review','Overdue','Working') and assign_date between '{0}' and '{1}') as no_of_pending_calls,
 		(SELECT COUNT(*) FROM `tabTask` WHERE repetitive_call =1 and assign_date between '{0}' and '{1}') as no_of_repeat_calls,
 		(SELECT COUNT(name) from `tabMaterial Request` where task IS NOT NULL and transaction_date between '{0}' and '{1}') as list_of_required_spares
