@@ -145,7 +145,7 @@ def get_attachment(doc):
 
 def send_task_escalation_email(doc):
 	if not frappe.db.get_value("Task", doc.name, "escalation"):
-		if doc.escalation and doc.escalation_:
+		if doc.escalation:
 			subject = f"Task has been escalated"
 
 			# send email notification to helpdesk
@@ -165,7 +165,7 @@ def send_task_escalation_email(doc):
 			# make(subject = subject, content=client_email_body, recipients=recipients,
 			# 		send_email=True, sender="erp@groupmfi.com")
 
-			# frappe.msgprint("Task escalation email has been sent")
+			frappe.msgprint("Task escalation email has been sent")
 
 
 def after_insert(doc,method):
@@ -870,7 +870,6 @@ def set_assigned_on_task(doc):
 
 def set_escalate(doc):
 	technician = frappe.db.get_value("Task", doc.name, "completed_by")
-	escalation = frappe.db.get_value("Task", doc.name, "escalation")
 
 	if technician != doc.completed_by:
-		doc.escalation = not(escalation)
+		doc.escalation = 0
