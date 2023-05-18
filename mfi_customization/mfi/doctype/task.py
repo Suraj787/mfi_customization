@@ -75,6 +75,7 @@ def validate(doc,method):
 	validate_link_fileds(doc)
 	update_technician_productivity_matrix(doc)
 	set_assigned_on_task(doc)
+	set_escalate(doc)
 
 
 def before_insert(doc,method):
@@ -867,3 +868,9 @@ def set_assigned_on_task(doc):
 		row.technician = doc.completed_by
 		row.assigned = now_datetime()
 
+def set_escalate(doc):
+	technician = frappe.db.get_value("Task", doc.name, "completed_by")
+	escalation = frappe.db.get_value("Task", doc.name, "escalation")
+
+	if technician != doc.completed_by:
+		doc.escalation = not(escalation)
