@@ -590,6 +590,15 @@ frappe.ui.form.on('Task', {
 		//});
 		if (frappe.user.has_role("Technicians") == 1 && frm.doc.type_of_call == "Service Request") {
 			frm.add_custom_button(__('Escalate'), function () {
+				validate_escalation(frm);
+				let technicians = [];
+				for (let t of frm.doc.task_escalation_list){
+					technicians.push(t.escalated_technician);
+				}
+				console.log('technicians', technicians);
+				console.log('frappe.user', frappe.user);
+				console.log('!(frappe.user in technicians)', !(frappe.user in technicians));
+				if (!(technicians.includes(frappe.user.name))){
 				const dialog = new frappe.ui.Dialog({
 					title: __('Escalate'),
 					fields: [
@@ -627,7 +636,10 @@ frappe.ui.form.on('Task', {
 				});
 
 				dialog.show();
-
+				}
+				else{
+					frappe.throw(__('A technician can escalate a task only once'));
+				}
 			});
 		}
 
@@ -764,6 +776,10 @@ function hide_btn_make(frm) {
 		frm.remove_custom_button('Material Request', 'Make');
 		frm.set_df_property('requested_material_status', "read_only", 1);
 	}
+}
+
+function validate_escalation(frm){
+	frappe.user
 }
 
 
