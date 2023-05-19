@@ -588,7 +588,7 @@ frappe.ui.form.on('Task', {
 		//frm.add_custom_button(__('Machine Asset History Report'), function () {
 		//	frappe.set_route(["query-report", "Machine Asset History"]);
 		//});
-		if (frappe.user.has_role("Technicians") == 1 && frm.doc.type_of_call == "Service Request") {
+		if (frappe.user.has_role("Technicians") == 1 && frm.doc.type_of_call != "Toner") {
 			frm.add_custom_button(__('Escalate'), function () {
 				validate_escalation(frm);
 				let technicians = [];
