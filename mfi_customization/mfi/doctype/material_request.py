@@ -565,30 +565,30 @@ def set_item_details(doc,method):
 					mr_child.total_yeild =float(item_yeild[0])
 					doc.save()
 
-# def notify_client_about_material_requested(doc, method):
-# 	"""
-# 	Email clients about material request for their task ticket
-# 	"""
-# 	if doc.task:
-# 		issue = frappe.db.get_value("Task", doc.task, 'issue')
-# 		if issue:
-# 			subject = f"""Material request created for issue {issue}"""
+def notify_client_about_material_requested(doc, method):
+	"""
+	Email clients about material request for their task ticket
+	"""
+	if doc.task:
+		issue = frappe.db.get_value("Task", doc.task, 'issue')
+		if issue:
+			subject = f"""Material request created for issue {issue}"""
 
-# 			# notify client
-# 			# email_body = f"""Kindly Note that Your Task Ticket Number {issue} is awaiting material to be resolved."""
-# 			# recipients = get_customer_emails(doc.project)
-# 			# make(subject = subject, content=email_body, recipients=recipients,
-# 			#         send_email=True, sender="erp@groupmfi.com")
+			# notify client
+			# email_body = f"""Kindly Note that Your Task Ticket Number {issue} is awaiting material to be resolved."""
+			# recipients = get_customer_emails(doc.project)
+			# make(subject = subject, content=email_body, recipients=recipients,
+			#         send_email=True, sender="erp@groupmfi.com")
 
-# 			# notify helpdesk
-# 			email_body = f"""Kindly note that Material Request for ticket number {issue} is awaiting your approval"""
-# 			recipients = frappe.db.get_value("Company", doc.company, "support_email")
-# 			type_of_call = frappe.db.get_value("Task", doc.task, 'type_of_call')
+			# notify helpdesk
+			email_body = f"""Kindly note that Material Request for ticket number {issue} is awaiting your approval"""
+			recipients = frappe.db.get_value("Company", doc.company, "support_email")
+			type_of_call = frappe.db.get_value("Task", doc.task, 'type_of_call')
 
-# 			if type_of_call == "Toner":
-# 				recipients = frappe.db.get_value("Company", doc.company, "toner_support_email")
-# 			make(subject = subject, content=email_body, recipients=recipients,
-# 					send_email=True, sender="erp@groupmfi.com")
+			if type_of_call == "Toner":
+				recipients = frappe.db.get_value("Company", doc.company, "toner_support_email")
+			make(subject = subject, content=email_body, recipients=recipients,
+					send_email=True, sender="erp@groupmfi.com")
 
 
 def notify_helpdesk_about_material_approval(doc, method):

@@ -134,7 +134,7 @@ doc_events = {
         # "onload":"mfi_customization.mfi.doctype.material_request.onload",
         "before_save":"mfi_customization.mfi.doctype.material_request.before_save",
         "before_insert": [
-            # "mfi_customization.mfi.doctype.material_request.notify_client_about_material_requested",
+            "mfi_customization.mfi.doctype.material_request.notify_client_about_material_requested",
             "mfi_customization.mfi.doctype.material_request.pause_task"
             ],
         "validate": "mfi_customization.mfi.doctype.material_request.set_material_issued_on_task"
