@@ -150,8 +150,9 @@ doc_events = {
     },
     "File":{
         "before_insert":["mfi_customization.mfi.doctype.communication.after_insert_file",
-                        "mfi_customization.utils.file.compress_uploaded_file"],
-        "after_update": "mfi_customization.utils.file.compress_uploaded_file"
+                        "mfi_customization.utils.file.compress_files"],
+        "after_insert": "mfi_customization.utils.file.file_after_insert",
+        "after_update": "mfi_customization.utils.file.file_after_update"
     },
     "Employee":{
         "after_save":"mfi_customization.mfi.doctype.employee.employee.get_company",
