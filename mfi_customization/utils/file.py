@@ -9,6 +9,7 @@ from PIL import Image
 def compress_uploaded_file(doc, method):
     compressed_file_extensions = ['.pdf', '.docx', '.xlsx']
     if os.path.splitext(doc.file_name)[1].lower() in compressed_file_extensions:
+        frappe.log_error(title=f'Size of {doc.file_name} b4 compressing', message=f'{doc.file_size}')
         file_path = os.path.join(frappe.get_site_path(), doc.file_url[1:])   # Path to the uploaded file
         downsized_file_path = f"{file_path}.downsized"  # Path for the downsized file
 
@@ -30,3 +31,5 @@ def compress_uploaded_file(doc, method):
 
         doc.file_url = doc.file_url.rstrip(".downsized")
         doc.file_name = doc.file_name.rstrip(".downsized")
+        frappe.log_error(title=f'Size of {doc.file_name} after compressing', message=f'{doc.file_size}')
+
