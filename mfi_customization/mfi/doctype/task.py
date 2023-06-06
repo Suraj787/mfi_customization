@@ -74,6 +74,7 @@ def validate(doc,method):
 
 	validate_link_fileds(doc)
 	update_technician_productivity_matrix(doc)
+	resolution_time(doc)
 	set_assigned_on_task(doc)
 	set_escalate(doc)
 
@@ -846,6 +847,7 @@ def update_technician_productivity_matrix(doc):
 					for i in doc.technician_productivity_matrix:
 						if i.technician == task.completed_by and not i.closed:
 							i.closed = now_datetime()
+							i.resolution_time = i.closed - i.working
 				else:
 					row = doc.append("technician_productivity_matrix", {})
 					row.technician = doc.completed_by
@@ -873,3 +875,12 @@ def set_escalate(doc):
 
 	if technician != doc.completed_by:
 		doc.escalation = 0
+
+def resolution_time(doc):
+	if frappe.db.exists('Task', doc.name):
+		if len(doc.technician_productivity_matrix)>0:
+			for i in doc.technician_productivity_matrix:
+				if i.working and i.closed and not i.material_request and not i.material_issued:
+					i.resolution_time = i.closed - i.working
+				elif i.working and i.closed and i.material_request and i.material_issued:
+					i.resolution_time = (i.material_request - i.working) + (i.closed - i.material_issued)
