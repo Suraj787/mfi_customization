@@ -75,7 +75,7 @@ def validate(doc,method):
 
 	validate_link_fileds(doc)
 	update_technician_productivity_matrix(doc)
-	resolution_time(doc)
+# 	resolution_time(doc)
 	set_assigned_on_task(doc)
 	set_escalate(doc)
 
