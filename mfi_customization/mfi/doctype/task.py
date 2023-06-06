@@ -847,7 +847,6 @@ def update_technician_productivity_matrix(doc):
 					for i in doc.technician_productivity_matrix:
 						if i.technician == task.completed_by and not i.closed:
 							i.closed = now_datetime()
-							i.resolution_time = i.closed - i.working
 				else:
 					row = doc.append("technician_productivity_matrix", {})
 					row.technician = doc.completed_by
@@ -881,6 +880,6 @@ def resolution_time(doc):
 		if len(doc.technician_productivity_matrix)>0:
 			for i in doc.technician_productivity_matrix:
 				if i.working and i.closed and not i.material_request and not i.material_issued:
-					i.resolution_time = i.closed - i.working
+					i.resolution_time = datetime.strptime(i.closed, '%d/%m/%y %H:%M:%S') - datetime.strptime(i.working, '%d/%m/%y %H:%M:%S')
 				elif i.working and i.closed and i.material_request and i.material_issued:
 					i.resolution_time = (i.material_request - i.working) + (i.closed - i.material_issued)
