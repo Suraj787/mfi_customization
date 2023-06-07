@@ -881,6 +881,6 @@ def resolution_time(doc):
 		if len(doc.technician_productivity_matrix)>0:
 			for i in doc.technician_productivity_matrix:
 				if i.working and i.closed and not i.material_request and not i.material_issued:
-					i.resolution_time = i.closed - datetime.strptime(i.working, '%y/%m/%d %H:%M:%S')
+					i.resolution_time = i.closed - datetime.strptime(i.working, '%y-%m-%d %H:%M:%S')
 				elif i.working and i.closed and i.material_request and i.material_issued:
 					i.resolution_time = (i.material_request - i.working) + (i.closed - i.material_issued)
