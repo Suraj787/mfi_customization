@@ -1,11 +1,4 @@
 frappe.ui.form.on('Task', {
-	completed_by(frm){
-	if (frappe.user.name == frm.doc.completed_by && frm.doc.escalation) {
-			{
-				frm.set_df_property('senior_technician_description', "hidden", 0);
-			}
-		}
-	},
 	escalation(frm) {
 		if (frm.doc.escalation) {
 			frappe.model.set_value("Task", frm.doc.name, "working_end_time", frappe.datetime.now_datetime());
