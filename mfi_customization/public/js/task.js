@@ -1,4 +1,11 @@
 frappe.ui.form.on('Task', {
+	completed_by(frm){
+	if (frappe.user.name == frm.doc.completed_by && frm.doc.escalation) {
+			{
+				frm.set_df_property('senior_technician_description', "hidden", 0);
+			}
+		}
+	},
 	escalation(frm) {
 		if (frm.doc.escalation) {
 			frappe.model.set_value("Task", frm.doc.name, "working_end_time", frappe.datetime.now_datetime());
@@ -145,11 +152,6 @@ frappe.ui.form.on('Task', {
 	},
 	refresh: function (frm) {
 		frm.set_df_property('senior_technician_description', "hidden", 1);
-		if (frappe.user.name == frm.doc.completed_by && frm.doc.escalation) {
-			{
-				frm.set_df_property('senior_technician_description', "hidden", 0);
-			}
-		}
 		frm.get_field("task_escalation_list").grid.cannot_add_rows = true;
 		frm.refresh_field("task_escalation_list");
 		frm.get_field("technician_productivity_matrix").grid.cannot_add_rows = true;
@@ -655,11 +657,7 @@ frappe.ui.form.on('Task', {
 frappe.ui.form.on('Task', {
 	onload: function (frm) {
 		status_option_permision_for_technician(frm)
-		if (frappe.user.name == cur_frm.doc.completed_by && cur_frm.doc.escalation) {
-			{
-				frm.set_df_property('senior_technician_description', "hidden", 0);
-			}
-		}
+		
 	}
 });
 
