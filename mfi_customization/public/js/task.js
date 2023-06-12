@@ -151,6 +151,17 @@ frappe.ui.form.on('Task', {
 		frm.refresh_field("technician_productivity_matrix");
 		if (frm.doc.status == "Working") {
 			$(".input-with-feedback option[value=" + 'Open' + "]").remove();
+			frm.doc.current_reading.map((i) => {
+			if (i.type === 'Black & White') {
+				var df = frappe.meta.get_docfield("Asset Readings","reading", frm.doc.name);
+				df.reqd = 1
+
+			}
+			if (i.type === 'Colour') {
+				var df = frappe.meta.get_docfield("Asset Readings","reading_2", frm.doc.name);
+				df.reqd = 1
+			}
+		})
 		}
 		if (frm.doc.status == "Completed") {
 			$(".input-with-feedback option[value=" + 'Open' + "]").remove();
