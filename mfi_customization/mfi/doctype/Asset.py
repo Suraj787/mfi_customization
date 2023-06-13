@@ -125,3 +125,15 @@ def date_pm_cycle(pm_cycle,project):
           invoce_startformating += add_half_year_Month
     
     return monthlylist,yearlylist,quarterlylist,half_yearlist,bymonthlylist
+
+@frappe.whitelist(allow_guest=True)
+def share_doc_till_limit(doc, method=None):
+    today = datetime.today().strftime('%Y-%m-%d')
+    today= datetime.strptime(today, '%Y-%m-%d')
+    user_list =[u['name'] for u in frappe.get_list("DocShare", {'share_doctype':"Asset",'share_name': doc.name}, 'name')]
+    if len(user_list) > 0 and  doc.shared_till:
+        time_limit = doc.creation + timedelta(hours=doc.shared_till)
+        for user in user_list:
+            if time_limit < today :
+                frappe.db.sql("""delete from `tabDocShare` where name=%s""", user, debug=1)
+
