@@ -204,7 +204,8 @@ scheduler_events = {
 # 		"mfi_customization.tasks.all"
 # 	],
 	"daily": [
-		"mfi_customization.mfi.doctype.Asset.make_task_on_PM_call_interval"
+		"mfi_customization.mfi.doctype.Asset.make_task_on_PM_call_interval",
+        "mfi_customization.mfi.doctype.Asset.share_doc_till_limit"
 	],
 # 	"hourly": [
 # 		"mfi_customization.tasks.hourly"
