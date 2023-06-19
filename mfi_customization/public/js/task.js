@@ -144,7 +144,7 @@ frappe.ui.form.on('Task', {
 
 	},
 	refresh: function (frm) {
-		frm.set_df_property('senior_technician_description', "hidden", 1);
+		// frm.set_df_property('senior_technician_description', "hidden", 1);
 		frm.get_field("task_escalation_list").grid.cannot_add_rows = true;
 		frm.refresh_field("task_escalation_list");
 		frm.get_field("technician_productivity_matrix").grid.cannot_add_rows = true;
