@@ -43,8 +43,8 @@ def get_asset_up(doc, method):
 def update_submitted_assets():
     ass = frappe.db.get_all('Asset',{'docstatus':1}, pluck='name')
     for i in ass:
+        frappe.log_error(f'Asset,{i}')
         ass_doc = frappe.get_doc('Asset', i)
-        ass_doc.update()
         ass_doc.save()
     
     
