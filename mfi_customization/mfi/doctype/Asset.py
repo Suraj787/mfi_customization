@@ -40,6 +40,15 @@ def get_asset_up(doc, method):
                 usr_perm.apply_to_all_doctypes = 1
                 usr_perm.save()
 
+def update_submitted_assets():
+    ass = frappe.db.get_all('Asset',{'docstatus':1}, pluck='name', limit=5000)
+    for i in ass:
+        frappe.log_error(f'Asset,{i}')
+        ass_doc = frappe.get_doc('Asset', i)
+        ass_doc.save()
+    
+    
+    
 
 def on_cancel(doc, method):
     # removing serial number on serial number
