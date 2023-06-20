@@ -7,7 +7,9 @@ frappe.ui.form.on('Task', {
 
 		    frm.set_value("completed_by", " ")
 		    
+		    
 		}
+		
 	},
 	type_of_call: function (frm) {
 		if (frm.doc.type_of_call == "Installation") {
@@ -149,6 +151,13 @@ frappe.ui.form.on('Task', {
 
 	},
 	refresh: function (frm) {
+		if(frm.doc.escalation){
+			frm.set_df_property('completed_by', 'read_only', 0);
+		    
+		}
+		else{
+			frm.set_df_property('completed_by', 'read_only', 1);
+		}
 		// frm.set_df_property('senior_technician_description', "hidden", 1);
 		frm.get_field("task_escalation_list").grid.cannot_add_rows = true;
 		frm.refresh_field("task_escalation_list");
@@ -387,9 +396,11 @@ frappe.ui.form.on('Task', {
 		}
 	},
 	validate: function (frm) {
-        if(frm.doc.completed_by && frm.doc.completed_by === assigned_user){
-		    frappe.throw("Please change assigned user.")
-	    }
+		if (frm.doc.escalation){
+	        if(frm.doc.completed_by && frm.doc.completed_by === assigned_user){
+			    frappe.throw("Please change assigned user.")
+		    }
+		}
 		if (frm.doc.status == 'Completed') {
 			frm.set_value("completed_on", frappe.datetime.now_date());
 			if (!frm.doc.asset) {
