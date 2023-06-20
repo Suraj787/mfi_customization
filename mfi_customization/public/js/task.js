@@ -3,9 +3,9 @@ frappe.ui.form.on('Task', {
 	escalation(frm) {
 		if (frm.doc.escalation) {
 			frappe.model.set_value("Task", frm.doc.name, "working_end_time", frappe.datetime.now_datetime());
-		    assigned_user = frm.doc.completed_by
+		    // assigned_user = frm.doc.completed_by
 
-		    frm.set_value("completed_by", " ")
+		    // frm.set_value("completed_by", " ")
 		    
 		    
 		}
@@ -110,6 +110,7 @@ frappe.ui.form.on('Task', {
 		}
 	},
 	onload: function (frm) {
+		// frm.set_value("completed_by",frappe.session.user)
 		if (frm.doc.status == "Working") {
 			set_permissions_for_symptoms(frm);
 		}
@@ -151,15 +152,17 @@ frappe.ui.form.on('Task', {
 
 	},
 	refresh: function (frm) {
-		if (!frm.is_new()){
-			if(frm.doc.escalation && frm.doc.completed_by){
-				frm.set_df_property('completed_by', 'read_only', 0);
+		// frm.set_value("completed_by",frappe.session.user)
+		// if (!frm.is_new()){
+		// 	if(frm.doc.escalation && frm.doc.completed_by){
+		// 		frm.set_df_property('completed_by', 'read_only', 0);
 			    
-			}
-			else{
-				frm.set_df_property('completed_by', 'read_only', 1);
-			}
-		}
+			// }
+		// 	else{
+		// 		frm.set_value("completed_by",frappe.session.user)
+		// 		frm.set_df_property('completed_by', 'read_only', 1);
+		// 	}
+		// }
 		
 		// frm.set_df_property('senior_technician_description', "hidden", 1);
 		frm.get_field("task_escalation_list").grid.cannot_add_rows = true;
@@ -396,11 +399,11 @@ frappe.ui.form.on('Task', {
 		}
 	},
 	validate: function (frm) {
-		if (frm.doc.escalation){
-	        if(frm.doc.completed_by && frm.doc.completed_by === assigned_user){
-			    frappe.throw("Please change assigned user.")
-		    }
-		}
+		// if (frm.doc.escalation){
+	    //     if(frm.doc.completed_by && frm.doc.completed_by === assigned_user){
+		// 	    frappe.throw("Please change assigned user.")
+		//     }
+		// }
 		if (frm.doc.status == 'Completed') {
 			frm.set_value("completed_on", frappe.datetime.now_date());
 			if (!frm.doc.asset) {
