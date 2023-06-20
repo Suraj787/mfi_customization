@@ -1,7 +1,12 @@
+ let assigned_user = '';
 frappe.ui.form.on('Task', {
 	escalation(frm) {
 		if (frm.doc.escalation) {
 			frappe.model.set_value("Task", frm.doc.name, "working_end_time", frappe.datetime.now_datetime());
+		    assigned_user = frm.doc.completed_by
+
+		    frm.set_value("completed_by", " ")
+		    
 		}
 	},
 	type_of_call: function (frm) {
@@ -366,6 +371,10 @@ frappe.ui.form.on('Task', {
 		}
 	},
 	completed_by: function (frm) {
+        // if(frm.doc.completed_by && frm.doc.completed_by === assigned_user){
+		//     frappe.throw("Please change assigned user.")
+	    // }
+		
 		if (frm.doc.completed_by && frm.doc.type_of_call != 'Toner') {
 			frappe.db.get_value('User', { 'name': frm.doc.completed_by }, ['full_name'], (val) => {
 				frm.set_value('technician_name', val.full_name);
@@ -378,7 +387,9 @@ frappe.ui.form.on('Task', {
 		}
 	},
 	validate: function (frm) {
-
+        if(frm.doc.completed_by && frm.doc.completed_by === assigned_user){
+		    frappe.throw("Please change assigned user.")
+	    }
 		if (frm.doc.status == 'Completed') {
 			frm.set_value("completed_on", frappe.datetime.now_date());
 			if (!frm.doc.asset) {
