@@ -32,17 +32,18 @@ def get_asset_up(doc, method):
             
         if doc.technician in frappe.db.get_all('Employee','user_id',pluck='user_id'):
             emp = frappe.get_doc('Employee',{'user_id':doc.technician})
-            if emp.company == doc.company:
-                usr_perm = frappe.new_doc('User Permission')
-                usr_perm.user = doc.technician
-                usr_perm.allow = 'Asset'
-                usr_perm.for_value = doc.name
-                usr_perm.apply_to_all_doctypes = 1
-                usr_perm.save()
+            if doc.technician not in frappe.db.get_all('User Permission', {'allow':'Asset', 'for_value':doc.name},'user',pluck='user') or 'Asset' not in frappe.db.get_all('User Permission', {'user':doc.technician, 'for_value':doc.name},'allow',pluck='allow') or doc.name not in frappe.db.get_all('User Permission', {'user':doc.technician, 'allow':'Asset'},'for_value',pluck='for_value'):
+                if emp.company == doc.company:
+                    usr_perm = frappe.new_doc('User Permission')
+                    usr_perm.user = doc.technician
+                    usr_perm.allow = 'Asset'
+                    usr_perm.for_value = doc.name
+                    usr_perm.apply_to_all_doctypes = 1
+                    usr_perm.save()
 
 def update_submitted_assets():
     ass = frappe.db.get_all('Asset',{'docstatus':1}, pluck='name')
-    ass = ass[5020:15001]
+    ass = ass[5006:15001]
     for i in ass:
         frappe.log_error(f'Asset,{i}')
         ass_doc = frappe.get_doc('Asset', i)
