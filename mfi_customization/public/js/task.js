@@ -151,13 +151,16 @@ frappe.ui.form.on('Task', {
 
 	},
 	refresh: function (frm) {
-		if(frm.doc.escalation){
-			frm.set_df_property('completed_by', 'read_only', 0);
-		    
+		if (!frm.is_new()){
+			if(frm.doc.escalation && frm.doc.completed_by){
+				frm.set_df_property('completed_by', 'read_only', 0);
+			    
+			}
+			else{
+				frm.set_df_property('completed_by', 'read_only', 1);
+			}
 		}
-		else{
-			frm.set_df_property('completed_by', 'read_only', 1);
-		}
+		
 		// frm.set_df_property('senior_technician_description', "hidden", 1);
 		frm.get_field("task_escalation_list").grid.cannot_add_rows = true;
 		frm.refresh_field("task_escalation_list");
@@ -380,10 +383,7 @@ frappe.ui.form.on('Task', {
 		}
 	},
 	completed_by: function (frm) {
-        // if(frm.doc.completed_by && frm.doc.completed_by === assigned_user){
-		//     frappe.throw("Please change assigned user.")
-	    // }
-		
+        
 		if (frm.doc.completed_by && frm.doc.type_of_call != 'Toner') {
 			frappe.db.get_value('User', { 'name': frm.doc.completed_by }, ['full_name'], (val) => {
 				frm.set_value('technician_name', val.full_name);
