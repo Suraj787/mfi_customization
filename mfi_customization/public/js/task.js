@@ -118,13 +118,15 @@ frappe.ui.form.on('Task', {
 		}
 	},
 	onload: function (frm) {
-		if(!frm.doc.escalation && frm.doc.completed_by){
-			frm.set_df_property('completed_by', 'read_only', 1);
-		}
-		else{
+		if(frappe.user != "Administrator"){
+				if(!frm.doc.escalation && frm.doc.completed_by){
+					frm.set_df_property('completed_by', 'read_only', 1);
+				}
+				else{
 
-			frm.set_df_property('completed_by', 'read_only', 0);
-		}
+					frm.set_df_property('completed_by', 'read_only', 0);
+				}
+			}
 		if (frm.doc.status == "Working") {
 			set_permissions_for_symptoms(frm);
 		}
@@ -389,7 +391,8 @@ frappe.ui.form.on('Task', {
 		}
 	},
 	completed_by: function (frm) {
-        if (frm.doc.escalation){
+
+        if (frappe.user != "Administrator" && frm.doc.escalation){
 	        if(frm.doc.completed_by && frm.doc.completed_by === assigned_user){
 			    frappe.throw("Please change assigned user.")
 		    }
