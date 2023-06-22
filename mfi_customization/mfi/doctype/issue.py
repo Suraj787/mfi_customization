@@ -60,8 +60,8 @@ def email_validation(doc):
 def set_company(doc):
 	if doc.asset:
 		company = frappe.db.get_value("Asset", {'name': doc.asset}, 'company')
-	if company:
-		doc.company = company
+		if company:
+			doc.company = company
 
 def set_territory(doc):
 	if doc.customer:
