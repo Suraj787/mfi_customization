@@ -116,7 +116,6 @@ frappe.ui.form.on('Task', {
 		}
 	},
 	onload: function (frm) {
-		frm.set_value('completed_by', frappe.session.user)
 		if(!frm.doc.escalation && frm.doc.completed_by){
 			frm.set_df_property('completed_by', 'read_only', 1);
 		}
@@ -165,17 +164,6 @@ frappe.ui.form.on('Task', {
 
 	},
 	refresh: function (frm) {
-		// frm.set_value("completed_by",frappe.session.user)
-		// if (!frm.is_new()){
-		// 	if(frm.doc.escalation && frm.doc.completed_by){
-		// 		frm.set_df_property('completed_by', 'read_only', 0);
-			    
-			// }
-		// 	else{
-		// 		frm.set_value("completed_by",frappe.session.user)
-		// 		frm.set_df_property('completed_by', 'read_only', 1);
-		// 	}
-		// }
 		
 		// frm.set_df_property('senior_technician_description', "hidden", 1);
 		frm.get_field("task_escalation_list").grid.cannot_add_rows = true;
