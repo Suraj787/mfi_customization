@@ -6,12 +6,14 @@ frappe.ui.form.on('Task', {
 		    // assigned_user = frm.doc.completed_by
 
 		    // frm.set_value("completed_by", " ")
-		    if(!frm.doc.escalation && frm.doc.completed_by){
-				frm.set_df_property('completed_by', 'read_only', 1);
-			}
-			else{
+		    if(frappe.user != "Administrator"){
+				if(!frm.doc.escalation && frm.doc.completed_by){
+					frm.set_df_property('completed_by', 'read_only', 1);
+				}
+				else{
 
-				frm.set_df_property('completed_by', 'read_only', 0);
+					frm.set_df_property('completed_by', 'read_only', 0);
+				}
 			}
 		    
 		}
@@ -404,13 +406,16 @@ frappe.ui.form.on('Task', {
 		}
 	},
 	validate: function (frm) {
-		 if(!frm.doc.escalation && frm.doc.completed_by){
+		if(frappe.user != "Administrator"){
+			if(!frm.doc.escalation && frm.doc.completed_by){
 				frm.set_df_property('completed_by', 'read_only', 1);
 			}
 			else{
 
 				frm.set_df_property('completed_by', 'read_only', 0);
 			}
+		}
+		 
 		if (frm.doc.status == 'Completed') {
 			frm.set_value("completed_on", frappe.datetime.now_date());
 			if (!frm.doc.asset) {
