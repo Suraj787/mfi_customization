@@ -3,18 +3,16 @@ frappe.ui.form.on('Task', {
 	escalation(frm) {
 		if (frm.doc.escalation) {
 			frappe.model.set_value("Task", frm.doc.name, "working_end_time", frappe.datetime.now_datetime());
-		    // assigned_user = frm.doc.completed_by
+		   
+		    // if(frappe.user != "Administrator" && frappe.user.has_role("Call Coordinator") == 1){
+			// 	if(!frm.doc.escalation && frm.doc.completed_by){
+			// 		frm.set_df_property('completed_by', 'read_only', 1);
+			// 	}
+			// 	else{
 
-		    // frm.set_value("completed_by", " ")
-		    if(frappe.user != "Administrator" && frappe.user.has_role("Call Coordinator") == 1){
-				if(!frm.doc.escalation && frm.doc.completed_by){
-					frm.set_df_property('completed_by', 'read_only', 1);
-				}
-				else{
-
-					frm.set_df_property('completed_by', 'read_only', 0);
-				}
-			}
+			// 		frm.set_df_property('completed_by', 'read_only', 0);
+			// 	}
+			// }
 		    
 		}
 		
@@ -118,15 +116,15 @@ frappe.ui.form.on('Task', {
 		}
 	},
 	onload: function (frm) {
-		if(frappe.user != "Administrator" && frappe.user.has_role("Call Coordinator") == 1){
-				if(!frm.doc.escalation && frm.doc.completed_by){
-					frm.set_df_property('completed_by', 'read_only', 1);
-				}
-				else{
+		// if(frappe.user != "Administrator" && frappe.user.has_role("Call Coordinator") == 1){
+		// 		if(!frm.doc.escalation && frm.doc.completed_by){
+		// 			frm.set_df_property('completed_by', 'read_only', 1);
+		// 		}
+		// 		else{
 
-					frm.set_df_property('completed_by', 'read_only', 0);
-				}
-			}
+		// 			frm.set_df_property('completed_by', 'read_only', 0);
+		// 		}
+		// 	}
 		if (frm.doc.status == "Working") {
 			set_permissions_for_symptoms(frm);
 		}
@@ -409,15 +407,15 @@ frappe.ui.form.on('Task', {
 		}
 	},
 	validate: function (frm) {
-		if(frappe.user != "Administrator" && frappe.user.has_role("Call Coordinator") == 1){
-			if(!frm.doc.escalation && frm.doc.completed_by){
-				frm.set_df_property('completed_by', 'read_only', 1);
-			}
-			else{
+		// if(frappe.user != "Administrator" && frappe.user.has_role("Call Coordinator") == 1){
+		// 	if(!frm.doc.escalation && frm.doc.completed_by){
+		// 		frm.set_df_property('completed_by', 'read_only', 1);
+		// 	}
+		// 	else{
 
-				frm.set_df_property('completed_by', 'read_only', 0);
-			}
-		}
+		// 		frm.set_df_property('completed_by', 'read_only', 0);
+		// 	}
+		// }
 		 
 		if (frm.doc.status == 'Completed') {
 			frm.set_value("completed_on", frappe.datetime.now_date());
