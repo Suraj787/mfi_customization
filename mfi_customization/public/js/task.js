@@ -6,7 +6,7 @@ frappe.ui.form.on('Task', {
 		    // assigned_user = frm.doc.completed_by
 
 		    // frm.set_value("completed_by", " ")
-		    if(frappe.user != "Administrator"){
+		    if(frappe.user != "Administrator" && frappe.user.has_role("Call Coordinator") == 1){
 				if(!frm.doc.escalation && frm.doc.completed_by){
 					frm.set_df_property('completed_by', 'read_only', 1);
 				}
@@ -118,7 +118,7 @@ frappe.ui.form.on('Task', {
 		}
 	},
 	onload: function (frm) {
-		if(frappe.user != "Administrator"){
+		if(frappe.user != "Administrator" && frappe.user.has_role("Call Coordinator") == 1){
 				if(!frm.doc.escalation && frm.doc.completed_by){
 					frm.set_df_property('completed_by', 'read_only', 1);
 				}
@@ -409,7 +409,7 @@ frappe.ui.form.on('Task', {
 		}
 	},
 	validate: function (frm) {
-		if(frappe.user != "Administrator"){
+		if(frappe.user != "Administrator" && frappe.user.has_role("Call Coordinator") == 1){
 			if(!frm.doc.escalation && frm.doc.completed_by){
 				frm.set_df_property('completed_by', 'read_only', 1);
 			}
