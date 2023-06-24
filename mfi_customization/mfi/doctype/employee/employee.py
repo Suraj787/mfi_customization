@@ -43,16 +43,16 @@ def get_company(doc,method):
             # Save the user document
             user.save()
 
-def get_user(doc,method):
-    if doc.designation == 'Technicians':
-        if doc.user_id:
-            if doc.user_id not in frappe.db.get_all('User Permission',{'allow':'User','user':doc.user_id,'applicable_for':'Task'},'for_value',pluck='for_value') or doc.user_id not in frappe.db.get_all('User Permission',{'allow':'User','for_value':doc.user_id,'applicable_for':'Task'},'user',pluck='user') or 'Task' not in frappe.db.get_all('User Permission',{'allow':'User','for_value':doc.user_id,'user':doc.user_id},'applicable_for',pluck='applicable_for'):
-                usr_perm = frappe.new_doc('User Permission')
-                usr_perm.user = doc.user_id
-                usr_perm.allow = 'User'
-                usr_perm.for_value = doc.user_id
-                usr_perm.applicable_for = 'Task'
-                usr_perm.save()
+#def get_user(doc,method):
+  #  if doc.designation == 'Technicians':
+   #     if doc.user_id:
+     #       if doc.user_id not in frappe.db.get_all('User Permission',{'allow':'User','user':doc.user_id,'applicable_for':'Task'},'for_value',pluck='for_value') or doc.user_id not in frappe.db.get_all('User Permission',{'allow':'User','for_value':doc.user_id,'applicable_for':'Task'},'user',pluck='user') or 'Task' not in frappe.db.get_all('User Permission',{'allow':'User','for_value':doc.user_id,'user':doc.user_id},'applicable_for',pluck='applicable_for'):
+    #            usr_perm = frappe.new_doc('User Permission')
+      #          usr_perm.user = doc.user_id
+       #         usr_perm.allow = 'User'
+       #         usr_perm.for_value = doc.user_id
+      #          usr_perm.applicable_for = 'Task'
+       #         usr_perm.save()
             
 
 def get_territory(doc,method):
