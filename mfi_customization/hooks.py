@@ -155,8 +155,8 @@ doc_events = {
         "after_update": "mfi_customization.utils.file.file_after_update"
     },
     "Employee":{
-        "after_save":["mfi_customization.mfi.doctype.employee.employee.get_company","mfi_customization.mfi.doctype.employee.employee.get_user"],
-        "validate":["mfi_customization.mfi.doctype.employee.employee.get_territory","mfi_customization.mfi.doctype.employee.employee.get_type_of_call","mfi_customization.mfi.doctype.employee.employee.get_roles_checked","mfi_customization.mfi.doctype.employee.employee.get_type_of_call","mfi_customization.mfi.doctype.employee.employee.get_user"],
+        "after_save":"mfi_customization.mfi.doctype.employee.employee.get_company",
+        "validate":["mfi_customization.mfi.doctype.employee.employee.get_territory","mfi_customization.mfi.doctype.employee.employee.get_type_of_call","mfi_customization.mfi.doctype.employee.employee.get_roles_checked","mfi_customization.mfi.doctype.employee.employee.get_type_of_call"],
     },
     "Project":{
         "after_save":"mfi_customization.mfi.doctype.project.get_company",
