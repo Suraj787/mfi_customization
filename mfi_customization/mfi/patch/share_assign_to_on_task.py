@@ -4,7 +4,7 @@
 
 from __future__ import unicode_literals
 import frappe
-#mfi_customization.mfi.patch.share_assign_to_on_task.execute
+
 
 def execute():
     # lst = []
