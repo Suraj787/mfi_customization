@@ -72,11 +72,13 @@ def validate(doc,method):
 	else:
 		create_user_permission(doc)
 		create_user_issue_permission(doc)
+		create_share(doc)
 
 	validate_link_fileds(doc)
 	update_technician_productivity_matrix(doc)
 # 	resolution_time(doc)
 	set_assigned_on_task(doc)
+	create_share(doc)
 	set_escalate(doc)
 
 
@@ -627,6 +629,17 @@ def create_user_issue_permission(doc):
 				for emp2 in frappe.get_all("Employee",{"name":emp.material_request_approver},['user_id']):
 					if emp2.user_id:
 						add_user_permission("Issue",doc.issue,emp2.user_id)
+
+def create_share(doc):
+	if 'Task' not in frappe.db.get_all('DocShare',{'user':doc.completed_by,'share_name':doc.name}, 'share_doctype', pluck='share_doctype') or doc.name not in frappe.db.get_all('DocShare',{'share_doctype':'Task','user':doc.completed_by}, 'share_name', pluck='share_name') or doc.completed_by not in frappe.db.get_all('DocShare',{'share_doctype':'Task','share_name':doc.name}, 'user', pluck='user'):
+		share = frappe.new_doc('DocShare')
+		share.share_doctype = 'Task'
+		share.share_name = doc.name
+		share.user = doc.completed_by
+		share.read = 1
+		share.write = 1
+		share.submit = 1
+		share.save()
 # def assign_task_validation(doc):
 # 	if doc.status=="Working":
 # 		for d in frappe.get_all("Task",{"status":"Working","completed_by":doc.completed_by,"name":("!=",doc.name)}):
