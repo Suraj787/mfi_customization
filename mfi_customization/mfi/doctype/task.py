@@ -72,13 +72,13 @@ def validate(doc,method):
 	else:
 		create_user_permission(doc)
 		create_user_issue_permission(doc)
-		create_share(doc)
+		# create_share(doc)
 
 	validate_link_fileds(doc)
 	update_technician_productivity_matrix(doc)
 # 	resolution_time(doc)
 	set_assigned_on_task(doc)
-	create_share(doc)
+	# create_share(doc)
 	set_escalate(doc)
 
 
