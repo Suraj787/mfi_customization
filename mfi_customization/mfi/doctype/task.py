@@ -631,7 +631,9 @@ def create_user_issue_permission(doc):
 						add_user_permission("Issue",doc.issue,emp2.user_id)
 
 def create_share(doc,method):
+	frappe.log_error('AFter Save function trigger')
 	if 'Task' not in frappe.db.get_all('DocShare',{'user':doc.completed_by,'share_name':doc.name}, 'share_doctype', pluck='share_doctype') or doc.name not in frappe.db.get_all('DocShare',{'share_doctype':'Task','user':doc.completed_by}, 'share_name', pluck='share_name') or doc.completed_by not in frappe.db.get_all('DocShare',{'share_doctype':'Task','share_name':doc.name}, 'user', pluck='user'):
+		frappe.log_error('Trigger inside if to save DocShare')
 		share = frappe.new_doc('DocShare')
 		share.share_doctype = 'Task'
 		share.share_name = doc.name
