@@ -111,8 +111,8 @@ doc_events = {
         "after_insert":["mfi_customization.mfi.doctype.task.after_insert",
                         "mfi_customization.mfi.doctype.task.link_issue_attachments"],
         "on_trash":"mfi_customization.mfi.doctype.task.after_delete",
-        "on_change":"mfi_customization.mfi.doctype.task.on_change"
-        #"before_save":"mfi_customization.mfi.doctype.task.before_save"
+        "on_change":"mfi_customization.mfi.doctype.task.on_change",
+        "after_save":"mfi_customization.mfi.doctype.task.create_share"
     },
     "Asset":{
         "after_insert":"mfi_customization.mfi.doctype.Asset.after_insert",
