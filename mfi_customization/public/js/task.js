@@ -4,15 +4,15 @@ frappe.ui.form.on('Task', {
 		if (frm.doc.escalation) {
 			frappe.model.set_value("Task", frm.doc.name, "working_end_time", frappe.datetime.now_datetime());
 		   
-		    // if(frappe.user != "Administrator" && frappe.user.has_role("Call Coordinator") == 1){
-			// 	if(!frm.doc.escalation && frm.doc.completed_by){
-			// 		frm.set_df_property('completed_by', 'read_only', 1);
-			// 	}
-			// 	else{
+		    if(frappe.user != "Administrator" && frappe.user.has_role("Call Coordinator") == 1){
+				if(!frm.doc.escalation && frm.doc.completed_by){
+					frm.set_df_property('completed_by', 'read_only', 1);
+				}
+				else{
 
-			// 		frm.set_df_property('completed_by', 'read_only', 0);
-			// 	}
-			// }
+					frm.set_df_property('completed_by', 'read_only', 0);
+				}
+			}
 		    
 		}
 		
@@ -116,15 +116,15 @@ frappe.ui.form.on('Task', {
 		}
 	},
 	onload: function (frm) {
-		// if(frappe.user != "Administrator" && frappe.user.has_role("Call Coordinator") == 1){
-		// 		if(!frm.doc.escalation && frm.doc.completed_by){
-		// 			frm.set_df_property('completed_by', 'read_only', 1);
-		// 		}
-		// 		else{
+		if(frappe.user != "Administrator" && frappe.user.has_role("Call Coordinator") == 1){
+				if(!frm.doc.escalation && frm.doc.completed_by){
+					frm.set_df_property('completed_by', 'read_only', 1);
+				}
+				else{
 
-		// 			frm.set_df_property('completed_by', 'read_only', 0);
-		// 		}
-		// 	}
+					frm.set_df_property('completed_by', 'read_only', 0);
+				}
+			}
 		if (frm.doc.status == "Working") {
 			set_permissions_for_symptoms(frm);
 		}
@@ -211,25 +211,29 @@ frappe.ui.form.on('Task', {
 			}, __("View"));
 		}
 		frm.trigger('customer');
+        
+        if(frm.doc.status !== 'Completed'){
 
-		frm.add_custom_button('Material Request', () => {
+			frm.add_custom_button('Material Request', () => {
 
-			var check_machine_reading = frappe.db.get_value("Machine Reading", { 'task': frm.doc.name }, 'name', (r) => {
-				if (r.name != null) {
-					frappe.model.set_value("Task", frm.doc.name, "working_end_time", frappe.datetime.now_datetime());
-					frm.save()
-					frappe.model.open_mapped_doc({
-						method: "mfi_customization.mfi.doctype.task.make_material_req",
-						frm: me.frm
-					})
+				var check_machine_reading = frappe.db.get_value("Machine Reading", { 'task': frm.doc.name }, 'name', (r) => {
+					if (r.name != null) {
+						frappe.model.set_value("Task", frm.doc.name, "working_end_time", frappe.datetime.now_datetime());
+						frm.save()
+						frappe.model.open_mapped_doc({
+							method: "mfi_customization.mfi.doctype.task.make_material_req",
+							frm: me.frm
+						})
 
 
-				} else {
+					} else {
 
-					frappe.msgprint("can't create Material Request without Creating Machine Reading")
-				}
-			})
-		}, __('Make'))
+						frappe.msgprint("can't create Material Request without Creating Machine Reading")
+					}
+				})
+			}, __('Make'))
+
+		}
 
 		frm.set_query("completed_by", function () {
 			return {
@@ -407,15 +411,15 @@ frappe.ui.form.on('Task', {
 		}
 	},
 	validate: function (frm) {
-		// if(frappe.user != "Administrator" && frappe.user.has_role("Call Coordinator") == 1){
-		// 	if(!frm.doc.escalation && frm.doc.completed_by){
-		// 		frm.set_df_property('completed_by', 'read_only', 1);
-		// 	}
-		// 	else{
+		if(frappe.user != "Administrator" && frappe.user.has_role("Call Coordinator") == 1){
+			if(!frm.doc.escalation && frm.doc.completed_by){
+				frm.set_df_property('completed_by', 'read_only', 1);
+			}
+			else{
 
-		// 		frm.set_df_property('completed_by', 'read_only', 0);
-		// 	}
-		// }
+				frm.set_df_property('completed_by', 'read_only', 0);
+			}
+		}
 		 
 		if (frm.doc.status == 'Completed') {
 			frm.set_value("completed_on", frappe.datetime.now_date());
@@ -638,7 +642,8 @@ frappe.ui.form.on('Task', {
 		//frm.add_custom_button(__('Machine Asset History Report'), function () {
 		//	frappe.set_route(["query-report", "Machine Asset History"]);
 		//});
-		if (frappe.user.has_role("Technicians") == 1 && frm.doc.type_of_call != "Toner") {
+		if (frappe.user.has_role("Technicians") == 1 && frm.doc.type_of_call != "Toner" && frm.doc.status !== 'Completed') {
+
 			frm.add_custom_button(__('Escalate'), function () {
 				validate_escalation(frm);
 				let technicians = [];

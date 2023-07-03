@@ -64,6 +64,7 @@ def validate(doc,method):
 
 
 	set_field_values(doc)
+	
 # 	assign_task_validation(doc)
 
 	if doc.get('__islocal'):
@@ -72,12 +73,16 @@ def validate(doc,method):
 	else:
 		create_user_permission(doc)
 		create_user_issue_permission(doc)
+		
 
 	validate_link_fileds(doc)
 	update_technician_productivity_matrix(doc)
 # 	resolution_time(doc)
 	set_assigned_on_task(doc)
+	
 	set_escalate(doc)
+
+
 
 
 def before_insert(doc,method):
@@ -250,7 +255,7 @@ def on_change(doc,method):
 
 			elif doc.status=="Working" and doc.attended_date_time:
 				issue.first_responded_on=doc.attended_date_time
-		issue.save()
+		issue.save(ignore_permissions=True)
 	escalation_section(doc)
 def after_delete(doc,method):
 	for t in frappe.get_all('Asset Repair',filters={'task':doc.name}):
@@ -263,7 +268,7 @@ def set_field_values(doc):
 			issue.assign_to = doc.get("completed_by")
 		if doc.get("assign_date"):
 			issue.assign_date = doc.get("assign_date")
-		issue.save()
+		issue.save(ignore_permissions=True)
 
 @frappe.whitelist()
 def make_material_req(source_name, target_doc=None):
@@ -331,7 +336,7 @@ def set_item_from_material_req(doc,method):
 							"qty": d.get('qty')
 						})
 		task.material_request=doc.name
-		task.save()
+		task.save(ignore_permissions=True)
 
 @frappe.whitelist()
 def get_tech(doctype, txt, searchfield, start, page_len, filters):
@@ -495,7 +500,7 @@ def create_machine_reading(doc):
 				mr.append("items",{
 						"item_code":doc.get('toner_type')
 					})
-				mr.save()
+				mr.save(ignore_permissions=True)
 			else:
 				mr=frappe.new_doc("Machine Reading")
 				mr.reading_date=d.get('date')
@@ -509,7 +514,7 @@ def create_machine_reading(doc):
 				mr.row_id = d.name
 				if doc.type_of_call =="Installation":
 					mr.reading_type = "Installation"
-				mr.save()
+				mr.save(ignore_permissions=True)
 			# d.machine_reading=mr.name
 def update_machine_reading(doc, existed_mr):
 	for d in doc.get('current_reading'):
@@ -521,7 +526,7 @@ def update_machine_reading(doc, existed_mr):
 			mr_doc.colour_reading=d.get("reading_2")
 			mr_doc.machine_type=d.get('type')
 			mr_doc.total=d.get("total")
-			mr_doc.save()
+			mr_doc.save(ignore_permissions=True)
 
 def set_reading_from_task_to_issue(doc):
 	issue_doc=frappe.get_doc('Issue',{'name':doc.get("issue")})
@@ -533,7 +538,7 @@ def set_reading_from_task_to_issue(doc):
 				isu.asset=d.get('asset')
 				isu.reading=d.get('reading')
 				isu.reading_2=d.get('reading_2')
-				issue_doc.save()
+				issue_doc.save(ignore_permissions=True)
 		else:
 			issue_doc.append("current_reading",{
 				"date":d.get('date'),
@@ -546,7 +551,7 @@ def set_reading_from_task_to_issue(doc):
 		issue_doc.asset = doc.get("asset")
 	if doc.get("serial_no"):
 		issue_doc.serial_no = doc.get("serial_no")
-	issue_doc.save()
+	issue_doc.save(ignore_permissions=True)
 
 def validate_reading(doc):
     user_roles= frappe.get_roles(frappe.session.user)
@@ -615,6 +620,15 @@ def create_user_permission(doc):
 			for emp2 in frappe.get_all("Employee",{"name":emp.material_request_approver},['user_id']):
 				if emp2.user_id:
 					add_user_permission("Task",doc.name,emp2.user_id)
+	if 'Task' not in frappe.db.get_all('DocShare',{'user':doc.completed_by,'share_name':doc.name}, 'share_doctype', pluck='share_doctype') or doc.name not in frappe.db.get_all('DocShare',{'share_doctype':'Task','user':doc.completed_by}, 'share_name', pluck='share_name') or doc.completed_by not in frappe.db.get_all('DocShare',{'share_doctype':'Task','share_name':doc.name}, 'user', pluck='user'):
+		share = frappe.new_doc('DocShare')
+		share.share_doctype = 'Task'
+		share.share_name = doc.name
+		share.user = doc.completed_by
+		share.read = 1
+		share.write = 1
+		
+		share.save(ignore_permissions=True)
 
 def create_user_issue_permission(doc):
 		if len(frappe.get_all("User Permission",{"allow":"Issue","for_value":doc.issue,"user":doc.completed_by}))==0:
@@ -627,6 +641,12 @@ def create_user_issue_permission(doc):
 				for emp2 in frappe.get_all("Employee",{"name":emp.material_request_approver},['user_id']):
 					if emp2.user_id:
 						add_user_permission("Issue",doc.issue,emp2.user_id)
+
+
+# def create_share(doc,method=None):
+# 	frappe.log_error('AFter Save function trigger')
+# 	print("..............................create_share")
+	
 # def assign_task_validation(doc):
 # 	if doc.status=="Working":
 # 		for d in frappe.get_all("Task",{"status":"Working","completed_by":doc.completed_by,"name":("!=",doc.name)}):
@@ -656,7 +676,7 @@ def link_issue_attachments(task, method):
 						"content": file.get_content(),
 					}
 				)
-				duplicate_file.save()
+				duplicate_file.save(ignore_permissions=True)
 
 
 def validate_customer(doc,issue):
@@ -724,7 +744,7 @@ def set_items_on_machine_reading_from_mr(asset,task):
 				machine_child.item_code = i.item_code
 				machine_child.item_name = i.item_name
 				machine_child.item_group = i.item_group
-				machine_reading_doc.save()
+				machine_reading_doc.save(ignore_permissions=True)
 
 
 @frappe.whitelist()
@@ -740,7 +760,7 @@ def transfer_data_to_issue(doc):
 		for current_reading in issue_doc.current_reading:
 			current_reading.reading = task.current_reading[0].reading
 			current_reading.reading_2 = task.current_reading[0].reading_2
-		issue_doc.save()
+		issue_doc.save(ignore_permissions=True)
 
 def get_location_validation(customer):
 	lst = []
@@ -781,11 +801,11 @@ def escalation_section(doc):
           issue.escalated_technician_name=doc.escalated_technician_name
           issue.escalation_description=doc.escalation_
           issue.senior_technician_description=doc.senior_technician_description
-          issue.save()
+          issue.save(ignore_permissions=True)
     if doc.status =="Completed" and doc.requested_material_status:
        if issue:
           issue.requested_material_status=doc.requested_material_status
-          issue.save()
+          issue.save(ignore_permissions=True)
 
 
 

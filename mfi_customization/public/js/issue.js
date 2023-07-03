@@ -1,4 +1,15 @@
 frappe.ui.form.on('Issue', {
+	customer:function(frm){
+	 if(frm.doc.customer){
+	        frappe.db.get_value('Customer',frm.doc.customer,'customer_name',(r)=>{
+	            console.log("frm.doc.customer",frm.doc.customer)
+	            console.log('rrrrrrrrrr',r)
+	            console.log('customer_name',r.customer_name)
+	            frm.set_value('name_of_the_customer',r.customer_name)
+	           // frm.refresh_fields("name_of_the_customer");
+	        })
+	    }
+	},
 	onload:function(frm){
 	    if((frappe.user.has_role("Technicians") == 1 || frappe.user.has_role("Toner Approval 1") == 1) && frappe.user!="Administrator"){
 	        frm.set_df_property('symptoms',"reqd",1);

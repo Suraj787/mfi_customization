@@ -111,8 +111,8 @@ doc_events = {
         "after_insert":["mfi_customization.mfi.doctype.task.after_insert",
                         "mfi_customization.mfi.doctype.task.link_issue_attachments"],
         "on_trash":"mfi_customization.mfi.doctype.task.after_delete",
-        "on_change":"mfi_customization.mfi.doctype.task.on_change"
-        #"before_save":"mfi_customization.mfi.doctype.task.before_save"
+        "on_change":"mfi_customization.mfi.doctype.task.on_change",
+        # "after_save":"mfi_customization.mfi.doctype.task.create_share"
     },
     "Asset":{
         "after_insert":"mfi_customization.mfi.doctype.Asset.after_insert",
@@ -155,8 +155,8 @@ doc_events = {
         "after_update": "mfi_customization.utils.file.file_after_update"
     },
     "Employee":{
-        "after_save":"mfi_customization.mfi.doctype.employee.employee.get_company",
-        "validate":["mfi_customization.mfi.doctype.employee.employee.get_territory","mfi_customization.mfi.doctype.employee.employee.get_type_of_call","mfi_customization.mfi.doctype.employee.employee.get_roles_checked","mfi_customization.mfi.doctype.employee.employee.get_type_of_call"],
+        "after_save":["mfi_customization.mfi.doctype.employee.employee.get_company","mfi_customization.mfi.doctype.employee.employee.get_user"],
+        "validate":["mfi_customization.mfi.doctype.employee.employee.get_territory","mfi_customization.mfi.doctype.employee.employee.get_type_of_call","mfi_customization.mfi.doctype.employee.employee.get_roles_checked","mfi_customization.mfi.doctype.employee.employee.get_type_of_call","mfi_customization.mfi.doctype.employee.employee.get_user"],
     },
     "Project":{
         "after_save":"mfi_customization.mfi.doctype.project.get_company",
