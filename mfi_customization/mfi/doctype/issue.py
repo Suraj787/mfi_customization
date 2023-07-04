@@ -227,7 +227,7 @@ def set_reading_from_issue_to_task(doc,method):
 				"reading":d.get('reading'),
 				"reading_2":d.get('reading_2')
 				})
-				task_doc.save()
+				task_doc.save(ignore_permissions=True)
 
 def validate_reading(doc):
     user_roles= frappe.get_roles(frappe.session.user)
@@ -283,7 +283,7 @@ def set_task_status_cancelled(doc):
 			task=frappe.get_doc("Task",tk.name)
 			if task.status!="Cancelled":
 				task.status="Cancelled"
-				task.save()
+				task.save(ignore_permissions=True)
 
 def validate_link_fileds(doc):
 	validate_location(doc)
