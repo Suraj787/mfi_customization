@@ -101,7 +101,7 @@ def send_task_completion_email(doc):
 		subject = f"""Issue {doc.issue} has been resolved"""
 
 		# send email notification to helpdesk
-		helpdesk_email_body = f"""Task ticket number {doc.name} has been successfully completed."""
+		helpdesk_email_body = f"""Task ticket number {doc.name}, {doc.customer_name_} has been successfully completed."""
 		recipients = frappe.db.get_value("Company", doc.company, "support_email")
 
 		if doc.type_of_call == "Toner":
@@ -209,10 +209,10 @@ def send_task_assignment_email(task):
 		# make(subject = assign_subject,content=body, recipients=recipients,
 		# 	send_email=True, sender="erp@groupmfi.com")
 
-		body = f"""Ticket no. {task.issue} has been assigned to our Engineer {task.technician_name}"""
+		body = f"""Ticket no. {task.issue}, {task.customer_name_} has been assigned to our Engineer {task.technician_name}"""
 		recipients = frappe.db.get_value("Company", task.company, "support_email")
 		if task.type_of_call == "Toner":
-			body = f"""Ticket no. {task.issue} with type of call "Toner" has been assigned to our Engineer {task.technician_name}"""
+			body = f"""Ticket no. {task.issue}, {task.customer_name_} with type of call "Toner" has been assigned to our Engineer {task.technician_name}"""
 			recipients = frappe.db.get_value("Company", task.company, "toner_support_email")
 
 		make(subject = assign_subject,content=body,recipients=recipients,
