@@ -59,7 +59,7 @@ def email_validation(doc):
 
 def set_company(doc):
 	if doc.asset:
-		company = frappe.db.get_value("Asset", {'name': doc.asset}, 'company')
+		company = frappe.db.get_value("Asset", {'name': doc.asset}, 'asset_owner_company')
 		if company:
 			doc.company = company
 
@@ -283,7 +283,7 @@ def set_task_status_cancelled(doc):
 			task=frappe.get_doc("Task",tk.name)
 			if task.status!="Cancelled":
 				task.status="Cancelled"
-				task.save(ignore_permissions=True)
+				task.save()
 
 def validate_link_fileds(doc):
 	validate_location(doc)
