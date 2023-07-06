@@ -250,6 +250,11 @@ fixtures = [
 # Overriding Methods
 # ------------------------------
 #
+override_doctype_class = {
+    "Customize Form": "mfi_customization.mfi.doctype.customize_form.CustomizeFormOverride"
+}
+
+
 override_whitelisted_methods = {
 	"erpnext.buying.doctype.purchase_order.purchase_order.make_purchase_invoice": "mfi_customization.mfi.doctype.purchase_order.make_purchase_invoice"
 }
