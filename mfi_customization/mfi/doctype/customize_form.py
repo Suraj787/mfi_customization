@@ -82,8 +82,9 @@ class CustomizeFormOverride(Document):
 			self.append("fields", new_d)
 
 		for fieldname in ("links", "actions", "states"):
-			for d in meta.get(fieldname):
-				self.append(fieldname, d)
+			if len(meta.get(fieldname))>0:
+				for d in meta.get(fieldname):
+					self.append(fieldname, d)
 
 	def create_auto_repeat_custom_field_if_required(self, meta):
 		"""
