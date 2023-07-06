@@ -250,9 +250,9 @@ fixtures = [
 # Overriding Methods
 # ------------------------------
 #
-override_doctype_class = {
-    "Customize Form": "mfi_customization.mfi.doctype.customize_form.CustomizeFormOverride"
-}
+# override_doctype_class = {
+#     "Customize Form": "mfi_customization.mfi.doctype.customize_form.CustomizeFormOverride"
+# }
 
 
 override_whitelisted_methods = {
