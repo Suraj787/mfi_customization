@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "allow_import": 1,
  "autoname": "field:serial_no",
  "creation": "2020-10-07 11:01:25.513423",
@@ -34,13 +35,16 @@
    "options": "Location"
   },
   {
+   "fetch_from": "asset.company",
+   "fetch_if_empty": 1,
    "fieldname": "company",
    "fieldtype": "Link",
    "label": "Company",
    "options": "Company"
   }
  ],
- "modified": "2021-06-02 15:51:16.424294",
+ "links": [],
+ "modified": "2023-06-26 14:50:14.154191",
  "modified_by": "Administrator",
  "module": "mfi",
  "name": "Asset Serial No",

@@ -1,0 +1,1 @@
+Task Ticket Number: {{ doc.issue }}, {{ doc.customer }} has assigned to you

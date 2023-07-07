@@ -12,6 +12,7 @@
   "working",
   "material_request",
   "material_issued",
+  "resume_working",
   "closed",
   "paused"
  ],
@@ -72,12 +73,19 @@
    "fieldtype": "Data",
    "label": "Technician Name",
    "read_only": 1
+  },
+  {
+   "fieldname": "resume_working",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Resume Working",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-06-13 09:37:33.436820",
+ "modified": "2023-07-05 14:25:06.251915",
  "modified_by": "Administrator",
  "module": "mfi",
  "name": "Technician Productivity Matrix",
