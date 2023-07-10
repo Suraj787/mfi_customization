@@ -629,6 +629,16 @@ def create_user_permission(doc):
 		share.write = 1
 		
 		share.save(ignore_permissions=True)
+		
+	if 'Issue' not in frappe.db.get_all('DocShare',{'user':doc.completed_by,'share_name':doc.issue}, 'share_doctype', pluck='share_doctype') or doc.issue not in frappe.db.get_all('DocShare',{'share_doctype':'Issue','user':doc.completed_by}, 'share_name', pluck='share_name') or doc.completed_by not in frappe.db.get_all('DocShare',{'share_doctype':'Issue','share_name':doc.issue}, 'user', pluck='user'):
+		share = frappe.new_doc('DocShare')
+		share.share_doctype = 'Issue'
+		share.share_name = doc.issue
+		share.user = doc.completed_by
+		share.read = 1
+		share.write = 1
+		
+		share.save(ignore_permissions=True)
 
 def create_user_issue_permission(doc):
 		if len(frappe.get_all("User Permission",{"allow":"Issue","for_value":doc.issue,"user":doc.completed_by}))==0:
