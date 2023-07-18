@@ -112,7 +112,7 @@ doc_events = {
                         "mfi_customization.mfi.doctype.task.link_issue_attachments"],
         "on_trash":"mfi_customization.mfi.doctype.task.after_delete",
         "on_change":"mfi_customization.mfi.doctype.task.on_change",
-        # "after_save":"mfi_customization.mfi.doctype.task.create_share"
+        "before_save":"mfi_customization.mfi.doctype.task.productivity_time"
     },
     "Asset":{
         "after_insert":"mfi_customization.mfi.doctype.Asset.after_insert",
@@ -250,9 +250,9 @@ fixtures = [
 # Overriding Methods
 # ------------------------------
 #
-# override_doctype_class = {
-#     "Customize Form": "mfi_customization.mfi.doctype.customize_form.CustomizeFormOverride"
-# }
+override_doctype_class = {
+    "Customize Form": "mfi_customization.mfi.doctype.customize_form.CustomizeFormOverride"
+}
 
 
 override_whitelisted_methods = {
