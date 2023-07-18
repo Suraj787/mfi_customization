@@ -922,8 +922,14 @@ def productivity_time(doc,method):
 		frappe.log_error('ewewew')
 		if i.working and i.closed and not i.material_request:
 			frappe.log_error('diffrrd')
-			closed = datetime.strptime(i.closed, '%Y-%m-%d %H:%M:%S.%f')
-			working = datetime.strptime(i.working, '%Y-%m-%d %H:%M:%S.%f')
+			try:
+				closed = datetime.strptime(i.closed, '%Y-%m-%d %H:%M:%S.%f')
+			except:
+				closed = i.closed
+			try:
+				working = datetime.strptime(i.working, '%Y-%m-%d %H:%M:%S.%f')
+			except:
+				working = i.working
 			difference = closed - working
 			seconds_in_day = 24 * 60 * 60
 			productivity_time = ((difference.days * seconds_in_day + difference.seconds)/60)/60
@@ -931,47 +937,98 @@ def productivity_time(doc,method):
 
 		if i.working and i.closed and i.material_request and i.material_issued and i.resume_working: 
 			frappe.log_error('diffrrd')
-			closed = datetime.strptime(i.closed, '%Y-%m-%d %H:%M:%S.%f') if type(i.closed) == 'str' else i.closed
-			working = datetime.strptime(i.working, '%Y-%m-%d %H:%M:%S.%f')
-			req = datetime.strptime(i.material_request, '%Y-%m-%d %H:%M:%S.%f')
-			iss = datetime.strptime(i.material_issued, '%Y-%m-%d %H:%M:%S.%f')
-			resume = datetime.strptime(i.resume_working, '%Y-%m-%d %H:%M:%S.%f')
+			try:
+				closed = datetime.strptime(i.closed, '%Y-%m-%d %H:%M:%S.%f')
+			except:
+				closed = i.closed
+			try:
+				working = datetime.strptime(i.working, '%Y-%m-%d %H:%M:%S.%f')
+			except:
+				working = i.working
+			try:
+				req = datetime.strptime(i.material_request, '%Y-%m-%d %H:%M:%S.%f')
+			except:
+				req = i.material_request
+			try:
+				iss = datetime.strptime(i.material_issued, '%Y-%m-%d %H:%M:%S.%f')
+			except:
+				iss = i.material_issued
+			try:
+				resume = datetime.strptime(i.resume_working, '%Y-%m-%d %H:%M:%S.%f')
+			except:
+				resume = i.resume_working
 			difference = (req-working)+(iss-req)+(closed-resume)
 			seconds_in_day = 24 * 60 * 60
 			productivity_time = ((difference.days * seconds_in_day + difference.seconds)/60)/60
 			i.productivity_time = round(productivity_time, 4)
 		
 		if i.working and doc.escalation_time and not i.closed and not i.material_request and not i.material_issued and not i.resume_working:
-			working = datetime.strptime(i.working, '%Y-%m-%d %H:%M:%S.%f')
-			escalate = datetime.strptime(doc.escalation_time, '%Y-%m-%d %H:%M:%S')
+			try:
+				working = datetime.strptime(i.working, '%Y-%m-%d %H:%M:%S.%f')
+			except:
+				working = i.working
+			try:
+				escalate = datetime.strptime(doc.escalation_time, '%Y-%m-%d %H:%M:%S')
+			except:
+				escalate = doc.escalation_time
 			difference = escalate-working
 			seconds_in_day = 24 * 60 * 60
 			productivity_time = ((difference.days * seconds_in_day + difference.seconds)/60)/60
 			i.productivity_time = round(productivity_time, 4)
 
 		if i.working and doc.escalation_time and not i.closed and i.material_request and i.material_issued and not i.resume_working:
-			working = datetime.strptime(i.working, '%Y-%m-%d %H:%M:%S.%f') if type(i.working) == 'str' else i.working
-			escalate = datetime.strptime(doc.escalation_time, '%Y-%m-%d %H:%M:%S.%f') if type(doc.escalation_time) == 'str' else doc.escalation_time
-			req = datetime.strptime(i.material_request, '%Y-%m-%d %H:%M:%S.%f') if type(i.material_request) == 'str' else i.material_request
-			iss = datetime.strptime(i.material_issued, '%Y-%m-%d %H:%M:%S.%f') if type(i.material_issued) == 'str' else i.material_issued
+			try:
+				working = datetime.strptime(i.working, '%Y-%m-%d %H:%M:%S.%f')
+			except:
+				working = i.working
+			try:
+				escalate = datetime.strptime(doc.escalation_time, '%Y-%m-%d %H:%M:%S')
+			except:
+				escalate = doc.escalation_time
+			try:
+				req = datetime.strptime(i.material_request, '%Y-%m-%d %H:%M:%S.%f')
+			except:
+				req = i.material_request
+			try:
+				iss = datetime.strptime(i.material_issued, '%Y-%m-%d %H:%M:%S.%f')
+			except:
+				iss = i.material_issued
 			difference = (req-working)+(iss-req)+(escalate-iss)
 			seconds_in_day = 24 * 60 * 60
 			productivity_time = ((difference.days * seconds_in_day + difference.seconds)/60)/60
 			i.productivity_time = round(productivity_time, 4)
 
 		if not i.working and i.closed and i.material_request and i.material_issued and i.resume_working:
-			closed = datetime.strptime(i.closed, '%Y-%m-%d %H:%M:%S.%f') if type(i.closed) == 'str' else i.closed
-			resume = datetime.strptime(i.resume_working, '%Y-%m-%d %H:%M:%S.%f') if type(i.resume_working) == 'str' else i.resume_working
-			req = datetime.strptime(i.material_request, '%Y-%m-%d %H:%M:%S.%f') if type(i.material_request) == 'str' else i.material_request
-			iss = datetime.strptime(i.material_issued, '%Y-%m-%d %H:%M:%S.%f') if type(i.material_issued) == 'str' else i.material_issued
+			try:
+				closed = datetime.strptime(i.closed, '%Y-%m-%d %H:%M:%S.%f')
+			except:
+				closed = i.closed
+			try:
+				resume = datetime.strptime(i.resume_working, '%Y-%m-%d %H:%M:%S.%f')
+			except:
+				resume = i.resume_working
+			try:
+				req = datetime.strptime(i.material_request, '%Y-%m-%d %H:%M:%S.%f')
+			except:
+				req = i.material_request
+			try:
+				iss = datetime.strptime(i.material_issued, '%Y-%m-%d %H:%M:%S.%f')
+			except:
+				iss = i.material_issued
 			difference = (iss-req)+(closed-resume)
 			seconds_in_day = 24 * 60 * 60
 			productivity_time = ((difference.days * seconds_in_day + difference.seconds)/60)/60
 			i.productivity_time = round(productivity_time, 4)
 
 		if not i.working and i.closed and not i.material_request and not i.material_issued and i.resume_working:
-			closed = datetime.strptime(i.closed, '%Y-%m-%d %H:%M:%S.%f')
-			resume = datetime.strptime(i.resume_working, '%Y-%m-%d %H:%M:%S.%f')
+			try:
+				closed = datetime.strptime(i.closed, '%Y-%m-%d %H:%M:%S.%f')
+			except:
+				closed = i.closed
+			try:
+				resume = datetime.strptime(i.resume_working, '%Y-%m-%d %H:%M:%S.%f')
+			except:
+				resume = i.resume_working
 			difference = closed-resume
 			seconds_in_day = 24 * 60 * 60
 			productivity_time = ((difference.days * seconds_in_day + difference.seconds)/60)/60
