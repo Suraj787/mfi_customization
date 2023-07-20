@@ -59,7 +59,7 @@ def email_validation(doc):
 
 def set_company(doc):
 	if doc.asset:
-		company = frappe.db.get_value("Asset", {'name': doc.asset}, 'company')
+		company = frappe.db.get_value("Asset", {'name': doc.asset}, 'asset_owner_company')
 		if company:
 			doc.company = company
 
@@ -227,7 +227,7 @@ def set_reading_from_issue_to_task(doc,method):
 				"reading":d.get('reading'),
 				"reading_2":d.get('reading_2')
 				})
-				task_doc.save()
+				task_doc.save(ignore_permissions=True)
 
 def validate_reading(doc):
     user_roles= frappe.get_roles(frappe.session.user)

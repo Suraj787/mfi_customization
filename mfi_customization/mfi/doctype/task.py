@@ -629,6 +629,16 @@ def create_user_permission(doc):
 		share.write = 1
 		
 		share.save(ignore_permissions=True)
+		
+	if 'Issue' not in frappe.db.get_all('DocShare',{'user':doc.completed_by,'share_name':doc.issue}, 'share_doctype', pluck='share_doctype') or doc.issue not in frappe.db.get_all('DocShare',{'share_doctype':'Issue','user':doc.completed_by}, 'share_name', pluck='share_name') or doc.completed_by not in frappe.db.get_all('DocShare',{'share_doctype':'Issue','share_name':doc.issue}, 'user', pluck='user'):
+		share = frappe.new_doc('DocShare')
+		share.share_doctype = 'Issue'
+		share.share_name = doc.issue
+		share.user = doc.completed_by
+		share.read = 1
+		share.write = 1
+		
+		share.save(ignore_permissions=True)
 
 def create_user_issue_permission(doc):
 		if len(frappe.get_all("User Permission",{"allow":"Issue","for_value":doc.issue,"user":doc.completed_by}))==0:
@@ -872,6 +882,17 @@ def update_technician_productivity_matrix(doc):
 					row = doc.append("technician_productivity_matrix", {})
 					row.technician = doc.completed_by
 					row.closed = now_datetime()
+			
+			elif frappe.db.get_value("Task", doc.name, "status") != "Resume Working" and doc.status == "Resume Working":  # working
+				resume_datetime = {row.technician: row.resume_working for row in task.technician_productivity_matrix}
+				if task.completed_by in resume_datetime and not resume_datetime[task.completed_by]:
+					for i in doc.technician_productivity_matrix:
+						if i.technician == task.completed_by and not i.resume_working:
+							i.resume_working = now_datetime()
+				else:
+					row = doc.append("technician_productivity_matrix", {})
+					row.technician = doc.completed_by
+					row.resume_working = now_datetime()
 
 def set_assigned_on_task(doc):
 	if frappe.db.exists('Task', doc.name):
@@ -896,6 +917,122 @@ def set_escalate(doc):
 	if technician != doc.completed_by:
 		doc.escalation = 0
 
+def productivity_time(doc,method):
+	for i in doc.technician_productivity_matrix:
+		frappe.log_error('ewewew')
+		if i.working and i.closed and not i.material_request:
+			frappe.log_error('diffrrd')
+			try:
+				closed = datetime.strptime(i.closed, '%Y-%m-%d %H:%M:%S.%f')
+			except:
+				closed = i.closed
+			try:
+				working = datetime.strptime(i.working, '%Y-%m-%d %H:%M:%S.%f')
+			except:
+				working = i.working
+			difference = closed - working
+			seconds_in_day = 24 * 60 * 60
+			productivity_time = difference
+			i.productivity_time = productivity_time
+
+		if i.working and i.closed and i.material_request and i.material_issued and i.resume_working: 
+			frappe.log_error('diffrrd')
+			try:
+				closed = datetime.strptime(i.closed, '%Y-%m-%d %H:%M:%S.%f')
+			except:
+				closed = i.closed
+			try:
+				working = datetime.strptime(i.working, '%Y-%m-%d %H:%M:%S.%f')
+			except:
+				working = i.working
+			try:
+				req = datetime.strptime(i.material_request, '%Y-%m-%d %H:%M:%S.%f')
+			except:
+				req = i.material_request
+			try:
+				iss = datetime.strptime(i.material_issued, '%Y-%m-%d %H:%M:%S.%f')
+			except:
+				iss = i.material_issued
+			try:
+				resume = datetime.strptime(i.resume_working, '%Y-%m-%d %H:%M:%S.%f')
+			except:
+				resume = i.resume_working
+			difference = (req-working)+(iss-req)+(closed-resume)
+			seconds_in_day = 24 * 60 * 60
+			productivity_time = difference
+			i.productivity_time = productivity_time
+		
+		if i.working and doc.escalation_time and not i.closed and not i.material_request and not i.material_issued and not i.resume_working:
+			try:
+				working = datetime.strptime(i.working, '%Y-%m-%d %H:%M:%S.%f')
+			except:
+				working = i.working
+			try:
+				escalate = datetime.strptime(doc.escalation_time, '%Y-%m-%d %H:%M:%S')
+			except:
+				escalate = doc.escalation_time
+			difference = escalate-working
+			seconds_in_day = 24 * 60 * 60
+			productivity_time = difference
+			i.productivity_time = productivity_time
+
+		if i.working and doc.escalation_time and not i.closed and i.material_request and i.material_issued and not i.resume_working:
+			try:
+				working = datetime.strptime(i.working, '%Y-%m-%d %H:%M:%S.%f')
+			except:
+				working = i.working
+			try:
+				escalate = datetime.strptime(doc.escalation_time, '%Y-%m-%d %H:%M:%S')
+			except:
+				escalate = doc.escalation_time
+			try:
+				req = datetime.strptime(i.material_request, '%Y-%m-%d %H:%M:%S.%f')
+			except:
+				req = i.material_request
+			try:
+				iss = datetime.strptime(i.material_issued, '%Y-%m-%d %H:%M:%S.%f')
+			except:
+				iss = i.material_issued
+			difference = (req-working)+(iss-req)+(escalate-iss)
+			seconds_in_day = 24 * 60 * 60
+			productivity_time = difference
+			i.productivity_time = productivity_time
+
+		if not i.working and i.closed and i.material_request and i.material_issued and i.resume_working:
+			try:
+				closed = datetime.strptime(i.closed, '%Y-%m-%d %H:%M:%S.%f')
+			except:
+				closed = i.closed
+			try:
+				resume = datetime.strptime(i.resume_working, '%Y-%m-%d %H:%M:%S.%f')
+			except:
+				resume = i.resume_working
+			try:
+				req = datetime.strptime(i.material_request, '%Y-%m-%d %H:%M:%S.%f')
+			except:
+				req = i.material_request
+			try:
+				iss = datetime.strptime(i.material_issued, '%Y-%m-%d %H:%M:%S.%f')
+			except:
+				iss = i.material_issued
+			difference = (iss-req)+(closed-resume)
+			seconds_in_day = 24 * 60 * 60
+			productivity_time = difference
+			i.productivity_time = productivity_time
+
+		if not i.working and i.closed and not i.material_request and not i.material_issued and i.resume_working:
+			try:
+				closed = datetime.strptime(i.closed, '%Y-%m-%d %H:%M:%S.%f')
+			except:
+				closed = i.closed
+			try:
+				resume = datetime.strptime(i.resume_working, '%Y-%m-%d %H:%M:%S.%f')
+			except:
+				resume = i.resume_working
+			difference = closed-resume
+			seconds_in_day = 24 * 60 * 60
+			productivity_time = difference
+			i.productivity_time = productivity_time
 # def resolution_time(doc):
 # 	if frappe.db.exists('Task', doc.name):
 # 		if len(doc.technician_productivity_matrix)>0:
