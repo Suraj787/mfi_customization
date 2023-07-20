@@ -650,9 +650,6 @@ frappe.ui.form.on('Task', {
 				for (let t of frm.doc.task_escalation_list){
 					technicians.push(t.escalated_technician);
 				}
-				console.log('technicians', technicians);
-				console.log('frappe.user', frappe.user);
-				console.log('!(frappe.user in technicians)', !(frappe.user in technicians));
 				if (!(technicians.includes(frappe.user.name))){
 				const dialog = new frappe.ui.Dialog({
 					title: __('Escalate'),
