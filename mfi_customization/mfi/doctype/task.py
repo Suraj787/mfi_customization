@@ -80,7 +80,7 @@ def validate(doc,method):
 # 	resolution_time(doc)
 	set_assigned_on_task(doc)
 	
-	set_escalate(doc)
+	# set_escalate(doc)
 
 
 
