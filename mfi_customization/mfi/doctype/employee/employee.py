@@ -51,6 +51,7 @@ def get_user(doc,method):
                usr_perm.user = doc.user_id
                usr_perm.allow = 'User'
                usr_perm.for_value = doc.user_id
+               usr_perm.apply_to_all_doctypes = 0
                usr_perm.applicable_for = 'Task'
                usr_perm.save()
             
