@@ -932,7 +932,9 @@ def productivity_time(doc,method):
 				working = i.working
 			difference = closed - working
 			seconds_in_day = 24 * 60 * 60
-			productivity_time = difference
+			productivity_time = str(difference)
+			separator = ':'
+			productivity_time = productivity_time.rsplit(separator, 1)[0]
 			i.productivity_time = productivity_time
 
 		if i.working and i.closed and i.material_request and i.material_issued and i.resume_working: 
@@ -959,7 +961,9 @@ def productivity_time(doc,method):
 				resume = i.resume_working
 			difference = (req-working)+(iss-req)+(closed-resume)
 			seconds_in_day = 24 * 60 * 60
-			productivity_time = difference
+			productivity_time = str(difference)
+			separator = ':'
+			productivity_time = productivity_time.rsplit(separator, 1)[0]
 			i.productivity_time = productivity_time
 		
 		if i.working and doc.escalation_time and not i.closed and not i.material_request and not i.material_issued and not i.resume_working:
@@ -973,7 +977,9 @@ def productivity_time(doc,method):
 				escalate = doc.escalation_time
 			difference = escalate-working
 			seconds_in_day = 24 * 60 * 60
-			productivity_time = difference
+			productivity_time = str(difference)
+			separator = ':'
+			productivity_time = productivity_time.rsplit(separator, 1)[0]
 			i.productivity_time = productivity_time
 
 		if i.working and doc.escalation_time and not i.closed and i.material_request and i.material_issued and not i.resume_working:
@@ -995,7 +1001,9 @@ def productivity_time(doc,method):
 				iss = i.material_issued
 			difference = (req-working)+(iss-req)+(escalate-iss)
 			seconds_in_day = 24 * 60 * 60
-			productivity_time = difference
+			productivity_time = str(difference)
+			separator = ':'
+			productivity_time = productivity_time.rsplit(separator, 1)[0]
 			i.productivity_time = productivity_time
 
 		if not i.working and i.closed and i.material_request and i.material_issued and i.resume_working:
@@ -1017,7 +1025,9 @@ def productivity_time(doc,method):
 				iss = i.material_issued
 			difference = (iss-req)+(closed-resume)
 			seconds_in_day = 24 * 60 * 60
-			productivity_time = difference
+			productivity_time = str(difference)
+			separator = ':'
+			productivity_time = productivity_time.rsplit(separator, 1)[0]
 			i.productivity_time = productivity_time
 
 		if not i.working and i.closed and not i.material_request and not i.material_issued and i.resume_working:
@@ -1031,7 +1041,9 @@ def productivity_time(doc,method):
 				resume = i.resume_working
 			difference = closed-resume
 			seconds_in_day = 24 * 60 * 60
-			productivity_time = difference
+			productivity_time = str(difference)
+			separator = ':'
+			productivity_time = productivity_time.rsplit(separator, 1)[0]
 			i.productivity_time = productivity_time
 # def resolution_time(doc):
 # 	if frappe.db.exists('Task', doc.name):
