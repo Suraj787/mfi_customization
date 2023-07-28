@@ -533,7 +533,7 @@ def get_asset_on_cust(doctype, txt, searchfield, start, page_len, filters):
 def create_machine_reading(doc):
 	for d in doc.get('current_reading'):
 		if len(frappe.get_all("Machine Reading",{"task":doc.name,"project":doc.project,"asset":d.get('asset'),"reading_date":d.get('date')}))<1:
-			if d.get("total") != None:
+			if d.get("colour_reading") != None and d.get("black_and_white_reading") != None:
 				if doc.type_of_call =="Toner":
 					mr=frappe.new_doc("Machine Reading")
 					mr.reading_date=d.get('date')
@@ -566,8 +566,8 @@ def create_machine_reading(doc):
 					mr.save(ignore_permissions=True)
 			# d.machine_reading=mr.name
 def update_machine_reading(doc, existed_mr):
-	if d.get("total") != None:
-		for d in doc.get('current_reading'):
+	for d in doc.get('current_reading'):
+		if d.get("colour_reading") != None and d.get("black_and_white_reading") != None:
 			for mr in existed_mr:
 				mr_doc=frappe.get_doc("Machine Reading", mr)
 				mr_doc.reading_date=d.get('date')
