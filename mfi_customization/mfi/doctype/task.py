@@ -610,13 +610,14 @@ def validate_reading(doc):
     if "Call Coordinator" not in user_roles or "Administrator" in user_roles:
         for cur in doc.get('current_reading'):
             print(f'\n\n\n\n\ntask{cur.get("reading")},{cur.get("reading_2")}\n\n\n\n\n')
-            cur.total=( int(cur.get('reading') or 0)  + int(cur.get('reading_2') or 0))
-            curr.append(cur.total)
-            curr_date.append(cur.date)
-            for lst in doc.get('last_readings'):
-                lst.total=( int(lst.get('reading') or 0)  + int(lst.get('reading_2') or 0))
-                last.append(lst.total)
-                last_date.append(lst.date)
+            if not cur.get('reading') and not cur.get('reading_2'):
+                cur.total=( int(cur.get('reading') or 0)  + int(cur.get('reading_2') or 0))
+                curr.append(cur.total)
+                curr_date.append(cur.date)
+                for lst in doc.get('last_readings'):
+                    lst.total=( int(lst.get('reading') or 0)  + int(lst.get('reading_2') or 0))
+                    last.append(lst.total)
+                    last_date.append(lst.date)
     if len(curr)>0 and len(last)>0:
         print(f'\n\n\n\n\n122{curr},{last}\n\n\n\n\n')
         frappe.log_error(f'\n\n\n\n\n122{curr},{last}\n\n\n\n\n')
