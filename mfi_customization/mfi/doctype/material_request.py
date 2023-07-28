@@ -469,19 +469,20 @@ def set_yeild_details(doc):
 
 		if asset_reading:
 			if  machine_reding_with_itm:
-				percent = (int(item_yeild[0])/int(machine_reding_with_itm[0]))*100
-				last_coverage = (float(coverage[0])/100) * (percent/100)
-				doc.append("items_with_yeild",{
-					"item_code": i.item_code,
-					"item_name": i.item_name,
-					"item_group": i.item_group,
-					"yeild":int(asset_reading) - int(machine_reding_with_itm[0]) ,
-					"total_yeild" :float(item_yeild[0]),
-					"last_coverage":"%.6f"% last_coverage,
-					"1st_reading":int(asset_reading) - int(machine_reding_with_itm[0]) if 0 < len(machine_reding_with_itm) else 0,
-					"2nd_reading": int(asset_reading) - int(machine_reding_with_itm[1]) if 1 < len(machine_reding_with_itm) else 0,
-					"3rd_reading": int(asset_reading) - int(machine_reding_with_itm[2]) if 2 < len(machine_reding_with_itm) else 0
-					})
+   				if int(machine_reding_with_itm[0])>0:
+					percent = (int(item_yeild[0])/int(machine_reding_with_itm[0]))*100
+					last_coverage = (float(coverage[0])/100) * (percent/100)
+					doc.append("items_with_yeild",{
+						"item_code": i.item_code,
+						"item_name": i.item_name,
+						"item_group": i.item_group,
+						"yeild":int(asset_reading) - int(machine_reding_with_itm[0]) ,
+						"total_yeild" :float(item_yeild[0]),
+						"last_coverage":"%.6f"% last_coverage,
+						"1st_reading":int(asset_reading) - int(machine_reding_with_itm[0]) if 0 < len(machine_reding_with_itm) else 0,
+						"2nd_reading": int(asset_reading) - int(machine_reding_with_itm[1]) if 1 < len(machine_reding_with_itm) else 0,
+						"3rd_reading": int(asset_reading) - int(machine_reding_with_itm[2]) if 2 < len(machine_reding_with_itm) else 0
+						})
 			else:
 				mchn_reading_installation = frappe.db.sql("""select name, total from `tabMachine Reading`
 				where asset ='{0}' and reading_type = 'Installation' ORDER BY name DESC LIMIT 3""".format(doc.asset),as_dict=1)
