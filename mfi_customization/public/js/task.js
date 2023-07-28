@@ -772,6 +772,9 @@ function set_permissions_for_symptoms(frm) {
 			frm.set_df_property('cause', "reqd", 0);
 			frm.set_df_property('signature', "reqd", 1);
 			frm.set_df_property('priority', "read_only", 1);
+			frm.set_df_property('asset', "reqd", 1);
+			frm.set_df_property('location', "reqd", 1);
+			frm.set_df_property('serial_no', "reqd", 1);
 		}
 		if ((frappe.user.has_role("Call Coordinator") == 1 || frappe.user.has_role("Toner Coordinator") == 1) && frappe.user != "Administrator") {
 			frm.set_df_property('symptoms', "hidden", 1);
