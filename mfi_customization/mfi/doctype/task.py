@@ -266,7 +266,7 @@ def lst_reading1(doc,method):
 
 
 def on_change(doc,method):
-	if doc.get("issue") and doc.status=='Completed':
+	if doc.get("issue") and doc.get("status")=='Completed':
 		set_reading_from_task_to_issue(doc)
 	validate_reading(doc)
 	existed_mr=[]
