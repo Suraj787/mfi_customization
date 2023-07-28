@@ -220,6 +220,50 @@ def send_task_assignment_email(task):
 
 		frappe.msgprint("Task assignment email has been sent")
 
+def lst_reading1(doc,method):
+	if doc.get("issue"):
+		issue=frappe.get_doc("Issue",doc.issue)
+		frappe.log_error('task-LAST READINGS')
+		if issue.status == 'Working' and len(issue.last_readings)>0:
+			last_reading=today()
+			#last_reading child table row will be less then 2 idx(3 row) then it will insert
+			if doc.asset and len(doc.get("last_readings"))<=3 and doc.status == 'Working':
+				frappe.log_error('task-LAST READINGS1111')
+				doc.set("last_readings", [])
+				l = []
+				for c_r in doc.current_reading:
+					l.append(c_r.total)
+				fltr={"project":doc.project,"asset":doc.asset,"reading_date":("<=",last_reading)}
+				mr_all = frappe.get_all("Machine Reading",filters=fltr,fields=["name","reading_date","asset","black_and_white_reading","colour_reading","total","machine_type"],limit=4,order_by="reading_date desc,name desc")
+				frappe.log_error(f'task-LAST READINGS2222,{mr_all}')
+				for d in range(len(mr_all)-1):
+					if len(mr_all)>0 and doc.type_of_call == "Toner":
+						print(f"\n\n\n\n\nttttt,{int(mr_all[d]['total'])}\n\n\n\n\n")
+						print(f"\n\n\n\n\nttttt+++++++++11111111,{int(mr_all[d+1]['total'])}\n\n\n\n\n")
+						doc.append("last_readings", {
+							"date" : mr_all[d]['reading_date'],
+							"type" : mr_all[d]['machine_type'],
+							"asset":mr_all[d]['asset'],
+							"reading":mr_all[d]['black_and_white_reading'],
+							"reading_2":mr_all[d]['colour_reading'],
+							"total":( int(mr_all[d]['black_and_white_reading'] or 0)  + int(mr_all[d]['colour_reading'] or 0)),
+							"yeild": int(mr_all[d]['total']) - int(mr_all[d+1]['total']) or 0,
+							"actual_coverage": str(round(5000/(int(mr_all[d]['total']) - int(mr_all[d+1]['total']))*5, 2)) + '%',
+							"rated_yield": 5000
+							})
+
+					else:
+						frappe.log_error('task-LAST READINGS33333')
+						doc.append("last_readings", {
+							"date" : mr_all[d]['reading_date'],
+							"type" : mr_all[d]['machine_type'],
+							"asset":mr_all[d]['asset'],
+							"reading":mr_all[d]['black_and_white_reading'],
+							"reading_2":mr_all[d]['colour_reading'],
+							"total":( int(mr_all[d]['black_and_white_reading'] or 0)  + int(mr_all[d]['colour_reading'] or 0)),
+							"yeild": 0
+							})
+
 
 def on_change(doc,method):
 	if doc.get("issue") and doc.status=='Completed':
@@ -237,6 +281,10 @@ def on_change(doc,method):
 		issue.response_date_time=doc.attended_date_time
 		if doc.issue and doc.status != 'Open':
 			issue.status=doc.status
+			if issue.details_available == 0:
+				issue.asset = doc.asset
+				issue.location = doc.location
+				issue.serial_no = doc.serial_no
 			if doc.status == 'Completed':
 				validate_if_material_request_is_not_submitted(doc)
 				validate_current_reading(doc)
@@ -799,7 +847,7 @@ def get_asset(customer,location):
 
 
 def validate_current_reading(doc):
-	if frappe.db.get_value('Type of Call',{'name':doc.type_of_call},'ignore_reading')==0 and len(doc.get("current_reading"))==0:
+	if frappe.db.get_value('Type of Call',{'name':doc.type_of_call},'ignore_reading')==0 and len(doc.get("current_reading"))==0 and frappe.db.get_value('Asset Readings',{'parent':doc.name,'type':'Black & White'},'reading')==None or frappe.db.get_value('Asset Readings',{'parent':doc.name,'type':'Colour'},'reading_2')==None:
 		frappe.throw("Cann't Complete Task Without Current Reading")
 
 
