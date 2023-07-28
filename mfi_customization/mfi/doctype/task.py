@@ -533,49 +533,51 @@ def get_asset_on_cust(doctype, txt, searchfield, start, page_len, filters):
 def create_machine_reading(doc):
 	for d in doc.get('current_reading'):
 		if len(frappe.get_all("Machine Reading",{"task":doc.name,"project":doc.project,"asset":d.get('asset'),"reading_date":d.get('date')}))<1:
-			if doc.type_of_call =="Toner":
-				mr=frappe.new_doc("Machine Reading")
-				mr.reading_date=d.get('date')
-				mr.asset=d.get('asset')
-				mr.black_and_white_reading=d.get("reading")
-				mr.colour_reading=d.get("reading_2")
-				mr.machine_type=d.get('type')
-				mr.total=d.get("total") or 0
-				mr.project=doc.project
-				mr.task=doc.name
-				mr.row_id = d.name
-				mr.item = doc.get('toner_type')
-				mr.append("items",{
-						"item_code":doc.get('toner_type')
-					})
-				mr.save(ignore_permissions=True)
-			else:
-				mr=frappe.new_doc("Machine Reading")
-				mr.reading_date=d.get('date')
-				mr.asset=d.get('asset')
-				mr.black_and_white_reading=d.get("reading")
-				mr.colour_reading=d.get("reading_2")
-				mr.machine_type=d.get('type')
-				mr.total=d.get("total")
-				mr.project=doc.project
-				mr.task=doc.name
-				mr.row_id = d.name
-				if doc.type_of_call =="Installation":
-					mr.reading_type = "Installation"
-				mr.save(ignore_permissions=True)
+			if d.get("total") != None:
+				if doc.type_of_call =="Toner":
+					mr=frappe.new_doc("Machine Reading")
+					mr.reading_date=d.get('date')
+					mr.asset=d.get('asset')
+					mr.black_and_white_reading=d.get("reading")
+					mr.colour_reading=d.get("reading_2")
+					mr.machine_type=d.get('type')
+					mr.total=d.get("total") or 0
+					mr.project=doc.project
+					mr.task=doc.name
+					mr.row_id = d.name
+					mr.item = doc.get('toner_type')
+					mr.append("items",{
+							"item_code":doc.get('toner_type')
+						})
+					mr.save(ignore_permissions=True)
+				else:
+					mr=frappe.new_doc("Machine Reading")
+					mr.reading_date=d.get('date')
+					mr.asset=d.get('asset')
+					mr.black_and_white_reading=d.get("reading")
+					mr.colour_reading=d.get("reading_2")
+					mr.machine_type=d.get('type')
+					mr.total=d.get("total")
+					mr.project=doc.project
+					mr.task=doc.name
+					mr.row_id = d.name
+					if doc.type_of_call =="Installation":
+						mr.reading_type = "Installation"
+					mr.save(ignore_permissions=True)
 			# d.machine_reading=mr.name
 def update_machine_reading(doc, existed_mr):
-	for d in doc.get('current_reading'):
-		for mr in existed_mr:
-			mr_doc=frappe.get_doc("Machine Reading", mr)
-			mr_doc.reading_date=d.get('date')
-			mr_doc.asset=d.get('asset')
-			mr_doc.black_and_white_reading=d.get("reading")
-			mr_doc.colour_reading=d.get("reading_2")
-			mr_doc.machine_type=d.get('type')
-			mr_doc.total=d.get("total")
-			mr_doc.save(ignore_permissions=True)
-
+	if d.get("total") != None:
+		for d in doc.get('current_reading'):
+			for mr in existed_mr:
+				mr_doc=frappe.get_doc("Machine Reading", mr)
+				mr_doc.reading_date=d.get('date')
+				mr_doc.asset=d.get('asset')
+				mr_doc.black_and_white_reading=d.get("reading")
+				mr_doc.colour_reading=d.get("reading_2")
+				mr_doc.machine_type=d.get('type')
+				mr_doc.total=d.get("total")
+				mr_doc.save(ignore_permissions=True)
+				
 def set_reading_from_task_to_issue(doc):
 	issue_doc=frappe.get_doc('Issue',{'name':doc.get("issue")})
 	for d in doc.get('current_reading'):
