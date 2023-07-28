@@ -107,12 +107,13 @@ doctype_list_js = {"Material Request":"public/js/material_request_list.js",
 doc_events = {
     "Task":{
         "before_insert": "mfi_customization.mfi.doctype.task.before_insert",
-        "validate":"mfi_customization.mfi.doctype.task.validate",
+        "validate":["mfi_customization.mfi.doctype.task.validate","mfi_customization.mfi.doctype.task.lst_reading1"],
         "after_insert":["mfi_customization.mfi.doctype.task.after_insert",
                         "mfi_customization.mfi.doctype.task.link_issue_attachments"],
         "on_trash":"mfi_customization.mfi.doctype.task.after_delete",
         "on_change":"mfi_customization.mfi.doctype.task.on_change",
-        "before_save":"mfi_customization.mfi.doctype.task.productivity_time"
+        "before_save":"mfi_customization.mfi.doctype.task.productivity_time",
+	"after_save": "mfi_customization.mfi.doctype.task.lst_reading1"
     },
     "Asset":{
         "after_insert":"mfi_customization.mfi.doctype.Asset.after_insert",
@@ -124,7 +125,8 @@ doc_events = {
     "Issue":{
         "validate":"mfi_customization.mfi.doctype.issue.validate",
         "on_change":"mfi_customization.mfi.doctype.issue.on_change",
-        "after_insert":"mfi_customization.mfi.doctype.issue.after_insert"
+        "after_insert":"mfi_customization.mfi.doctype.issue.after_insert",
+	"before_save":"mfi_customization.mfi.doctype.issue.validate"
     },
     "Material Request":{
         #"on_change":"mfi_customization.mfi.doctype.material_request.set_item_from_material_req",
