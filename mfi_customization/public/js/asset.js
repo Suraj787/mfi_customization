@@ -110,4 +110,36 @@ frappe.ui.form.on('Asset', {
         
     }
 
+    pm_call_interval: function(frm) {
+        frappe.call({
+            method: 'mfi_customization.mfi.doctype.Asset.date_pm_call_interval',
+            args: {
+                "project": frm.doc.project,
+                "pm_call_interval": frm.doc.pm_call_interval
+
+            },
+            callback: function(r) {
+                console.log(r)
+
+                if (frm.doc.pm_call_interval) {
+                    cur_frm.clear_table("pm_schedule");
+                    cur_frm.refresh_fields("pm_schedule")
+                    console.log('message',r.message)
+                    for (let i = 0; i < r.message.length; i++) {
+
+                        var childTable = cur_frm.add_child("pm_schedule")
+                        childTable.date = r.message[i]
+
+                        cur_frm.refresh_fields("pm_schedule")
+
+
+                    }
+
+                }
+
+            }
+        })
+    
+}
+
 })
