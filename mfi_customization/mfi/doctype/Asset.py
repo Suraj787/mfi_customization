@@ -138,6 +138,36 @@ def date_pm_cycle(pm_cycle,project):
     
     return monthlylist,yearlylist,quarterlylist,half_yearlist,bymonthlylist
 
+@frappe.whitelist()
+def date_pm_call_interval(project,pm_call_interval):
+    invoicing_starts_from = frappe.get_value('Project', {'name': project}, 'expected_start_date')
+    expected_end_date = frappe.get_value('Project', {'name': project}, 'expected_end_date')
+
+    days = []
+    
+    endate=str(expected_end_date)
+    frappe.log_error(f'end,{endate}')
+    endate_strp =datetime.strptime(endate, "%Y-%m-%d")
+    endateformating = datetime(endate_strp.year,endate_strp.month,endate_strp.day)
+    invoicing_start_date = str(invoicing_starts_from)
+    invoicing_strp=datetime. strptime(invoicing_start_date,"%Y-%m-%d")
+    invoce_startformating=datetime(invoicing_strp.year,invoicing_strp.month,invoicing_strp.day)
+    
+    if invoce_startformating> endateformating:
+       frappe.throw("Invoicing Starts from date can't before Expected End Date")
+
+    
+    if pm_call_interval:
+        d = int(pm_call_interval)
+        add_days = relativedelta(days=d)
+        frappe.log_error(f'invoce_startformating1212,{invoce_startformating}')
+        frappe.log_error(f'endateformating1212,{endateformating}')
+        while invoce_startformating <= endateformating:
+            days.append(invoce_startformating.date())
+            invoce_startformating += add_days
+    frappe.log_error(f'days,{days}')
+    return days
+
 @frappe.whitelist(allow_guest=True)
 def share_doc_till_limit(doc, method=None):
     today = datetime.today().strftime('%Y-%m-%d')
